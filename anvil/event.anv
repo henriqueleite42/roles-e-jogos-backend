@@ -1,0 +1,264 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Event
+
+Description: |
+  Controls events
+
+Enums:
+  EventConfidentiality:
+    Type: String
+    Values:
+      Public:
+        Description: |
+          Anyone can view and confirm presence on the event
+        Value: PUBLIC
+        Index: 0
+      OnlyInvited:
+        Description: |
+          Only invited people can see and confirm presence on the event
+        Value: ONLY_INVITED
+        Index: 1
+
+  EventAttendanceStatus:
+    Type: String
+    Values:
+      Going:
+        Value: GOING
+        Index: 0
+      Maybe:
+        Value: MAYBE
+        Index: 1
+      NotGoing:
+        Value: NOT_GOING
+        Index: 2
+
+Types:
+  EventData:
+    Type: Map
+    Properties:
+      Event:
+        $ref: Entities.Event
+      Games:
+        Type: List
+        Items:
+          $ref: Game.Entities.Game
+      Attendances:
+        Type: List
+        Items:
+          Type: Map
+          Properties:
+            AccountId:
+              Type: Int
+            Handle:
+              Type: String
+            AvatarUrl:
+              Type: String
+
+Entities:
+  NamingCase: snake
+  Entities:
+    Event:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        OwnerId:
+          Type: Int
+          DbType: INTEGER
+        Name:
+          Type: String
+          DbType: VARCHAR(50)
+        Description:
+          Type: String
+          DbType: VARCHAR(1000)
+        IconPath:
+          Type: String
+          DbType: VARCHAR(250)
+          Optional: true
+        Date:
+          Type: Timestamp
+          DbType: TIMESTAMPTZ
+        MaxAmountOfPlayers:
+          Type: Int
+          DbType: INTEGER
+          Optional: true
+        LocationName:
+          Type: String
+          DbType: VARCHAR(100)
+        LocationAddress:
+          Type: String
+          DbType: VARCHAR(500)
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      ForeignKeys:
+        - Columns:
+            - OwnerId
+          RefColumns:
+            - Account.Entities.Account.Id
+
+    EventGame:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        EventId:
+          Type: Int
+          DbType: INTEGER
+        GameId:
+          Type: Int
+          DbType: INTEGER
+      PrimaryKey:
+        - Id
+        - EventId
+        - GameId
+      ForeignKeys:
+        - Columns:
+            - EventId
+          RefColumns:
+            - Event.Id
+        - Columns:
+            - GameId
+          RefColumns:
+            - Game.Entities.Game.Id
+
+    EventAttendance:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        EventId:
+          Type: Int
+          DbType: INTEGER
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        Status:
+          Type: Enum
+          EnumRef: Enums.EventAttendanceStatus
+        ConfirmedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+        - EventId
+        - AccountId
+      ForeignKeys:
+        - Columns:
+            - EventId
+          RefColumns:
+            - Event.Id
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Entities.Account.Id
+
+Usecase:
+  Methods:
+    CreateEvent:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            $ref: Account.Entities.Account.Id
+          Name:
+            Type: String
+            Validate:
+              - min=1
+              - max=50
+          Description:
+            Type: String
+            Validate:
+              - min=1
+              - max=1000
+          Icon:
+            Type: Map
+            Description: |
+              Only one of the properties should have a value.
+              Tells which icon to use.
+            Properties:
+              CustomIcon:
+                Description: |
+                  Use a custom icon uploaded by the user.
+                Type: String
+                Optional: true
+                Validate:
+                  - path
+              GameIcon:
+                Description: |
+                  Use the icon from a game. If the user wants to use the icon
+                  from a specific game, this property will have the GameId.
+                Type: Int
+                Optional: true
+          Date:
+            Type: Timestamp
+          MaxAmountOfPlayers:
+            Type: Int
+            Validate:
+              - min=1
+              - max=9999
+            Optional: true
+          LocationName:
+            Type: String
+            Validate:
+              - min=1
+              - max=100
+          LocationAddress:
+            Type: String
+            Validate:
+              - min=1
+              - max=500
+          GamesList:
+            Type: List
+            Items:
+              Type: Int
+
+    GetEvents:
+      Input:
+        Type: Map
+        Properties:
+          Pagination:
+            $ref: Common.Types.PaginationInputString
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.EventData
+          Pagination:
+            $ref: Common.Types.PaginationOutputString
+
+    ConfirmAttendance:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            $ref: Account.Entities.Account.Id
+          Confirmation:
+            Type: Enum
+            EnumRef: Enums.EventAttendanceStatus
+
+Delivery:
+  Servers:
+    Prod:
+      Url: https://roles-e-jogos.com.br
+    Dev:
+      Url: http://localhost:3000
+  Http:
+    Routes:
+      - UsecaseMethod: GetEvents
+        Method: GET
+        Path: /events?after=:After&limit=:Limit
+
+      - UsecaseMethod: ConfirmAttendance
+        Method: POST
+        Path: /events/attendance

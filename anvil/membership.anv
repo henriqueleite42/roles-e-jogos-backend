@@ -1,0 +1,91 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Membership
+
+Description: |
+  Controls plans and memberships
+
+Enums:
+  MembershipStatus:
+    Type: String
+    Values:
+      Created:
+        Value: CREATED
+        Index: 0
+      Active:
+        Value: ACTIVE
+        Index: 1
+
+  PaymentMethod:
+    Type: String
+    Values:
+      CreditCard:
+        Value: CREDIT_CARD
+        Index: 0
+      BankSlip:
+        Description: Boleto bancario
+        Value: BANK_SLIP
+        Index: 1
+
+Entities:
+  NamingCase: snake
+  Entities:
+    Plan:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+          Validate:
+            - id
+        Name:
+          Type: String
+          DbType: VARCHAR(50)
+        MonthsInterval:
+          Type: String
+          DbType: INTEGER
+        Price:
+          Type: Int
+          DbType: INTEGER
+        ExternalId:
+          Type: Int
+          DbType: INTEGER
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      Indexes:
+        - Columns:
+            - ExternalId
+
+    Membership:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        ExternalId:
+          Type: Int
+          DbType: INTEGER
+        PlanId:
+          Type: Int
+          DbType: INTEGER
+        Status:
+          Type: Enum
+          EnumRef: Enums.MembershipStatus
+        PaymentMethod:
+          Type: Enum
+          EnumRef: Enums.PaymentMethod
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      ForeignKeys:
+        - Columns:
+            - PlanId
+          RefColumns:
+            - Plan.Id

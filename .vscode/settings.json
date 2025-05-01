@@ -1,0 +1,32 @@
+{
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	},
+	"files.associations": {
+    "*.anv": "yaml",
+  },
+	"material-icon-theme.files.associations": {
+		"*.dbml": "database"
+	},
+	"cSpell.enableFiletypes": [
+		"dbml",
+		"hcl"
+	],
+	"cSpell.words": [
+		"aidanwoods",
+		"econominhas",
+		"emptypb",
+		"jackc",
+		"lasmusas",
+		"Ludopedia",
+		"paseto",
+		"passwordless",
+		"protobuf",
+		"Rpcs",
+		"timestamptz",
+		"Usecase",
+		"usecases",
+		"varchar",
+		"zerolog"
+	]
+}

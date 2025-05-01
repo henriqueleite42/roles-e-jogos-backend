@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Game
+
+Description: |
+  Controls games and their relationships
+
+Enums:
+  Kind:
+    Type: String
+    Values:
+      Rpg:
+        Value: RPG
+        Index: 0
+      Game:
+        Value: GAME
+        Index: 1
+      Expansion:
+        Value: EXPANSION
+        Index: 2
+
+Entities:
+  NamingCase: snake
+  Entities:
+    Game:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        Name:
+          Type: String
+          DbType: VARCHAR(50)
+        Description:
+          Type: String
+          DbType: VARCHAR(1000)
+        IconPath:
+          Type: String
+          DbType: VARCHAR(250)
+          Optional: true
+        Kind:
+          Type: Enum
+          EnumRef: Enums.Kind
+        LudopediaId:
+          Type: Int
+          DbType: INTEGER
+          Optional: true
+        LudopediaUrl:
+          Type: String
+          DbType: VARCHAR(500)
+          Optional: true
+        MinAmountOfPlayers:
+          Type: Int
+          DbType: INTEGER
+        MaxAmountOfPlayers:
+          Type: Int
+          DbType: INTEGER
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      Indexes:
+        - Columns:
+            - LudopediaId
+
+Repository:
+  Methods:
+    CreateGame:
+      Input:
+        Type: Map
+        Properties:
+          Name:
+            Type: String
+          Description:
+            Type: String
+            Validate:
+              - max=1000
+          IconPath:
+            Type: String
+            DbType: VARCHAR(250)
+            Optional: true
+          Kind:
+            Type: Enum
+            EnumRef: Enums.Kind
+          LudopediaId:
+            Type: Int
+            Optional: true
+          LudopediaUrl:
+            Type: String
+            Optional: true
+            Validate:
+              - max=500
+          MinAmountOfPlayers:
+            Type: Int
+          MaxAmountOfPlayers:
+            Type: Int
+      Output:
+        Type: Map
+        Properties:
+          Id:
+            Type: Int
+
+Usecase:
+  Methods:
+    CreateGame:
+      Input:
+        Type: Map
+        Properties:
+          Name:
+            Type: String
+          Description:
+            Type: String
+            Validate:
+              - max=1000
+          IconPath:
+            Type: String
+            DbType: VARCHAR(250)
+            Optional: true
+          Kind:
+            Type: Enum
+            EnumRef: Enums.Kind
+          LudopediaId:
+            Type: Int
+            Optional: true
+          LudopediaUrl:
+            Type: String
+            Optional: true
+            Validate:
+              - max=500
+          MinAmountOfPlayers:
+            Type: Int
+          MaxAmountOfPlayers:
+            Type: Int

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/config/v1.0.0.json
+
+ProjectName: Backend
+
+AnvilVersion: 1.0.0
+
+Schemas:
+  - ./anvil/account.anv
+  - ./anvil/collection.anv
+  - ./anvil/common.anv
+  - ./anvil/event.anv
+  - ./anvil/gallery.anv
+  - ./anvil/game.anv
+
+Generators:
+  # https://github.com/henriqueleite42/anvil/tree/master/generators/atlas
+  - Name: atlas
+    Version: 1.0.0
+    Parameters:
+      OutDir: "./database"
+
+  # https://github.com/henriqueleite42/anvil/tree/master/generators/go-project
+  - Name: go-project
+    Version: 1.0.0
+    Parameters:
+      OutDir: "."
+      ProjectName: github.com/lasmusas/backend
+      GoVersion: 1.23.2

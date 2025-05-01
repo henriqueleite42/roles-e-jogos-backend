@@ -1,0 +1,145 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Collection
+
+Description: |
+  Controls game collections of users
+
+Types:
+  GroupCollectionItem:
+    Type: Map
+    Properties:
+      Game:
+        $ref: Game.Entities.Game
+      Owners:
+        Type: List
+        Items:
+          Type: Map
+          Properties:
+            AccountId:
+              Type: Int
+            Handle:
+              Type: String
+            AvatarUrl:
+              Type: String
+
+Entities:
+  NamingCase: snake
+  Entities:
+    PersonalCollection:
+      Description: |
+        Collection of games that the account owns
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        GameId:
+          Type: Int
+          DbType: INTEGER
+        Paid:
+          Type: Int
+          Optional: true
+          DbType: INTEGER
+        AcquiredAt:
+          Type: Timestamp
+          Optional: true
+          DbType: TIMESTAMPTZ
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      ForeignKeys:
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Entities.Account.Id
+        - Columns:
+            - GameId
+          RefColumns:
+            - Game.Entities.Game.Id
+
+Repository:
+  Methods:
+    AddToPersonalCollection:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            $ref: Account.Entities.Account.Id
+          Paid:
+            Type: Int
+            Optional: true
+          AcquiredAt:
+            Type: Timestamp
+            Optional: true
+
+    GetCollectiveCollection:
+      Description: |
+        Gets the collective game collection ordered by game name ASC
+      Input:
+        Type: Map
+        Properties:
+          Pagination:
+            $ref: Common.Types.PaginationInputString
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.GroupCollectionItem
+          Pagination:
+            $ref: Common.Types.PaginationOutputString
+
+Usecase:
+  Methods:
+    AddToPersonalCollection:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            $ref: Account.Entities.Account.Id
+          Paid:
+            Type: Int
+            Optional: true
+          AcquiredAt:
+            Type: Timestamp
+            Optional: true
+
+    GetCollectiveCollection:
+      Input:
+        Type: Map
+        Properties:
+          Pagination:
+            $ref: Common.Types.PaginationInputString
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.GroupCollectionItem
+          Pagination:
+            $ref: Common.Types.PaginationOutputString
+
+Delivery:
+  Servers:
+    Prod:
+      Url: https://roles-e-jogos.com.br
+    Dev:
+      Url: http://localhost:3000
+  Http:
+    Routes:
+      - UsecaseMethod: AddToPersonalCollection
+        Method: POST
+        Path: /collection/personal
+
+      - UsecaseMethod: GetCollectiveCollection
+        Method: GET
+        Path: /collection/collective

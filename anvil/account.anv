@@ -1,0 +1,620 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Account
+
+Description: |
+  Controls user account, profile, connections, email addresses and phone numbers
+
+Enums:
+  Provider:
+    Type: String
+    Values:
+      Google:
+        Value: GOOGLE
+        Index: 0
+  OtpPurpose:
+    Type: String
+    Values:
+      SignIn:
+        Value: SIGN_IN
+        Index: 0
+
+Types:
+  AccountDataDb:
+    Type: Map
+    Properties:
+      Id:
+        Type: Int
+        AutoIncrement: true
+      IsAdmin:
+        Type: Bool
+        Default: "FALSE"
+      Handle:
+        Type: String
+      Name:
+        Type: String
+        Optional: true
+      AvatarPath:
+        Type: String
+        Optional: true
+      CreatedAt:
+        Type: Timestamp
+        Default: NOW()
+
+  AccountData:
+    Type: Map
+    Properties:
+      AccountId:
+        Type: Int
+      IsAdmin:
+        Type: Bool
+
+  ProfileData:
+    Type: Map
+    Properties:
+      Handle:
+        Type: String
+      Name:
+        Type: String
+        Optional: true
+      AvatarUrl:
+        Type: String
+        Optional: true
+
+Entities:
+  NamingCase: snake
+  Entities:
+    Account:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+          Validate:
+            - id
+        IsAdmin:
+          Type: Bool
+          DbType: BOOLEAN
+          Default: "FALSE"
+        Handle:
+          Type: String
+          DbType: VARCHAR(16)
+        Name:
+          Type: String
+          DbType: VARCHAR(50)
+          Optional: true
+        AvatarPath:
+          Type: String
+          DbType: CHAR(20)
+          Optional: true
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      Indexes:
+        - Columns:
+            - Handle
+          Unique: true
+
+    Connection:
+      Columns:
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        Provider:
+          Type: Enum
+          EnumRef: Enums.Provider
+        ExternalHandle:
+          Type: String
+          DbType: VARCHAR(30)
+          Optional: true
+        ExternalId:
+          Type: String
+          DbType: VARCHAR(255)
+        RefreshToken:
+          Type: String
+          DbType: VARCHAR(500)
+          Optional: true
+          Confidentiality: MEDIUM
+        CreatedAt:
+          Type: String
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Provider
+        - ExternalId
+      Indexes:
+        - Columns:
+            - AccountId
+      ForeignKeys:
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Id
+          OnDelete: CASCADE
+
+    EmailAddress:
+      Name: email_addresses
+      Columns:
+        EmailAddress:
+          Type: String
+          Validate:
+            - email
+          DbType: VARCHAR(500)
+          Confidentiality: MEDIUM
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+        ValidatedAt:
+          Type: Timestamp
+          Optional: true
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - EmailAddress
+      ForeignKeys:
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Id
+          OnDelete: CASCADE
+
+    OneTimePassword:
+      Columns:
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        Code:
+          Type: String
+          DbType: VARCHAR(255)
+        Purpose:
+          Type: Enum
+          EnumRef: Enums.OtpPurpose
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - AccountId
+        - Code
+        - Purpose
+      ForeignKeys:
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Id
+          OnDelete: CASCADE
+
+Repository:
+  Methods:
+    PartialCreateAccountWithConnection:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalId:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    CreateAccountWithConnection:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+          Name:
+            Type: String
+            Optional: true
+          Email:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalHandle:
+            Type: String
+            Optional: true
+          ExternalId:
+            Type: String
+          RefreshToken:
+            Type: String
+            Optional: true
+      Output:
+        $ref: Types.AccountData
+
+    CreateAccountWithEmail:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+          Email:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    CompleteAccountWithConnection:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Name:
+            Type: String
+            Optional: true
+          Email:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalHandle:
+            Type: String
+            Optional: true
+          ExternalId:
+            Type: String
+          RefreshToken:
+            Type: String
+            Optional: true
+      Output:
+        $ref: Types.AccountData
+
+    GetAccountDataById:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+      Output:
+        $ref: Types.AccountData
+
+    GetAccountDataByHandle:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    GetAccountById:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+      Output:
+        $ref: Entities.Account
+
+    GetAccountByHandle:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+      Output:
+        $ref: Entities.Account
+
+    LinkConnectionWithAccount:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Email:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalHandle:
+            Type: String
+            Optional: true
+          ExternalId:
+            Type: String
+          RefreshToken:
+            Type: String
+            Optional: true
+
+    GetAccountDataByEmail:
+      Input:
+        Type: Map
+        Properties:
+          Email:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    CreateOtp:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Code:
+            Type: String
+          Purpose:
+            Type: Enum
+            EnumRef: Enums.OtpPurpose
+
+    GetOtp:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Code:
+            Type: String
+          Purpose:
+            Type: Enum
+            EnumRef: Enums.OtpPurpose
+      Output:
+        Type: Map
+        Properties:
+          CreatedAt:
+            Type: Timestamp
+
+    GetAccountDataByEmailOrConnection:
+      Input:
+        Type: Map
+        Properties:
+          Email:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalId:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    GetAccountDataByConnection:
+      Input:
+        Type: Map
+        Properties:
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalId:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    EditProfile:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Name:
+            Type: String
+            Optional: true
+
+    EditAccountHandle:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Handle:
+            Type: String
+
+    EditAccountAvatarPath:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Path:
+            Type: String
+            Validate:
+              - path
+
+    GetListByIds:
+      Input:
+        Type: Map
+        Properties:
+          AccountsIds:
+            Type: List
+            Items:
+              Type: Int
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.AccountDataDb
+
+    GetEmailListByIds:
+      Input:
+        Type: Map
+        Properties:
+          AccountsIds:
+            Type: List
+            Items:
+              Type: Int
+          ValidatedOnly:
+            Type: Bool
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Entities.EmailAddress
+
+Usecase:
+  Methods:
+    CreateWithGoogleProvider:
+      Input:
+        Type: Map
+        Properties:
+          Code:
+            Type: String
+            Validate:
+              - min=1
+      Output:
+        $ref: Types.AccountData
+
+    SendSignInOtp:
+      Input:
+        Type: Map
+        Properties:
+          Email:
+            Type: String
+            Validate:
+              - email
+
+    ExchangeSignInOtp:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+            Validate:
+              - id
+          Otp:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
+    EditProfile:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+            Validate:
+              - id
+          Name:
+            Type: String
+            Optional: true
+            Validate:
+              - max=24
+
+    CheckHandle:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+            Validate:
+              - handle
+      Output:
+        Type: Map
+        Properties:
+          Available:
+            Type: Bool
+
+    EditHandle:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+            Validate:
+              - id
+          NewHandle:
+            Type: String
+            Validate:
+              - handle
+
+    GetListById:
+      Input:
+        Type: Map
+        Properties:
+          AccountsIds:
+            Type: List
+            Items:
+              Type: Int
+            Validate:
+              - gt=0
+              - dive,min=1
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.AccountDataDb
+
+    GetEmailListById:
+      Input:
+        Type: Map
+        Properties:
+          AccountsIds:
+            Type: List
+            Items:
+              Type: Int
+            Validate:
+              - gt=0
+              - dive,min=1
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Entities.EmailAddress
+
+    GetProfileById:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+            Validate:
+              - id
+      Output:
+        $ref: Types.ProfileData
+
+    GetProfileByHandle:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+            Validate:
+              - handle
+      Output:
+        $ref: Types.ProfileData
+
+Delivery:
+  Servers:
+    Prod:
+      Url: https://roles-e-jogos.com.br
+    Dev:
+      Url: http://localhost:3000
+  Http:
+    Routes:
+      - UsecaseMethod: CreateWithGoogleProvider
+        Method: GET
+        Path: /auth/google?code=:Code
+
+      - UsecaseMethod: SendSignInOtp
+        Method: POST
+        Path: /auth/send-sign-in-otp
+
+      - UsecaseMethod: ExchangeSignInOtp
+        Method: POST
+        Path: /auth/exchange-sign-in-otp
+
+      - UsecaseMethod: EditProfile
+        Method: PUT
+        Path: /profile
+
+      - UsecaseMethod: CheckHandle
+        Method: GET
+        Path: /profile/handle/check?handle=:Handle
+
+      - UsecaseMethod: EditHandle
+        Method: PUT
+        Path: /profile/handle

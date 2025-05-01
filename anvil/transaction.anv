@@ -1,0 +1,162 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Transaction
+
+Description: |
+  Controls payments for everything
+
+Enums:
+  Status:
+    Type: String
+    Values:
+      Created:
+        Description: Created, waiting payment
+        Value: CREATED
+        Index: 0
+      Paid:
+        Description: Fully paid, finished, nothing to worry anymore
+        Value: PAID
+        Index: 1
+      Expired:
+        Description: Expired, client took to long to pay, invalid transaction
+        Value: EXPIRED
+        Index: 2
+
+Entities:
+  NamingCase: snake
+  Entities:
+    Transaction:
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+          Validate:
+            - id
+        ExternalId:
+          Type: Int
+          DbType: INTEGER
+        ShortDescription:
+          Type: String
+          DbType: VARCHAR(100)
+        Status:
+          Type: Enum
+          EnumRef: Enums.Status
+        TotalAmount:
+          Type: Int
+          DbType: INTEGER
+        PaidAt:
+          Type: Timestamp
+          DbType: TIMESTAMPTZ
+          Optional: true
+        ExpiredAt:
+          Type: Timestamp
+          DbType: TIMESTAMPTZ
+          Optional: true
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      Indexes:
+        - Columns:
+            - ExternalId
+
+    TransactionMembership:
+      Description: |
+        The items of a transaction are stored as relationships of that transaction.
+
+        As transactions are used to pay for memberships, we have this relationship to
+        store the related data.
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+          Validate:
+            - id
+        TransactionId:
+          $ref: Entities.Transaction.Id
+        MembershipId:
+          $ref: Membership.Entities.Membership.Id
+      PrimaryKey:
+        - Id
+      ForeignKeys:
+        - Columns:
+            - TransactionId
+          RefColumns:
+            - Entities.Transaction.Id
+        - Columns:
+            - MembershipId
+          RefColumns:
+            - Membership.Entities.Membership.Id
+
+Repository:
+  Methods:
+    CreateGame:
+      Input:
+        Type: Map
+        Properties:
+          Name:
+            Type: String
+          Description:
+            Type: String
+            Validate:
+              - max=1000
+          IconPath:
+            Type: String
+            DbType: VARCHAR(250)
+            Optional: true
+          Kind:
+            Type: Enum
+            EnumRef: Enums.Kind
+          LudopediaId:
+            Type: Int
+            Optional: true
+          LudopediaUrl:
+            Type: String
+            Optional: true
+            Validate:
+              - max=500
+          MinAmountOfPlayers:
+            Type: Int
+          MaxAmountOfPlayers:
+            Type: Int
+      Output:
+        Type: Map
+        Properties:
+          Id:
+            Type: Int
+
+Usecase:
+  Methods:
+    CreateGame:
+      Input:
+        Type: Map
+        Properties:
+          Name:
+            Type: String
+          Description:
+            Type: String
+            Validate:
+              - max=1000
+          IconPath:
+            Type: String
+            DbType: VARCHAR(250)
+            Optional: true
+          Kind:
+            Type: Enum
+            EnumRef: Enums.Kind
+          LudopediaId:
+            Type: Int
+            Optional: true
+          LudopediaUrl:
+            Type: String
+            Optional: true
+            Validate:
+              - max=500
+          MinAmountOfPlayers:
+            Type: Int
+          MaxAmountOfPlayers:
+            Type: Int

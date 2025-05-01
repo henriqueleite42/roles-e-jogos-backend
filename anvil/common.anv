@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/henriqueleite42/anvil/master/schemas/domain/v1.0.0.json
+
+Domain: Common
+
+Description: |
+  Common thing to be used by all domains
+
+Types:
+  PaginationInputId:
+    Type: Map
+    Properties:
+      After:
+        Type: Int
+        Optional: true
+      Limit:
+        Type: Int
+        Validate:
+          - min=1
+          - max=100
+        Optional: true
+    Optional: true
+
+  PaginationOutputId:
+    Type: Map
+    Properties:
+      Previous:
+        Type: Int
+        Optional: true
+      Next:
+        Type: Int
+        Optional: true
+      Limit:
+        Type: Int
+
+  PaginationInputInt:
+    Type: Map
+    Properties:
+      After:
+        Type: Int
+        Optional: true
+      Limit:
+        Type: Int
+        Validate:
+          - min=1
+          - max=100
+        Optional: true
+    Optional: true
+
+  PaginationOutputInt:
+    Type: Map
+    Properties:
+      Previous:
+        Type: Int
+        Optional: true
+      Next:
+        Type: Int
+        Optional: true
+      Limit:
+        Type: Int
+
+  PaginationInputString:
+    Type: Map
+    Properties:
+      After:
+        Type: String
+        Optional: true
+      Limit:
+        Type: Int
+        Validate:
+          - min=1
+          - max=100
+        Optional: true
+    Optional: true
+
+  PaginationOutputString:
+    Type: Map
+    Properties:
+      Previous:
+        Type: String
+        Optional: true
+      Next:
+        Type: String
+        Optional: true
+      Limit:
+        Type: Int
+
+  PaginationInputTimestamp:
+    Type: Map
+    Properties:
+      After:
+        Type: Timestamp
+        Optional: true
+      Limit:
+        Type: Int
+        Validate:
+          - min=1
+          - max=100
+        Optional: true
+    Optional: true
+
+  PaginationOutputTimestamp:
+    Type: Map
+    Properties:
+      Previous:
+        Type: Timestamp
+        Optional: true
+      Next:
+        Type: Timestamp
+        Optional: true
+      Limit:
+        Type: Int
