@@ -12,6 +12,9 @@ Enums:
       Google:
         Value: GOOGLE
         Index: 0
+      Ludopedia:
+        Value: LUDOPEDIA
+        Index: 1
   OtpPurpose:
     Type: String
     Values:
@@ -192,20 +195,6 @@ Entities:
 
 Repository:
   Methods:
-    PartialCreateAccountWithConnection:
-      Input:
-        Type: Map
-        Properties:
-          Handle:
-            Type: String
-          Provider:
-            Type: Enum
-            EnumRef: Enums.Provider
-          ExternalId:
-            Type: String
-      Output:
-        $ref: Types.AccountData
-
     CreateAccountWithConnection:
       Input:
         Type: Map
@@ -239,31 +228,6 @@ Repository:
             Type: String
           Email:
             Type: String
-      Output:
-        $ref: Types.AccountData
-
-    CompleteAccountWithConnection:
-      Input:
-        Type: Map
-        Properties:
-          AccountId:
-            Type: Int
-          Name:
-            Type: String
-            Optional: true
-          Email:
-            Type: String
-          Provider:
-            Type: Enum
-            EnumRef: Enums.Provider
-          ExternalHandle:
-            Type: String
-            Optional: true
-          ExternalId:
-            Type: String
-          RefreshToken:
-            Type: String
-            Optional: true
       Output:
         $ref: Types.AccountData
 
@@ -406,17 +370,6 @@ Repository:
           Handle:
             Type: String
 
-    EditAccountAvatarPath:
-      Input:
-        Type: Map
-        Properties:
-          AccountId:
-            Type: Int
-          Path:
-            Type: String
-            Validate:
-              - path
-
     GetListByIds:
       Input:
         Type: Map
@@ -454,6 +407,17 @@ Repository:
 Usecase:
   Methods:
     CreateWithGoogleProvider:
+      Input:
+        Type: Map
+        Properties:
+          Code:
+            Type: String
+            Validate:
+              - min=1
+      Output:
+        $ref: Types.AccountData
+
+    CreateWithLudopediaProvider:
       Input:
         Type: Map
         Properties:
@@ -598,6 +562,10 @@ Delivery:
       - UsecaseMethod: CreateWithGoogleProvider
         Method: GET
         Path: /auth/google?code=:Code
+
+      - UsecaseMethod: CreateWithLudopediaProvider
+        Method: GET
+        Path: /auth/ludopedia?code=:Code
 
       - UsecaseMethod: SendSignInOtp
         Method: POST

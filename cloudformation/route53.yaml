@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+  Domain:
+    Type: String
+
+Resources:
+  Dns:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name:
+        Ref: Domain
+      HostedZoneTags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName:
+        Ref: Domain
+        ValidationMethod: DNS
+      SubjectAlternativeNames:
+        - Fn::Join:
+            - ""
+            - - "*."
+              - Ref: Domain
+      DomainValidationOptions:
+        DomainName:
+          Ref: Domain
+        HostedZoneId:
+          Ref: Dns
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+Outputs:
+  DnsId:
+    Value:
+      ReF: Dns
+    Export:
+      Name: rolesejogos-dns-id
+
+  CertificateArn:
+    Value:
+      Ref: Certificate
+    Export:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Domain
+            - "certificate"

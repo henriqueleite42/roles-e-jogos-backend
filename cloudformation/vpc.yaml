@@ -1,0 +1,176 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+Resources:
+  DefaultVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1c
+      VpcId:
+        Ref: DefaultVPC
+      CidrBlock: 10.10.0.0/24
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1c
+      VpcId:
+        Ref: DefaultVPC
+      CidrBlock: 10.10.64.0/24
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: DefaultVPC
+      InternetGatewayId:
+        Ref: InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: DefaultVPC
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: InternetGateway
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: DefaultVPC
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  PublicSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: PublicRouteTable
+      SubnetId:
+        Ref: PublicSubnet1
+
+  PrivateSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      SubnetId:
+        Ref: PrivateSubnet1
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - rolesejogos
+            - security-group
+      GroupDescription:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - rolesejogos
+            - security-group
+      VpcId:
+        Ref: DefaultVPC
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  S3VpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId:
+        Ref: DefaultVPC
+      ServiceName:
+        Fn::Sub: "com.amazonaws.${AWS::Region}.s3"
+      VpcEndpointType: Gateway
+      PrivateDnsEnabled: true
+
+Outputs:
+  VpcId:
+    Value:
+      Ref: DefaultVPC
+    Export:
+      Name: rolesejogos-vpc-id
+
+  PublicSubnetIds:
+    Value:
+      Fn::Join:
+        - ","
+        - - Ref: PublicSubnet1
+    Export:
+      Name: rolesejogos-public-subnets
+
+  PrivateSubnetIds:
+    Value:
+      Fn::Join:
+        - ","
+        - - Ref: PrivateSubnet1
+    Export:
+      Name: rolesejogos-private-subnets
+
+  SecurityGroupId:
+    Value:
+      Ref: SecurityGroup
+    Export:
+      Name: rolesejogos-security-group-id
+
+  SecurityGroupName:
+    Value:
+      Fn::Join:
+        - "-"
+        - - Ref: Environment
+          - "rolesejogos-security-group"
+    Export:
+      Name: rolesejogos-security-group-name

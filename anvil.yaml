@@ -24,5 +24,5 @@ Generators:
     Version: 1.0.0
     Parameters:
       OutDir: "."
-      ProjectName: github.com/lasmusas/backend
+      ProjectName: github.com/henriqueleite42/roles-e-jogos-backend
       GoVersion: 1.23.2

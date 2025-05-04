@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+Resources:
+  EmailRolesEJogosDomain:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: rolesejogos.com.br
+
+  RecordSetGroup:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId:
+        Fn::ImportValue: rolesejogos-dns-id
+      RecordSets:
+        - Type: CNAE
+          Name:
+            Fn::GetAtt:
+              - RecordSetGroup
+              - DkimDNSTokenName1
+          ResourceRecords:
+            - Fn::GetAtt:
+                - RecordSetGroup
+                - DkimDNSTokenValue1
+        - Type: CNAE
+          Name:
+            Fn::GetAtt:
+              - RecordSetGroup
+              - DkimDNSTokenName2
+          ResourceRecords:
+            - Fn::GetAtt:
+                - RecordSetGroup
+                - DkimDNSTokenValue2
+        - Type: CNAE
+          Name:
+            Fn::GetAtt:
+              - RecordSetGroup
+              - DkimDNSTokenName3
+          ResourceRecords:
+            - Fn::GetAtt:
+                - RecordSetGroup
+                - DkimDNSTokenValue3

@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+Resources:
+  S3BucketMedias:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - rolesejogos
+            - medias
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment

@@ -30,14 +30,14 @@ Schemas:
             Controls games and their relationships
         Uri: ./anvil/game.anv
 Enums:
-    StateHash: 0611d034ee1ddfcb565403fba43f2616057fcd23
+    StateHash: db4459e5c1af2a74573f1b1e9d589eff8ac5ecc5
     Enums:
         1d5729102f3561d854eb625555849c32a6e1a11d:
             Ref: Account.Enums.Provider
             OriginalPath: Account.Enums.Provider
             RootNode: Enums
             Domain: Account
-            StateHash: f084b8f9cc75e903236d1de9cddc7ef1440dbec5
+            StateHash: 2cd1eacb37c85518babc17bb181f10dc77155dde
             Name: Provider
             DbName: provider_enum
             DbType: provider_enum
@@ -46,10 +46,6 @@ Enums:
                 - Name: Google
                   Value: GOOGLE
                   Index: 0
-                  Deprecated: false
-                - Name: Ludopedia
-                  Value: LUDOPEDIA
-                  Index: 1
                   Deprecated: false
         4bad9244d34bf69fb1b7d70a93bf9513352c74e7:
             Ref: Account.Enums.OtpPurpose
@@ -174,7 +170,7 @@ Enums:
                   Index: 1
                   Deprecated: false
 Types:
-    StateHash: 0d849cc53b0227fb730b0ec435a4de6916111270
+    StateHash: 9a4096b882b97ddb889f352737f64c036894c021
     Types:
         0e912c30d439e9b20b3d7f19c56978e97a866072:
             Ref: Event.Types.EventData.Attendances.AttendancesItem
@@ -861,20 +857,6 @@ Types:
                 - id
             AutoIncrement: false
             Type: Int
-        8a637f9525fe216afaf1127718da76049e61f71e:
-            Ref: Account.Usecase.CreateWithLudopediaProvider.Input
-            OriginalPath: Account.Usecase.Methods.CreateWithLudopediaProvider.Input
-            RootNode: Usecase
-            Domain: Account
-            StateHash: 99f22e5853b66c9bfa13b77aa0c8d067724fb0b2
-            Name: CreateWithLudopediaProviderInput
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Map
-            ChildTypes:
-                - PropName: Code
-                  TypeHash: a43b1566bdd6b74f8b5210c6ce04d49649fb1e24
         8b98caaeee84005a8b525ca72031f53acfcaa52a:
             Ref: Account.Repository.GetAccountDataByEmailOrConnection.Input.Provider
             OriginalPath: Account.Repository.Methods.GetAccountDataByEmailOrConnection.Input.Properties.Provider
@@ -2555,19 +2537,6 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
-        a43b1566bdd6b74f8b5210c6ce04d49649fb1e24:
-            Ref: Account.Usecase.CreateWithLudopediaProvider.Input.Code
-            OriginalPath: Account.Usecase.Methods.CreateWithLudopediaProvider.Input.Properties.Code
-            RootNode: Usecase
-            Domain: Account
-            StateHash: a698e96630eeed1cafda29fe37738aa5bf78a3fa
-            Name: Code
-            Confidentiality: LOW
-            Optional: false
-            Validate:
-                - min=1
-            AutoIncrement: false
-            Type: String
         a70c27dfeaf194792acf2ed036585f20453dddc2:
             Ref: Account.Usecase.GetListById.Input.AccountsIds
             OriginalPath: Account.Usecase.Methods.GetListById.Input.Properties.AccountsIds
@@ -3899,7 +3868,7 @@ Types:
             AutoIncrement: false
             Type: Int
 Entities:
-    StateHash: 299e38157cddc5e7030382bb7ad1bcf90ee437f2
+    StateHash: 2b22d5d6353face892856cfb899564ba6cb2b5f6
     Metadata:
         NamingCase: snake
     Entities:
@@ -3908,8 +3877,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Connection
             Domain: Account
             RootNode: Entities
-            StateHash: 57ae23d13a083ccf594f69463becb0561a02681f
-            Order: 3
+            StateHash: e462a2087022aaf6ef48853426fe3d100d967022
+            Order: 1
             Name: Connection
             TypeHash: 1c3a15db7a8e1f3f0c0e29c97364307305c51f14
             DbName: connections
@@ -3988,8 +3957,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.EmailAddress
             Domain: Account
             RootNode: Entities
-            StateHash: 984cdeeb380d9046c735439ffa9df098675ce763
-            Order: 4
+            StateHash: 16e895b7d9fdd429e56d5ef9bed31c8e84b832a1
+            Order: 2
             Name: EmailAddress
             TypeHash: 4b6ef13483a6c567097eada4c8a459671c690dfe
             DbName: email_addresses
@@ -4044,8 +4013,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.Event
             Domain: Event
             RootNode: Entities
-            StateHash: bae9316a7454ed0dcbe618b1bbdbec61b3e67af1
-            Order: 7
+            StateHash: e42489f7a865d36fbef7180b62971bcf17f591d8
+            Order: 5
             Name: Event
             TypeHash: 6d987db707682a8d7b15914ef1d601db6b52bf57
             DbName: events
@@ -4141,8 +4110,8 @@ Entities:
             OriginalPath: Game.Entities.Entities.Game
             Domain: Game
             RootNode: Entities
-            StateHash: bb2844a900ea73c3310fecdb7972db2b9867ce13
-            Order: 1
+            StateHash: 6e6d091c9b7947af176430349bc09b49d756b9c7
+            Order: 9
             Name: Game
             TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
             DbName: games
@@ -4236,8 +4205,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Account
             Domain: Account
             RootNode: Entities
-            StateHash: 5b21dd5db5cd753c4cb8c6f562d482540bed97f7
-            Order: 2
+            StateHash: 060f89e166f6ad09b9f45874153304968ba46fa9
+            Order: 0
             Name: Account
             TypeHash: 948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5
             DbName: accounts
@@ -4303,8 +4272,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.PersonalCollection
             Domain: Collection
             RootNode: Entities
-            StateHash: dd1df42f26188e6fe0df3a2404f2af16e80efc12
-            Order: 6
+            StateHash: 52e4b2e04c499770a07dd2a3bcba89e5c4002102
+            Order: 4
             Name: PersonalCollection
             TypeHash: 7692916db8c983a1ec09d50ac41bcc40df2ee8fd
             DbName: personal_collections
@@ -4382,8 +4351,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventAttendance
             Domain: Event
             RootNode: Entities
-            StateHash: 032af6a7fa3efcb770cbde5870efeadea5c92fb1
-            Order: 8
+            StateHash: 16f6107a91595dfc384091eeb27f1be17a2822db
+            Order: 6
             Name: EventAttendance
             TypeHash: ba427435768ee5c6811035c1e8bef2f960ed9173
             DbName: event_attendances
@@ -4456,8 +4425,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventGame
             Domain: Event
             RootNode: Entities
-            StateHash: c75f75ecaf4891c3081946075b189eb637129892
-            Order: 9
+            StateHash: 01e83e8fac5d711a03c3428912032cb4664e496f
+            Order: 7
             Name: EventGame
             TypeHash: cd7138056ba65b462f4c696752f7ce1c46c35b97
             DbName: event_games
@@ -4516,8 +4485,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.OneTimePassword
             Domain: Account
             RootNode: Entities
-            StateHash: a8842701c612be6a2daf2190ad6ab3717111dee2
-            Order: 5
+            StateHash: 8deaf09223f4b53ac6f2078930ddd71de4ac80a2
+            Order: 3
             Name: OneTimePassword
             TypeHash: ce86052d641eedf3e7b0e624cb24abae8b246ec6
             DbName: one_time_passwords
@@ -4574,8 +4543,8 @@ Entities:
             OriginalPath: Gallery.Entities.Entities.Media
             Domain: Gallery
             RootNode: Entities
-            StateHash: c42143ac0954e2476f6fd4efe62ee6bdabf33a9f
-            Order: 0
+            StateHash: 61d3d8656a95ea1b6a4373e6a6845e1ab62b689c
+            Order: 8
             Name: Media
             TypeHash: d4a719990056e08446b07132ff0a0e1565f8dbfc
             DbName: medias
@@ -4646,7 +4615,7 @@ Entities:
                     RefColumnsHashes:
                         - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
 Repository:
-    StateHash: cf88f1f8b18dfc7e80828c1c601d467d494d9402
+    StateHash: 88dea8715deab390bad5f7c71be58d138338c2ab
     Repositories:
         Account:
             StateHash: 1617d69bdf0a10eb201796c22b3584db01d931ec
@@ -4865,19 +4834,19 @@ Repository:
                         Output:
                             TypeHash: cd6ab98532f74f1a7b5dc300fc5760744fc3173b
 Usecase:
-    StateHash: 9b65ff8c8073a0933e6048b5e12017a1375be3f3
+    StateHash: 1307b348ed58339a9929bb6d55d58a9a1047b3c6
     Usecases:
         Account:
-            StateHash: f4db5ded079652143307fb1664317cfdb0c4db8f
+            StateHash: 735070d9cbeab8eaf6338f952e7705dd25da86d7
             Methods:
-                StateHash: 09c1167e11f516b0b1933c9e43d764eeacc9adf6
+                StateHash: a4fe7cdb96465c33836856a546fab48386b10b84
                 Methods:
                     4d22799165e6bf771f8fc9f941ae30c74cc19f00:
                         Ref: Account.Usecase.EditProfile
                         OriginalPath: Account.Usecase.Methods.EditProfile
                         Domain: Account
-                        StateHash: a783472b8a9af64efbe195bf6bdda635341a38e6
-                        Order: 4
+                        StateHash: c431bafd718d0319dc11290725419020e6c4ea79
+                        Order: 3
                         Name: EditProfile
                         Input:
                             TypeHash: 817447698d09636323024b4e34933bc3bb8103c3
@@ -4896,8 +4865,8 @@ Usecase:
                         Ref: Account.Usecase.SendSignInOtp
                         OriginalPath: Account.Usecase.Methods.SendSignInOtp
                         Domain: Account
-                        StateHash: 7ac67d56398ffe280a59dce15eef2297f6ea4ddf
-                        Order: 10
+                        StateHash: b2e39ae122d4e081b7cf108f9ce20b248b52d63a
+                        Order: 9
                         Name: SendSignInOtp
                         Input:
                             TypeHash: b2119287b228bbb7b57533b75904f8736f5ded1a
@@ -4905,8 +4874,8 @@ Usecase:
                         Ref: Account.Usecase.GetProfileById
                         OriginalPath: Account.Usecase.Methods.GetProfileById
                         Domain: Account
-                        StateHash: 909a29c2ef6bba1897f2e3b01c6da731c5cb8f04
-                        Order: 9
+                        StateHash: 41e9833d86749e5bae61d110e754187e2b816605
+                        Order: 8
                         Name: GetProfileById
                         Input:
                             TypeHash: 3435fd33666152884e5b98375ea0586d5963f4a4
@@ -4916,8 +4885,8 @@ Usecase:
                         Ref: Account.Usecase.GetListById
                         OriginalPath: Account.Usecase.Methods.GetListById
                         Domain: Account
-                        StateHash: 2e3e508adb1d44da7e09e07d3815c87dddb0e19e
-                        Order: 7
+                        StateHash: a1e93059a1ec2b937f05710934451fe63a00436b
+                        Order: 6
                         Name: GetListById
                         Input:
                             TypeHash: 481a6d291128cf8cabf4d645f0c2018c31f14fd7
@@ -4938,8 +4907,8 @@ Usecase:
                         Ref: Account.Usecase.EditHandle
                         OriginalPath: Account.Usecase.Methods.EditHandle
                         Domain: Account
-                        StateHash: fb31d2df4fef5421d02aeb2da89a6e410b1977a1
-                        Order: 3
+                        StateHash: 8604c1be0fe770d74630f5b89a8e9a93111e0a2d
+                        Order: 2
                         Name: EditHandle
                         Input:
                             TypeHash: 27d4e6f0071a3ec8537704ae1104f429ec109c19
@@ -4947,30 +4916,19 @@ Usecase:
                         Ref: Account.Usecase.ExchangeSignInOtp
                         OriginalPath: Account.Usecase.Methods.ExchangeSignInOtp
                         Domain: Account
-                        StateHash: e277c6eaed6401d2e6e6fd88ead497c091426279
-                        Order: 5
+                        StateHash: 4df310292626dc4748ec61850d54fb24be91dc72
+                        Order: 4
                         Name: ExchangeSignInOtp
                         Input:
                             TypeHash: 9738ab31160b67ffaf628be368c7d199c718582b
-                        Output:
-                            TypeHash: a6fa1c050a76696ac25f23a364d9b4e0b02e4cbb
-                    aee13b95425f313c192211585ea41a007bdb04d6:
-                        Ref: Account.Usecase.CreateWithLudopediaProvider
-                        OriginalPath: Account.Usecase.Methods.CreateWithLudopediaProvider
-                        Domain: Account
-                        StateHash: 55312bcfe1c2f439a43957e1218750577aaf5579
-                        Order: 2
-                        Name: CreateWithLudopediaProvider
-                        Input:
-                            TypeHash: 8a637f9525fe216afaf1127718da76049e61f71e
                         Output:
                             TypeHash: a6fa1c050a76696ac25f23a364d9b4e0b02e4cbb
                     c8da4f54268428593c5f85e38518d9dabf6e9cf1:
                         Ref: Account.Usecase.GetEmailListById
                         OriginalPath: Account.Usecase.Methods.GetEmailListById
                         Domain: Account
-                        StateHash: fc2641138784efd32fdbc7090cd5154b7ba51788
-                        Order: 6
+                        StateHash: a22c0d5f40658fb467fedc04cbd460d798c57e53
+                        Order: 5
                         Name: GetEmailListById
                         Input:
                             TypeHash: 359682c0153ce007c396bedfcabf61978f656450
@@ -4980,8 +4938,8 @@ Usecase:
                         Ref: Account.Usecase.GetProfileByHandle
                         OriginalPath: Account.Usecase.Methods.GetProfileByHandle
                         Domain: Account
-                        StateHash: f96c9d67ab5694c162e897c67ad3eba703d6818a
-                        Order: 8
+                        StateHash: 21afe618415ff7669a7464e949ca014561f971ce
+                        Order: 7
                         Name: GetProfileByHandle
                         Input:
                             TypeHash: b1ffde0a9ea22da4a943516863f1ff623a92094f
@@ -5061,7 +5019,7 @@ Usecase:
                         Input:
                             TypeHash: fe46e39562dd1cc43157c5e24237fd3613d44b59
 Delivery:
-    StateHash: 23fecc5408c164f678dfc5aba2371745d8146b48
+    StateHash: a5a894808e91f65f278b2e062081fd3c3a3cf39c
     Deliveries:
         Account:
             StateHash: ecbe45ec521cf6efea12b0eba72c0db1c84d545b

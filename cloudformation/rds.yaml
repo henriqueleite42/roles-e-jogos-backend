@@ -1,0 +1,110 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+Resources:
+  SubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: backend-sqldb-sbntg
+      DBSubnetGroupDescription: backend database subnet group
+      SubnetIds:
+        Fn::ImportValue: rolesejogos-private-subnets
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  SecurityGroup:
+    Type:
+    Properties:
+      VpcId:
+        Ref: rolesejogos-vpc-id
+      GroupName: rolesejogos-db-scrtg
+      SecurityGroupIngress:
+        FromPort: 5432
+        ToPort: 5432
+        IpProtocol: tcp
+        SourceSecurityGroupName:
+          Fn::ImportValue:
+            Fn::Join:
+              - "-"
+              - - Ref: Environment
+                - rolesejogos
+                - security-group
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  BackendDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      MaxAllocatedStorage: 20
+      DBInstanceClass: db.t2.micro
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: true
+      AvailabilityZone: us-east-1c
+      DBInstanceIdentifier:
+      DBName:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - rolesejogos
+            - backend-database
+      DBSubnetGroupName:
+      Engine: postgres
+      EngineVersion: 17
+      ManageMasterUserPassword: true
+      MultiAZ: false
+      PubliclyAccessible: false
+      StorageEncrypted: true
+      BackupRetentionPeriod: 7
+      DeleteAutomatedBackups: false
+      DeletionProtection: true
+      DBSecurityGroups:
+        - db-sg-group
+      VPCSecurityGroups:
+        - Fn::ImportValue: rolesejogos-security-group-id
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+Outputs:
+  DatabaseUrl:
+    Value:
+      Fn::GetAtt:
+        - Database
+        - "Endpoint.Address"
+    Export:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Fn::Join:
+                - "-"
+                - - Ref: Environment
+                  - rolesejogos
+                  - backend-database
+            - url
+
+  SecurityGroupId:
+    Value:
+      Ref: SecurityGroup
+    Export:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Fn::Join:
+                - "-"
+                - - Ref: Environment
+                  - rolesejogos
+                  - backend-database
+            - scg
