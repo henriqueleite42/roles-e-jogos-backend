@@ -111,7 +111,7 @@ type AccountRepository interface {
 	GetAccountDataByEmailOrConnection(ctx context.Context, i *GetAccountDataByEmailOrConnectionInput) (*models.AccountData, error)
 	GetAccountDataByHandle(ctx context.Context, i *GetAccountDataByHandleInput) (*models.AccountData, error)
 	GetAccountDataById(ctx context.Context, i *GetAccountDataByIdInput) (*models.AccountData, error)
-	GetAccountDataBySessionId(ctx context.Context, i *GetAccountDataBySessionIdInput) (*models.AccountData, error)
+	GetAccountDataBySessionId(ctx context.Context, i *GetAccountDataBySessionIdInput) (*models.AccountDataDb, error)
 	GetConnection(ctx context.Context, i *GetConnectionInput) (*models.Connection, error)
 	GetEmailListByIds(ctx context.Context, i *GetEmailListByIdsInput) (*GetEmailListByIdsOutput, error)
 	GetListByIds(ctx context.Context, i *GetListByIdsInput) (*GetListByIdsOutput, error)

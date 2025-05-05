@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 )
 
@@ -18,6 +19,15 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 		Logger()
 
 	if r.Method == http.MethodGet {
+		_, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
+			Req: r,
+		})
+		if err != nil {
+			logger.Warn().Err(err).Msg("invalid cookie")
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+			return
+		}
+
 		query := r.URL.Query()
 		handle := query.Get("handle")
 
@@ -26,7 +36,7 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 		}
 
 		logger.Trace().Msg("validate checkHandleInput")
-		err := self.validator.Validate(checkHandleInput)
+		err = self.validator.Validate(checkHandleInput)
 		if err != nil {
 			logger.Info().Err(err).Msg("invalid checkHandleInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)

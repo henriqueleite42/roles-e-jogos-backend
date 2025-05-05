@@ -28,10 +28,8 @@ func (self *AccountUsecaseImplementation) GetListById(ctx context.Context, i *Ge
 	for k, v := range accounts.Data {
 		result.Data[k] = &models.AccountDataDb{
 			AvatarPath: v.AvatarPath,
-			CreatedAt:  v.CreatedAt,
 			Handle:     v.Handle,
 			Id:         v.Id,
-			Name:       v.Name,
 		}
 	}
 

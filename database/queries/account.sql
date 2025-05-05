@@ -230,7 +230,9 @@ INSERT INTO "sessions" (
 -- name: GetAccountDataBySession :one
 SELECT
 	a."id",
-	a."is_admin"
+	a."is_admin",
+	a."handle",
+	a."avatar_path"
 FROM "sessions" s
 LEFT JOIN "accounts" a ON a."id" = s."account_id"
 WHERE

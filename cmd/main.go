@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/auth_postgres"
 	go_validator "github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/go-validator"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/google"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/ludopedia"
@@ -163,6 +164,22 @@ func main() {
 
 	// ----------------------------
 	//
+	// Adapters (repository dependents)
+	//
+	// ----------------------------
+
+	authPostgresAdapter, err := auth_postgres.NewAuthPostgres(&auth_postgres.NewAuthPostgresInput{
+		Logger:            &logger,
+		AccountRepository: accountRepository,
+	})
+	if err != nil {
+		logger.Fatal().
+			Err(err).
+			Msg("fail to initialize AuthPostgresAdapter")
+	}
+
+	// ----------------------------
+	//
 	// Services
 	//
 	// ----------------------------
@@ -205,9 +222,11 @@ func main() {
 
 	logger.Trace().Msg("initializing http server")
 	httpDelivery := http_delivery.NewHttpDelivery(&http_delivery.NewHttpDeliveryInput{
-		Logger:         &logger,
+		Logger: &logger,
+
 		Validator:      goValidatorAdapter,
 		SecretsAdapter: secretsAdapter,
+		AuthAdapter:    authPostgresAdapter,
 
 		AccountUsecase:    accountUsecase,
 		CollectionUsecase: collectionUsecase,

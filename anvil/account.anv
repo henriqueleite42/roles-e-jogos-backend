@@ -34,15 +34,9 @@ Types:
         Default: "FALSE"
       Handle:
         Type: String
-      Name:
-        Type: String
-        Optional: true
       AvatarPath:
         Type: String
         Optional: true
-      CreatedAt:
-        Type: Timestamp
-        Default: NOW()
 
   AccountData:
     Type: Map
@@ -453,7 +447,7 @@ Repository:
           SessionId:
             Type: String
       Output:
-        $ref: Types.AccountData
+        $ref: Types.AccountDataDb
 
 Usecase:
   Methods:

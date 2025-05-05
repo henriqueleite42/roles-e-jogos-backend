@@ -11,6 +11,7 @@ import (
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery"
+	account_delivery_http "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/http/account"
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 	event_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/event"
@@ -20,8 +21,10 @@ import (
 type httpDelivery struct {
 	server *http.Server
 
-	logger    *zerolog.Logger
-	validator adapters.Validator
+	logger      *zerolog.Logger
+	validator   adapters.Validator
+	authAdapter adapters.Auth
+	idAdapter   adapters.Id
 
 	accountUsecase    account_usecase.AccountUsecase
 	collectionUsecase collection_usecase.CollectionUsecase
@@ -33,6 +36,8 @@ type NewHttpDeliveryInput struct {
 
 	Validator      adapters.Validator
 	SecretsAdapter *adapters.Secrets
+	AuthAdapter    adapters.Auth
+	IdAdapter      adapters.Id
 
 	AccountUsecase    account_usecase.AccountUsecase
 	CollectionUsecase collection_usecase.CollectionUsecase
@@ -45,7 +50,13 @@ func (self *httpDelivery) Name() string {
 
 func (self *httpDelivery) Listen() {
 	go func() {
-		// Add routers here
+		account_delivery_http.AddAccountController(&account_delivery_http.AddAccountControllerInput{
+			Logger:         self.logger,
+			Validator:      self.validator,
+			AuthAdapter:    self.authAdapter,
+			IdAdapter:      self.idAdapter,
+			AccountUsecase: self.accountUsecase,
+		})
 
 		self.logger.Info().
 			Msgf("HTTP server initialized at %v", self.server.Addr)
@@ -101,6 +112,8 @@ func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
 		server:            server,
 		logger:            i.Logger,
 		validator:         i.Validator,
+		authAdapter:       i.AuthAdapter,
+		idAdapter:         i.IdAdapter,
 		accountUsecase:    i.AccountUsecase,
 		collectionUsecase: i.CollectionUsecase,
 		eventUsecase:      i.EventUsecase,

@@ -322,7 +322,9 @@ func (q *Queries) GetAccountDataById(ctx context.Context, id int32) (GetAccountD
 const getAccountDataBySession = `-- name: GetAccountDataBySession :one
 SELECT
 	a."id",
-	a."is_admin"
+	a."is_admin",
+	a."handle",
+	a."avatar_path"
 FROM "sessions" s
 LEFT JOIN "accounts" a ON a."id" = s."account_id"
 WHERE
@@ -331,14 +333,21 @@ LIMIT 1
 `
 
 type GetAccountDataBySessionRow struct {
-	ID      pgtype.Int4
-	IsAdmin pgtype.Bool
+	ID         pgtype.Int4
+	IsAdmin    pgtype.Bool
+	Handle     pgtype.Text
+	AvatarPath pgtype.Text
 }
 
 func (q *Queries) GetAccountDataBySession(ctx context.Context, sessionID string) (GetAccountDataBySessionRow, error) {
 	row := q.db.QueryRow(ctx, getAccountDataBySession, sessionID)
 	var i GetAccountDataBySessionRow
-	err := row.Scan(&i.ID, &i.IsAdmin)
+	err := row.Scan(
+		&i.ID,
+		&i.IsAdmin,
+		&i.Handle,
+		&i.AvatarPath,
+	)
 	return i, err
 }
 

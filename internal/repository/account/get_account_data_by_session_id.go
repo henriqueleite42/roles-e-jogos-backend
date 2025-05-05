@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (self *accountRepositoryImplementation) GetAccountDataBySessionId(ctx context.Context, i *GetAccountDataBySessionIdInput) (*models.AccountData, error) {
+func (self *accountRepositoryImplementation) GetAccountDataBySessionId(ctx context.Context, i *GetAccountDataBySessionIdInput) (*models.AccountDataDb, error) {
 	db, err := self.getSlcQueries(ctx)
 	if err != nil {
 		return nil, err
@@ -23,8 +23,15 @@ func (self *accountRepositoryImplementation) GetAccountDataBySessionId(ctx conte
 		return nil, err
 	}
 
-	return &models.AccountData{
-		AccountId: int(row.ID.Int32),
-		IsAdmin:   row.IsAdmin.Bool,
+	var avatarPath *string
+	if row.AvatarPath.Valid {
+		avatarPath = &row.AvatarPath.String
+	}
+
+	return &models.AccountDataDb{
+		Id:         int(row.ID.Int32),
+		IsAdmin:    row.IsAdmin.Bool,
+		AvatarPath: avatarPath,
+		Handle:     row.Handle.String,
 	}, nil
 }

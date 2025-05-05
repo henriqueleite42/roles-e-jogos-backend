@@ -24,11 +24,9 @@ type AccountData struct {
 
 type AccountDataDb struct {
 	AvatarPath *string
-	CreatedAt  time.Time `validate:"required"`
 	Handle     string
 	Id         int
 	IsAdmin    bool
-	Name       *string
 }
 
 type ProfileData struct {
