@@ -5,34 +5,6 @@ Domain: Gallery
 Description: |
   Controls photos and videos of games
 
-Enums:
-  EventConfidentiality:
-    Type: String
-    Values:
-      Public:
-        Description: |
-          Anyone can view and confirm presence on the event
-        Value: PUBLIC
-        Index: 0
-      OnlyInvited:
-        Description: |
-          Only invited people can see and confirm presence on the event
-        Value: ONLY_INVITED
-        Index: 1
-
-  EventConfirmationStatus:
-    Type: String
-    Values:
-      Going:
-        Value: GOING
-        Index: 0
-      Maybe:
-        Value: MAYBE
-        Index: 1
-      NotGoing:
-        Value: NOT_GOING
-        Index: 2
-
 Entities:
   NamingCase: snake
   Entities:
@@ -70,19 +42,3 @@ Entities:
             - OwnerId
           RefColumns:
             - Account.Entities.Account.Id
-
-Delivery:
-  Servers:
-    Prod:
-      Url: https://roles-e-jogos.com.br
-    Dev:
-      Url: http://localhost:3000
-  Http:
-    Routes:
-      - UsecaseMethod: GetEvents
-        Method: GET
-        Path: /events?after=:After&limit=:Limit
-
-      - UsecaseMethod: ConfirmAttendance
-        Method: POST
-        Path: /events/attendance

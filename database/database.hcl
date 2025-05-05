@@ -15,14 +15,6 @@ enum "event_confidentiality_enum" {
 		"ONLY_INVITED",
 	]
 }
-enum "event_confirmation_status_enum" {
-	schema = schema.public
-	values = [
-		"GOING",
-		"MAYBE",
-		"NOT_GOING",
-	]
-}
 enum "kind_enum" {
 	schema = schema.public
 	values = [
