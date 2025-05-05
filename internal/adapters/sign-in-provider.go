@@ -9,7 +9,7 @@ type ExchangeCodeInput struct {
 type ExchangeCodeOutput struct {
 	Scopes       []string
 	AccessToken  string
-	RefreshToken string
+	RefreshToken *string
 	ExpiresAt    time.Time
 }
 
@@ -19,7 +19,6 @@ type GetAuthenticatedUserDataOutput struct {
 	Name            string
 	Email           string
 	AvatarUrl       *string
-	BannerUrl       *string
 	IsEmailVerified bool
 }
 

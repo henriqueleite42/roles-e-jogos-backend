@@ -47,12 +47,12 @@ type Account struct {
 }
 
 type Connection struct {
-	AccountId      int      `db:"account_id"`
-	CreatedAt      string   `db:"created_at"`
-	ExternalHandle *string  `db:"external_handle"`
-	ExternalId     string   `db:"external_id"`
-	Provider       Provider `validate:"required" db:"provider"`
-	RefreshToken   *string  `db:"refresh_token"`
+	AccountId      int       `db:"account_id"`
+	CreatedAt      time.Time `validate:"required" db:"created_at"`
+	ExternalHandle *string   `db:"external_handle"`
+	ExternalId     string    `db:"external_id"`
+	Provider       Provider  `validate:"required" db:"provider"`
+	RefreshToken   *string   `db:"refresh_token"`
 }
 
 type EmailAddress struct {
@@ -67,4 +67,10 @@ type OneTimePassword struct {
 	Code      string     `db:"code"`
 	CreatedAt time.Time  `validate:"required" db:"created_at"`
 	Purpose   OtpPurpose `validate:"required" db:"purpose"`
+}
+
+type Session struct {
+	AccountId int       `db:"account_id"`
+	CreatedAt time.Time `validate:"required" db:"created_at"`
+	SessionId string    `db:"session_id"`
 }

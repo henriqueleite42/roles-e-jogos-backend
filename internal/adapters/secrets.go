@@ -1,7 +1,5 @@
 package adapters
 
-import "crypto"
-
 type Secrets struct {
 	Port        string
 	DatabaseUrl string
@@ -12,9 +10,7 @@ type Secrets struct {
 
 	MediasS3BucketName string
 
-	MediasCloudfrontKeyId      string
-	MediasCloudfrontUrl        string
-	MediasCloudfrontPrivateKey crypto.Signer
+	MediasCloudfrontUrl string
 
 	EmailAddressSystemMessages string
 	NameSystemMessages         string

@@ -122,7 +122,7 @@ Entities:
           Optional: true
           Confidentiality: MEDIUM
         CreatedAt:
-          Type: String
+          Type: Timestamp
           Default: NOW()
           DbType: TIMESTAMPTZ
       PrimaryKey:
@@ -186,6 +186,27 @@ Entities:
         - AccountId
         - Code
         - Purpose
+      ForeignKeys:
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Id
+          OnDelete: CASCADE
+
+    Session:
+      Columns:
+        SessionId:
+          Type: String
+          DbType: CHAR(32)
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - SessionId
       ForeignKeys:
         - Columns:
             - AccountId
@@ -266,6 +287,18 @@ Repository:
             Type: String
       Output:
         $ref: Entities.Account
+
+    GetConnection:
+      Input:
+        Type: Map
+        Properties:
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+          ExternalId:
+            Type: String
+      Output:
+        $ref: Entities.Connection
 
     LinkConnectionWithAccount:
       Input:
@@ -404,6 +437,24 @@ Repository:
             Items:
               $ref: Entities.EmailAddress
 
+    CreateSession:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+      Output:
+        $ref: Entities.Session
+
+    GetAccountDataBySessionId:
+      Input:
+        Type: Map
+        Properties:
+          SessionId:
+            Type: String
+      Output:
+        $ref: Types.AccountData
+
 Usecase:
   Methods:
     CreateWithGoogleProvider:
@@ -417,16 +468,18 @@ Usecase:
       Output:
         $ref: Types.AccountData
 
-    CreateWithLudopediaProvider:
+    LinkLudopediaProvider:
       Input:
         Type: Map
         Properties:
+          AccountId:
+            Type: Int
+            Validate:
+              - id
           Code:
             Type: String
             Validate:
               - min=1
-      Output:
-        $ref: Types.AccountData
 
     SendSignInOtp:
       Input:
@@ -563,17 +616,17 @@ Delivery:
         Method: GET
         Path: /auth/google?code=:Code
 
-      - UsecaseMethod: CreateWithLudopediaProvider
-        Method: GET
-        Path: /auth/ludopedia?code=:Code
-
-      - UsecaseMethod: SendSignInOtp
+      - UsecaseMethod: LinkLudopediaProvider
         Method: POST
-        Path: /auth/send-sign-in-otp
+        Path: /auth/link/ludopedia
 
-      - UsecaseMethod: ExchangeSignInOtp
-        Method: POST
-        Path: /auth/exchange-sign-in-otp
+      # - UsecaseMethod: SendSignInOtp
+      #   Method: POST
+      #   Path: /auth/send-sign-in-otp
+
+      # - UsecaseMethod: ExchangeSignInOtp
+      #   Method: POST
+      #   Path: /auth/exchange-sign-in-otp
 
       - UsecaseMethod: EditProfile
         Method: PUT

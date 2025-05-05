@@ -132,7 +132,7 @@ Enums:
                   Index: 1
                   Deprecated: false
 Types:
-    StateHash: e0812d4fc5fe173d300a724ea9a99b3fd4ccb2ec
+    StateHash: 158d285a187e8fc7728a70a8d19e4782b36915c7
     Types:
         0e912c30d439e9b20b3d7f19c56978e97a866072:
             Ref: Event.Types.EventData.Attendances.AttendancesItem
@@ -309,17 +309,6 @@ Types:
                   TypeHash: 265bb1209265fd4046f887befc81e4abb08e0593
                 - PropName: Limit
                   TypeHash: 7549100a749e9d5afc8216b2267697da48e3fbec
-        2b7c9d02b673a935bad6c9c797cb73bc5159396e:
-            Ref: Account.Repository.GetAccountDataBySessionId.Input.SessionId
-            OriginalPath: Account.Repository.Methods.GetAccountDataBySessionId.Input.Properties.SessionId
-            RootNode: Repository
-            Domain: Account
-            StateHash: 12b52a76d05cccef5d6e429a7ef26ae4e30675a9
-            Name: SessionId
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: String
         2b0203f24493184b273fec0dd38eba1b407f07af:
             Ref: Account.Repository.GetListByIds.Input.AccountsIds
             OriginalPath: Account.Repository.Methods.GetListByIds.Input.Properties.AccountsIds
@@ -720,13 +709,13 @@ Types:
             OriginalPath: Account.Entities.Entities.Connection.Columns.CreatedAt
             RootNode: Entities
             Domain: Account
-            StateHash: 112d4eb3606bdf287a9e71a60d0915ad84ec9a88
+            StateHash: a9125f6c0b29d02a0c1da2c2bcd56743f508e8c4
             Name: CreatedAt
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Default: NOW()
-            Type: Timestamp
+            Type: String
             DbName: created_at
             DbType: TIMESTAMPTZ
         6e3d35e336891995769c63d3b86b67f8c593db98:
@@ -2273,13 +2262,13 @@ Types:
             OriginalPath: Account.Entities.Entities.Session.Columns.CreatedAt
             RootNode: Entities
             Domain: Account
-            StateHash: 1905ef158acb30d906552103e46a6b8bc641f0b5
+            StateHash: a251026c9054a8ba498a00eb7731c881285d9b61
             Name: CreatedAt
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Default: NOW()
-            Type: Timestamp
+            Type: String
             DbName: created_at
             DbType: TIMESTAMPTZ
         84979e0d79e6d9c2fb93c7c1ce7bba24fa3fbe4c:
@@ -2499,7 +2488,7 @@ Types:
             OriginalPath: Account.Repository.Methods.CreateSession.Input
             RootNode: Repository
             Domain: Account
-            StateHash: 0104a58ab5e53ebf3b22ddf7a785160d4783f110
+            StateHash: 714cad9422122098d9496de672ceccff07796e88
             Name: CreateSessionInput
             Confidentiality: LOW
             Optional: false
@@ -2507,18 +2496,7 @@ Types:
             Type: Map
             ChildTypes:
                 - PropName: AccountId
-                  TypeHash: 186225638fc2a6065578e2c7120350b005b8534c
-        186225638fc2a6065578e2c7120350b005b8534c:
-            Ref: Account.Repository.CreateSession.Input.AccountId
-            OriginalPath: Account.Repository.Methods.CreateSession.Input.Properties.AccountId
-            RootNode: Repository
-            Domain: Account
-            StateHash: 621a275c9bcba2d4c32214dc345bff8356a1eeb7
-            Name: AccountId
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Int
+                  TypeHash: c4c6f5e114598f78419bc2a530f72ce5c6345cd0
         802417342c0de956d22eec298a31f554ced5e0ad:
             Ref: Collection.Types.GroupCollectionItem.Owners.OwnersItem.AvatarUrl
             OriginalPath: Collection.Types.Types.GroupCollectionItem.Properties.Owners.Items.OwnersItem.Properties.AvatarUrl
@@ -2962,20 +2940,22 @@ Types:
             OriginalPath: Account.Entities.Entities.Session.Columns.SessionId
             RootNode: Entities
             Domain: Account
-            StateHash: ffb1b312a2b1091939a8a3b745523de0feb1d3e7
+            StateHash: ce366b8525db68ad0d23dfcc23f6e2d6ca8c38f5
             Name: SessionId
             Confidentiality: LOW
             Optional: false
-            AutoIncrement: false
-            Type: String
+            Validate:
+                - id
+            AutoIncrement: true
+            Type: Int
             DbName: session_id
-            DbType: CHAR(32)
+            DbType: INTEGER
         b19056ec93041e5e7bbf6a6dd9c9586b4e10234a:
             Ref: Account.Repository.GetAccountDataBySessionId.Input
             OriginalPath: Account.Repository.Methods.GetAccountDataBySessionId.Input
             RootNode: Repository
             Domain: Account
-            StateHash: ea5b72e0589590081d63f4038528c6bb19d4fd16
+            StateHash: bb550440a50eeca9c7dbd1d41b56a2abea4ae046
             Name: GetAccountDataBySessionIdInput
             Confidentiality: LOW
             Optional: false
@@ -2983,7 +2963,7 @@ Types:
             Type: Map
             ChildTypes:
                 - PropName: SessionId
-                  TypeHash: 2b7c9d02b673a935bad6c9c797cb73bc5159396e
+                  TypeHash: 8e17d60894981c9b4d150039d6a4f6f8d5b442d3
         b2119287b228bbb7b57533b75904f8736f5ded1a:
             Ref: Account.Usecase.SendSignInOtp.Input
             OriginalPath: Account.Usecase.Methods.SendSignInOtp.Input
@@ -4817,12 +4797,12 @@ Entities:
                     RefColumnsHashes:
                         - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
 Repository:
-    StateHash: 4392d643ed808440432f993692de0d74d8d56002
+    StateHash: 4ddad2acd13fa29d697285b21a7f7ca6eaeb7ed1
     Repositories:
         Account:
-            StateHash: afb5701db7896dd8826a5f9a4d5f45980889f2e8
+            StateHash: 9794975dbc53de0f2ffe5ecb9a73f1b6f3f4aae1
             Methods:
-                StateHash: f72ef7f9402cc05dad2c901c351de8e8071d7bd6
+                StateHash: 893378185f04b0073730c5cfb214f21c5f904046
                 Methods:
                     0e6777e71d079980357537d4fb030db6c0bbc15c:
                         Ref: Account.Repository.GetOtp
@@ -4839,13 +4819,13 @@ Repository:
                         Ref: Account.Repository.GetAccountDataBySessionId
                         OriginalPath: Account.Repository.Methods.GetAccountDataBySessionId
                         Domain: Account
-                        StateHash: 77bd5f190bae87be05c5803aa3b2ac0dd69e3653
+                        StateHash: 8cdbb5fa919fc335a7bd04abcab0bbd0d4cf1840
                         Order: 13
                         Name: GetAccountDataBySessionId
                         Input:
                             TypeHash: b19056ec93041e5e7bbf6a6dd9c9586b4e10234a
                         Output:
-                            TypeHash: a6fa1c050a76696ac25f23a364d9b4e0b02e4cbb
+                            TypeHash: d4901c80815147b8e547787c6fe2492ae1b85b47
                     6dbf47c59804e8e8a7dd5a1455c9aead1a2d1f1c:
                         Ref: Account.Repository.GetConnection
                         OriginalPath: Account.Repository.Methods.GetConnection
@@ -5069,7 +5049,7 @@ Repository:
                         Output:
                             TypeHash: cd6ab98532f74f1a7b5dc300fc5760744fc3173b
 Usecase:
-    StateHash: 1201500262ba1cdb08006c8a4e1d782a5ea4104d
+    StateHash: 22450ade4c139aaa775369228f30de8068d338d9
     Usecases:
         Account:
             StateHash: 2798568509cebfb65cd866b103fdb229d0c23470
@@ -5263,7 +5243,7 @@ Usecase:
                         Input:
                             TypeHash: fe46e39562dd1cc43157c5e24237fd3613d44b59
 Delivery:
-    StateHash: d9fada5df2f859c7e8b03b6178676590fb27bc42
+    StateHash: 5f86e74060a00d414b284f4c27862f8c0116c93b
     Deliveries:
         Account:
             StateHash: 75a40ee5d93fea6b070712f19b5fc54dedb9f723

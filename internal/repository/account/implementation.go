@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/queries"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
@@ -12,11 +13,15 @@ import (
 type accountRepositoryImplementation struct {
 	logger  *zerolog.Logger
 	queries *queries.Queries
+
+	idAdapter adapters.Id
 }
 
 type NewAccountRepositoryInput struct {
 	Logger  *zerolog.Logger
 	Queries *queries.Queries
+
+	IdAdapter adapters.Id
 }
 
 // Applies the transaction if it's needed
@@ -39,7 +44,8 @@ func NewAccountRepository(i *NewAccountRepositoryInput) (AccountRepository, erro
 	}
 
 	return &accountRepositoryImplementation{
-		logger:  i.Logger,
-		queries: i.Queries,
+		logger:    i.Logger,
+		queries:   i.Queries,
+		idAdapter: i.IdAdapter,
 	}, nil
 }

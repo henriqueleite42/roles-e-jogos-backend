@@ -25,6 +25,9 @@ type CreateOtpInput struct {
 	Code      string
 	Purpose   models.OtpPurpose `validate:"required" db:"purpose"`
 }
+type CreateSessionInput struct {
+	AccountId int
+}
 type EditAccountHandleInput struct {
 	AccountId int
 	Handle    string
@@ -56,6 +59,13 @@ type GetAccountDataByHandleInput struct {
 }
 type GetAccountDataByIdInput struct {
 	AccountId int
+}
+type GetAccountDataBySessionIdInput struct {
+	SessionId string
+}
+type GetConnectionInput struct {
+	ExternalId string
+	Provider   models.Provider `validate:"required" db:"provider"`
 }
 type GetEmailListByIdsInput struct {
 	AccountsIds   []int `validate:"required"`
@@ -91,6 +101,7 @@ type AccountRepository interface {
 	CreateAccountWithConnection(ctx context.Context, i *CreateAccountWithConnectionInput) (*models.AccountData, error)
 	CreateAccountWithEmail(ctx context.Context, i *CreateAccountWithEmailInput) (*models.AccountData, error)
 	CreateOtp(ctx context.Context, i *CreateOtpInput) error
+	CreateSession(ctx context.Context, i *CreateSessionInput) (*models.Session, error)
 	EditAccountHandle(ctx context.Context, i *EditAccountHandleInput) error
 	EditProfile(ctx context.Context, i *EditProfileInput) error
 	GetAccountByHandle(ctx context.Context, i *GetAccountByHandleInput) (*models.Account, error)
@@ -100,6 +111,8 @@ type AccountRepository interface {
 	GetAccountDataByEmailOrConnection(ctx context.Context, i *GetAccountDataByEmailOrConnectionInput) (*models.AccountData, error)
 	GetAccountDataByHandle(ctx context.Context, i *GetAccountDataByHandleInput) (*models.AccountData, error)
 	GetAccountDataById(ctx context.Context, i *GetAccountDataByIdInput) (*models.AccountData, error)
+	GetAccountDataBySessionId(ctx context.Context, i *GetAccountDataBySessionIdInput) (*models.AccountData, error)
+	GetConnection(ctx context.Context, i *GetConnectionInput) (*models.Connection, error)
 	GetEmailListByIds(ctx context.Context, i *GetEmailListByIdsInput) (*GetEmailListByIdsOutput, error)
 	GetListByIds(ctx context.Context, i *GetListByIdsInput) (*GetListByIdsOutput, error)
 	GetOtp(ctx context.Context, i *GetOtpInput) (*GetOtpOutput, error)

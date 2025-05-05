@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"sync"
 	"time"
 
@@ -12,18 +11,32 @@ import (
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery"
+	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
+	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
+	event_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/event"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/utils"
 )
 
 type httpDelivery struct {
-	server 		*http.Server
-	logger		*zerolog.Logger
+	server *http.Server
+
+	logger    *zerolog.Logger
 	validator adapters.Validator
+
+	accountUsecase    account_usecase.AccountUsecase
+	collectionUsecase collection_usecase.CollectionUsecase
+	eventUsecase      event_usecase.EventUsecase
 }
 
 type NewHttpDeliveryInput struct {
-	Logger		*zerolog.Logger
-	Validator adapters.Validator
+	Logger *zerolog.Logger
+
+	Validator      adapters.Validator
+	SecretsAdapter *adapters.Secrets
+
+	AccountUsecase    account_usecase.AccountUsecase
+	CollectionUsecase collection_usecase.CollectionUsecase
+	EventUsecase      event_usecase.EventUsecase
 }
 
 func (self *httpDelivery) Name() string {
@@ -73,7 +86,7 @@ func (self *httpDelivery) Cancel(timeout time.Duration) {
 }
 
 func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
-	port := fmt.Sprintf(":%v", os.Getenv("PORT"))
+	port := fmt.Sprintf(":%v", i.SecretsAdapter.Port)
 
 	server := &http.Server{
 		Addr:    port,
@@ -85,8 +98,11 @@ func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
 	}
 
 	return &httpDelivery{
-		server: 	 server,
-		logger: 	 i.Logger,
-		validator: i.Validator,
+		server:            server,
+		logger:            i.Logger,
+		validator:         i.Validator,
+		accountUsecase:    i.AccountUsecase,
+		collectionUsecase: i.CollectionUsecase,
+		eventUsecase:      i.EventUsecase,
 	}
 }

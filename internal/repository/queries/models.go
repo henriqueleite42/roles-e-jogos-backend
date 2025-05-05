@@ -96,49 +96,6 @@ func (ns NullEventConfidentialityEnum) Value() (driver.Value, error) {
 	return string(ns.EventConfidentialityEnum), nil
 }
 
-type EventConfirmationStatusEnum string
-
-const (
-	EventConfirmationStatusEnumGOING    EventConfirmationStatusEnum = "GOING"
-	EventConfirmationStatusEnumMAYBE    EventConfirmationStatusEnum = "MAYBE"
-	EventConfirmationStatusEnumNOTGOING EventConfirmationStatusEnum = "NOT_GOING"
-)
-
-func (e *EventConfirmationStatusEnum) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = EventConfirmationStatusEnum(s)
-	case string:
-		*e = EventConfirmationStatusEnum(s)
-	default:
-		return fmt.Errorf("unsupported scan type for EventConfirmationStatusEnum: %T", src)
-	}
-	return nil
-}
-
-type NullEventConfirmationStatusEnum struct {
-	EventConfirmationStatusEnum EventConfirmationStatusEnum
-	Valid                       bool // Valid is true if EventConfirmationStatusEnum is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullEventConfirmationStatusEnum) Scan(value interface{}) error {
-	if value == nil {
-		ns.EventConfirmationStatusEnum, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.EventConfirmationStatusEnum.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullEventConfirmationStatusEnum) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.EventConfirmationStatusEnum), nil
-}
-
 type KindEnum string
 
 const (
@@ -354,4 +311,10 @@ type PersonalCollection struct {
 	GameID     int32
 	ID         int32
 	Paid       pgtype.Int4
+}
+
+type Session struct {
+	AccountID int32
+	CreatedAt pgtype.Timestamptz
+	SessionID string
 }

@@ -1,46 +1,44 @@
-package google
+package ludopedia
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 )
 
+const ONE_YEAR_IN_HOURS = 8766 * time.Hour
+
 type exchangeTokenApiOutput struct {
-	AccessToken  string `json:"access_token"`
-	TokenType    string `json:"token_type"`
-	ExpiresIn    int    `json:"expires_in"`
-	RefreshToken string `json:"refresh_token"`
-	Scope        string `json:"scope"`
+	AccessToken string `json:"access_token"`
 }
 
-func (self *googleAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adapters.ExchangeCodeOutput, error) {
+func (self *ludopediaAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adapters.ExchangeCodeOutput, error) {
 	self.logger.Trace().Msg("start ExchangeCode")
 
 	self.logger.Trace().Msg("building exchange code body")
-	// ALERT: The order of the properties is important, don't change it!
-	body := url.Values{}
-	body.Set("code", i.Code)
-	body.Set("client_id", self.secrets.GoogleClientId)
-	body.Set("client_secret", self.secrets.GoogleClientSecret)
-	body.Set("redirect_uri", self.secrets.GoogleRedirectUri)
-	body.Set("grant_type", "authorization_code")
-	// ALERT: The order of the properties is important, don't change it!
+	body := map[string]string{
+		"code": i.Code,
+	}
 	self.logger.Trace().Msg("exchange code built")
-	encodedBody := body.Encode()
-	self.logger.Debug().Str("body", encodedBody).Msg("Exchange code built")
+	encodedBody, err := json.Marshal(body)
+	if err != nil {
+		self.logger.Error().Err(err).Msg(
+			"json.Marshal failed",
+		)
+		return nil, errors.New("json.Marshal failed")
+	}
+	self.logger.Debug().Str("body", string(encodedBody)).Msg("Exchange code built")
 
 	self.logger.Trace().Msg("building request to exchange code")
 	req, err := http.NewRequest(
 		http.MethodPost,
-		"https://oauth2.googleapis.com/token",
-		strings.NewReader(body.Encode()),
+		"https://ludopedia.com.br/tokenrequest",
+		bytes.NewReader(encodedBody),
 	)
 	if err != nil {
 		self.logger.Error().Err(err).Msg(
@@ -49,7 +47,7 @@ func (self *googleAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adapter
 		return nil, errors.New("fail to build request")
 	}
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Type", "application/json")
 	self.logger.Trace().Msg("request built")
 
 	self.logger.Trace().Msg("do request to exchange code")
@@ -92,28 +90,24 @@ func (self *googleAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adapter
 	}
 	self.logger.Debug().Interface("body", exchangeCode).Msg("response body decoded")
 
+	// As the token doesn't expire, we set the date to a loooong time
 	expDate := time.
 		Now().
-		Add(
-			time.Duration(
-				exchangeCode.ExpiresIn,
-			),
-		)
+		Add(10 * ONE_YEAR_IN_HOURS)
 
 	self.logger.Debug().
 		Time("time", expDate).
 		Msg("expDate")
 
 	output := &adapters.ExchangeCodeOutput{
-		AccessToken:  exchangeCode.AccessToken,
-		RefreshToken: &exchangeCode.RefreshToken,
-		Scopes:       strings.Split(exchangeCode.Scope, " "),
-		ExpiresAt:    expDate,
+		AccessToken: exchangeCode.AccessToken,
+		Scopes:      []string{},
+		ExpiresAt:   expDate,
 	}
 
 	self.logger.Debug().
 		Interface("output", output).
-		Msg("successfully finish GoogleAdapter.ExchangeCode")
+		Msg("successfully finish LudopediaAdapter.ExchangeCode")
 
 	return output, nil
 }

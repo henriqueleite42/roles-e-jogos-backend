@@ -52,6 +52,22 @@ WHERE
 	a."id" = $1
 LIMIT 1;
 
+
+-- name: GetConnection :one
+SELECT
+	c."account_id",
+	c."provider",
+	c."external_handle",
+	c."external_id",
+	c."refresh_token",
+	c."created_at"
+FROM "connections" c
+WHERE
+	c."external_id" = $1
+	AND
+	c."provider" = $2
+LIMIT 1;
+
 -- name: GetAccountDataByHandle :one
 SELECT
 	a."id",
@@ -200,4 +216,23 @@ WHERE
 	otp."code" = $2
 	AND
 	otp."purpose" = $3
+LIMIT 1;
+
+-- name: CreateSession :exec
+INSERT INTO "sessions" (
+	"session_id",
+	"account_id"
+) VALUES (
+	$1,
+	$2
+);
+
+-- name: GetAccountDataBySession :one
+SELECT
+	a."id",
+	a."is_admin"
+FROM "sessions" s
+LEFT JOIN "accounts" a ON a."id" = s."account_id"
+WHERE
+	s."session_id" = $1
 LIMIT 1;

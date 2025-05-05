@@ -1,31 +1,30 @@
-package google
+package ludopedia
 
 import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 )
 
 type getUserDataApiOutput struct {
-	Sub           string `json:"sub"`
-	GivenName     string `json:"given_name"`
-	Email         string `json:"email"`
-	EmailVerified bool   `json:"email_verified"`
-	Picture       string `json:"picture"`
+	IdUsuario int    `json:"id_usuario"`
+	Usuario   string `json:"usuario"`
+	Thumb     string `json:"thumb"`
 }
 
-func (self *googleAdapter) GetUserData(accessToken string) (*adapters.GetAuthenticatedUserDataOutput, error) {
+func (self *ludopediaAdapter) GetUserData(accessToken string) (*adapters.GetAuthenticatedUserDataOutput, error) {
 	self.logger.Trace().Msg("start GetUserData")
 
 	req, err := http.NewRequest(
 		http.MethodGet,
-		"https://openidconnect.googleapis.com/v1/userinfo",
+		"https://ludopedia.com.br/api/v1/me",
 		nil,
 	)
 	if err != nil {
-		self.logger.Error().Err(err).Msg("fail to build request to get google user data")
+		self.logger.Error().Err(err).Msg("fail to build request to get ludopedia user data")
 		return nil, errors.New("fail to build request")
 	}
 	req.Header.Add("Accept", "application/json")
@@ -33,14 +32,14 @@ func (self *googleAdapter) GetUserData(accessToken string) (*adapters.GetAuthent
 	req.Header.Add("Authorization", "Bearer "+accessToken)
 	self.logger.Trace().Msg("request built")
 
-	self.logger.Trace().Msg("do request to get google user data")
+	self.logger.Trace().Msg("do request to get ludopedia user data")
 	userDataRes, err := self.httpClient.Do(req)
 	if err != nil {
-		self.logger.Error().Err(err).Msg("fail to make request to get google user data")
+		self.logger.Error().Err(err).Msg("fail to make request to get ludopedia user data")
 		return nil, errors.New("fail to make request")
 	}
 	defer userDataRes.Body.Close()
-	self.logger.Trace().Msg("request to get google user data done")
+	self.logger.Trace().Msg("request to get ludopedia user data done")
 
 	self.logger.Trace().Msg("decode req body")
 	userData := getUserDataApiOutput{}
@@ -52,11 +51,9 @@ func (self *googleAdapter) GetUserData(accessToken string) (*adapters.GetAuthent
 	self.logger.Trace().Msg("req body decoded")
 
 	output := &adapters.GetAuthenticatedUserDataOutput{
-		Id:              userData.Sub,
-		Name:            userData.GivenName,
-		Email:           userData.Email,
-		IsEmailVerified: userData.EmailVerified,
-		AvatarUrl:       &userData.Picture,
+		Id:        strconv.Itoa(userData.IdUsuario),
+		Handle:    &userData.Usuario,
+		AvatarUrl: &userData.Thumb,
 	}
 
 	self.logger.Debug().

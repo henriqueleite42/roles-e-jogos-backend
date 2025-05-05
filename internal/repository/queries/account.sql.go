@@ -91,6 +91,26 @@ func (q *Queries) CreateOtp(ctx context.Context, arg CreateOtpParams) error {
 	return err
 }
 
+const createSession = `-- name: CreateSession :exec
+INSERT INTO "sessions" (
+	"session_id",
+	"account_id"
+) VALUES (
+	$1,
+	$2
+)
+`
+
+type CreateSessionParams struct {
+	SessionID string
+	AccountID int32
+}
+
+func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) error {
+	_, err := q.db.Exec(ctx, createSession, arg.SessionID, arg.AccountID)
+	return err
+}
+
 const createValidatedEmailAddress = `-- name: CreateValidatedEmailAddress :exec
 INSERT INTO "email_addresses" (
 	"account_id",
@@ -299,6 +319,29 @@ func (q *Queries) GetAccountDataById(ctx context.Context, id int32) (GetAccountD
 	return i, err
 }
 
+const getAccountDataBySession = `-- name: GetAccountDataBySession :one
+SELECT
+	a."id",
+	a."is_admin"
+FROM "sessions" s
+LEFT JOIN "accounts" a ON a."id" = s."account_id"
+WHERE
+	s."session_id" = $1
+LIMIT 1
+`
+
+type GetAccountDataBySessionRow struct {
+	ID      pgtype.Int4
+	IsAdmin pgtype.Bool
+}
+
+func (q *Queries) GetAccountDataBySession(ctx context.Context, sessionID string) (GetAccountDataBySessionRow, error) {
+	row := q.db.QueryRow(ctx, getAccountDataBySession, sessionID)
+	var i GetAccountDataBySessionRow
+	err := row.Scan(&i.ID, &i.IsAdmin)
+	return i, err
+}
+
 const getAccountsListByIds = `-- name: GetAccountsListByIds :many
 SELECT
 	a."avatar_path",
@@ -344,6 +387,50 @@ func (q *Queries) GetAccountsListByIds(ctx context.Context, dollar_1 []int32) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const getConnection = `-- name: GetConnection :one
+SELECT
+	c."account_id",
+	c."provider",
+	c."external_handle",
+	c."external_id",
+	c."refresh_token",
+	c."created_at"
+FROM "connections" c
+WHERE
+	c."external_id" = $1
+	AND
+	c."provider" = $2
+LIMIT 1
+`
+
+type GetConnectionParams struct {
+	ExternalID string
+	Provider   ProviderEnum
+}
+
+type GetConnectionRow struct {
+	AccountID      int32
+	Provider       ProviderEnum
+	ExternalHandle pgtype.Text
+	ExternalID     string
+	RefreshToken   pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+}
+
+func (q *Queries) GetConnection(ctx context.Context, arg GetConnectionParams) (GetConnectionRow, error) {
+	row := q.db.QueryRow(ctx, getConnection, arg.ExternalID, arg.Provider)
+	var i GetConnectionRow
+	err := row.Scan(
+		&i.AccountID,
+		&i.Provider,
+		&i.ExternalHandle,
+		&i.ExternalID,
+		&i.RefreshToken,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const getEmailsByAccountsIds = `-- name: GetEmailsByAccountsIds :many

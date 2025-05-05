@@ -53,7 +53,7 @@ func (self *AccountUsecaseImplementation) CreateWithGoogleProvider(ctx context.C
 		Handle:         genHandle(),
 		Name:           &externalUserData.Name,
 		Provider:       models.Provider_Google,
-		RefreshToken:   &exchangeResult.RefreshToken,
+		RefreshToken:   exchangeResult.RefreshToken,
 	})
 	if err != nil {
 		tx.Rollback(ctx)

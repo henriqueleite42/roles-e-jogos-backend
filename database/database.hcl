@@ -474,3 +474,30 @@ table "personal_collections" {
 		]
 	}
 }
+table "sessions" {
+	schema = schema.public
+	column "account_id" {
+		type = sql("INTEGER")
+	}
+	column "created_at" {
+		type = sql("TIMESTAMPTZ")
+		default = sql("NOW()")
+	}
+	column "session_id" {
+		type = sql("CHAR(32)")
+	}
+	primary_key {
+		columns = [
+			column.session_id,
+		]
+	}
+	foreign_key "sessions_account_id_fk" {
+		columns = [
+			column.account_id
+		]
+		ref_columns = [
+			table.accounts.column.id
+		]
+		on_delete = CASCADE
+	}
+}
