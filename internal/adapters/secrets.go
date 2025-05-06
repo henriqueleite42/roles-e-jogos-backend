@@ -1,8 +1,11 @@
 package adapters
 
 type Secrets struct {
-	Port        string
-	DatabaseUrl string
+	Port string
+
+	DatabaseUrl      string
+	DatabaseUsername string
+	DatabasePassword string
 
 	GoogleClientId     string
 	GoogleClientSecret string

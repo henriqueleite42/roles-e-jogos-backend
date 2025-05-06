@@ -22,8 +22,8 @@ go.work
 /cloudformation.yaml
 
 # Localstack
-/api/localstack/*
-!/api/localstack/scripts
+/localstack/*
+!/localstack/scripts
 
 # Env
 .env

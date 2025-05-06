@@ -23,3 +23,26 @@ Resources:
         - Key: environment
           Value:
             Ref: Environment
+
+Outputs:
+  S3BucketMediasName:
+    Value:
+      Ref: S3BucketMedias
+    Export:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - s3-bucket-medias-name
+
+  S3BucketMediasDomainName:
+    Value:
+      Fn::GetAtt:
+        - S3BucketMedias
+        - DomainName
+    Export:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - s3-bucket-medias-domain-name

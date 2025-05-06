@@ -25,3 +25,18 @@ migrate:
 
 queries:
 	sqlc generate
+
+make deploy:
+	aws cloudformation deploy \
+		--stack-name dev-rolesejogos-vpc \
+		--template-file "./cloudformation/vpc.yaml" \
+	&& \
+	aws cloudformation deploy \
+		--stack-name dev-rolesejogos-s3 \
+		--template-file "./cloudformation/s3.yaml" \
+	&& \
+	aws cloudformation deploy \
+		--stack-name dev-rolesejogos-cloudfront \
+		--template-file "./cloudformation/cloudfront.yaml"
+
+

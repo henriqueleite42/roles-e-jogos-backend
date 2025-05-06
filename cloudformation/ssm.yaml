@@ -1,0 +1,172 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+  GoogleClientIdValue:
+    Type: String
+
+  GoogleRedirectUriValue:
+    Type: String
+
+Resources:
+  Port:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - port
+      Tier: Standard
+      Type: String
+      Value: "3001"
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  DatabaseUrl:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - database-url
+      Tier: Standard
+      Type: String
+      Value:
+        Fn::ImportValue:
+          Fn::Join:
+            - "-"
+            - - Ref: Environment
+            - database-url
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  GoogleClientId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - google-client-id
+      Tier: Standard
+      Type: String
+      Value:
+        Ref: GoogleClientIdValue
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  GoogleRedirectUri:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - google-redirect-uri
+      Tier: Standard
+      Type: String
+      Value:
+        Ref: GoogleRedirectUriValue
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  MediasS3BucketName:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - medias-s3-bucket-name
+      Tier: Standard
+      Type: String
+      Value:
+        Fn::ImportValue:
+          Fn::Join:
+            - "-"
+            - - Ref: Environment
+              - s3-bucket-medias-name
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  MediasCloudfrontUrl:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - medias-cloudfront-url
+      Tier: Standard
+      Type: String
+      Value:
+        Fn::Join:
+          - ""
+          - - "https://"
+            - Fn::ImportValue:
+                Fn::Join:
+                  - "-"
+                  - - Ref: Environment
+                    - cloudfront-medias-s3-bucket-domain
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  EmailAddressSystemMessages:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - email-address-system-messages
+      Tier: Standard
+      Type: String
+      Value: no-reply@rolesejogos.com.br
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  NameSystemMessages:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - name-system-messages
+      Tier: Standard
+      Type: String
+      Value: Rolês & Jogos
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment

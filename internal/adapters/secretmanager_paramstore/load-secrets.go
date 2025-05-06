@@ -2,6 +2,7 @@ package secretmanager_paramstore
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -10,9 +11,14 @@ import (
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/utils"
 )
 
+type databaseUsernamePassword struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 // AwsName: LocalName
 var SECRETS_NAMES = []string{
-	"DatabaseUrl",
+	"DatabaseUsernamePassword",
 	"GoogleClientSecret",
 }
 
@@ -56,8 +62,23 @@ func (self *secretmanagerParamstore) loadSecrets(cfg aws.Config) error {
 			localName := namesMap[*v.Name]
 
 			switch localName {
-			case "DatabaseUrl":
-				self.secrets.DatabaseUrl = *v.SecretString
+			case "DatabaseUsernamePassword":
+				value := databaseUsernamePassword{}
+				err := json.Unmarshal(v.SecretBinary, &value)
+				if err != nil {
+					self.logger.Error().Msg("fail to parse json for \"DatabaseUsernamePassword\"")
+					return fmt.Errorf("fail to parse json for \"DatabaseUsernamePassword\"")
+				}
+				if value.Username == "" {
+					self.logger.Error().Msg("\"DatabaseUsernamePassword.Username\" is empty")
+					return fmt.Errorf("\"DatabaseUsernamePassword.Username\" is empty")
+				}
+				if value.Password == "" {
+					self.logger.Error().Msg("\"DatabaseUsernamePassword.Password\" is empty")
+					return fmt.Errorf("\"DatabaseUsernamePassword.Password\" is empty")
+				}
+				self.secrets.DatabaseUsername = value.Username
+				self.secrets.DatabasePassword = value.Password
 			case "GoogleClientSecret":
 				self.secrets.GoogleClientSecret = *v.SecretString
 			}

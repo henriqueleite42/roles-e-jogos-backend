@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+Resources:
+  S3BucketMediasPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Fn::ImportValue:
+          Fn::Join:
+            - "-"
+            - - Ref: Environment
+              - s3-bucket-medias-name
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "s3:GetObject"
+            Effect: "Allow"
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - CloudfrontMediasS3BucketOriginAccessIdentity
+                  - S3CanonicalUserId
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - "arn:aws:s3:::"
+                  - Fn::ImportValue:
+                      Fn::Join:
+                        - "-"
+                        - - Ref: Environment
+                          - s3-bucket-medias-name
+                  - "/*"
+
+  CloudfrontMediasS3BucketOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      Comment:
+        Fn::Join:
+          - ""
+          - - "for bucket "
+            - Fn::ImportValue:
+                Fn::Join:
+                  - "-"
+                  - - Ref: Environment
+                    - s3-bucket-medias-name
+
+  CloudfrontMediasS3Bucket:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - "HEAD"
+            - "GET"
+          CachedMethods:
+            - "HEAD"
+            - "GET"
+          Compress: true
+          ForwardedValues:
+            Cookies:
+              Forward: "none"
+            Headers:
+              - "Origin"
+            QueryString: false
+          TargetOriginId:
+            Fn::Join:
+              - ""
+              - - "s3-origin"
+                - Fn::ImportValue:
+                    Fn::Join:
+                      - "-"
+                      - - Ref: Environment
+                        - s3-bucket-medias-name
+          ViewerProtocolPolicy: "redirect-to-https"
+          Enabled: true
+          HttpVersion: "http1.1"
+          IPV6Enabled: false
+          Origins:
+            - DomainName:
+                Fn::ImportValue:
+                  Fn::Join:
+                    - "-"
+                    - - Ref: Environment
+                      - s3-bucket-medias-domain-name
+              Id:
+                Fn::Join:
+                  - ""
+                  - - "s3-origin"
+                    - Fn::ImportValue:
+                        Fn::Join:
+                          - "-"
+                          - - Ref: Environment
+                            - s3-bucket-medias-name
+              OriginPath: ""
+              S3OriginConfig:
+                OriginAccessIdentity:
+                  Fn::Sub: "origin-access-identity/cloudfront/${CloudfrontMediasS3BucketOriginAccessIdentity}"
+        PriceClass: "PriceClass_100"
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+Outputs:
+  CloudfrontMediasS3BucketDomain:
+    Value:
+      Fn::GetAtt:
+        - CloudfrontMediasS3Bucket
+        - DomainName
+    Export:
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - cloudfront-medias-s3-bucket-domain

@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+
+Resources:
+  Ec2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      # Find images at:
+      # https://cloud-images.ubuntu.com/locator/ec2/
+      ImageId: ami-05c17b22914ce7378
+      AvailabilityZone: us-east-1c
+      SecurityGroups:
+        - Fn::ImportValue:
+            Fn::Join:
+              - "-"
+              - - Ref: Environment
+                - security-group-id
+        - Fn::ImportValue:
+            Fn::Join:
+              - "-"
+              - - Ref: Environment
+                - security-group-ssh-id
+        - Fn::ImportValue:
+            Fn::Join:
+              - "-"
+              - - Ref: Environment
+                - security-group-tcp-id
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment

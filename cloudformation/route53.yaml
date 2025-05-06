@@ -47,7 +47,7 @@ Outputs:
     Value:
       ReF: Dns
     Export:
-      Name: rolesejogos-dns-id
+      Name: dns-id
 
   CertificateArn:
     Value:

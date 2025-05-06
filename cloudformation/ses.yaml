@@ -47,3 +47,14 @@ Resources:
             - Fn::GetAtt:
                 - RecordSetGroup
                 - DkimDNSTokenValue3
+
+  EmailTemplateSignInOtp:
+    Type: AWS::SES::Template
+    Properties:
+      TemplateName:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - email-template-sign-in-otp
+      SubjectPart: "{{otp}} - Seu código chegou!"
+      HtmlPart: "{{otp}}"

@@ -14,6 +14,8 @@ import (
 // AwsName: LocalName
 var VARIABLES_NAMES = []string{
 	"Port",
+	"DatabaseUrl",
+	"DatabaseUsername",
 	"GoogleClientId",
 	"GoogleRedirectUri",
 	"MediasS3BucketName",
@@ -30,7 +32,7 @@ func (self *secretmanagerParamstore) loadVariables(cfg aws.Config) error {
 
 	prefix := fmt.Sprintf("%s-", os.Getenv("ENV"))
 
-	namesMap := make(map[string]string, len(SECRETS_NAMES))
+	namesMap := make(map[string]string, len(VARIABLES_NAMES))
 	secretsNamesAws := make([]string, 0, len(VARIABLES_NAMES))
 	for _, v := range VARIABLES_NAMES {
 		name := prefix + pascalToKebab(v)
@@ -70,6 +72,9 @@ func (self *secretmanagerParamstore) loadVariables(cfg aws.Config) error {
 			switch localName {
 			case "Port":
 				self.secrets.Port = *v.Value
+
+			case "DatabaseUrl":
+				self.secrets.DatabaseUrl = *v.Value
 
 			case "GoogleClientId":
 				self.secrets.GoogleClientId = *v.Value

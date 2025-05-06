@@ -108,18 +108,42 @@ Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName:
-        Fn::Join:
-          - "-"
-          - - Ref: Environment
-            - rolesejogos
-            - security-group
-      GroupDescription:
-        Fn::Join:
-          - "-"
-          - - Ref: Environment
-            - rolesejogos
-            - security-group
+      GroupName: security-group
+      GroupDescription: security-group
+      VpcId:
+        Ref: DefaultVPC
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  SecurityGroupSsh:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: security-group-ssh
+      GroupDescription: Enable ssh(22) access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: "22"
+          ToPort: "22"
+          CidrIp: 0.0.0.0/0
+      VpcId:
+        Ref: DefaultVPC
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  SecurityGroupTcp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: security-group-ssh
+      GroupDescription: Enable TCP(80) access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: "80"
+          ToPort: "80"
+          CidrIp: 0.0.0.0/0 # any IP
       VpcId:
         Ref: DefaultVPC
       Tags:
@@ -142,7 +166,7 @@ Outputs:
     Value:
       Ref: DefaultVPC
     Export:
-      Name: rolesejogos-vpc-id
+      Name: vpc-id
 
   PublicSubnetIds:
     Value:
@@ -150,7 +174,7 @@ Outputs:
         - ","
         - - Ref: PublicSubnet1
     Export:
-      Name: rolesejogos-public-subnets
+      Name: public-subnets
 
   PrivateSubnetIds:
     Value:
@@ -158,19 +182,31 @@ Outputs:
         - ","
         - - Ref: PrivateSubnet1
     Export:
-      Name: rolesejogos-private-subnets
+      Name: private-subnets
 
   SecurityGroupId:
     Value:
       Ref: SecurityGroup
     Export:
-      Name: rolesejogos-security-group-id
+      Name: security-group-id
+
+  SecurityGroupSshId:
+    Value:
+      Ref: SecurityGroupSsh
+    Export:
+      Name: security-group-ssh-id
+
+  SecurityGroupTcpId:
+    Value:
+      Ref: SecurityGroupTcp
+    Export:
+      Name: security-group-tcp-id
 
   SecurityGroupName:
     Value:
       Fn::Join:
         - "-"
         - - Ref: Environment
-          - "rolesejogos-security-group"
+          - "security-group"
     Export:
-      Name: rolesejogos-security-group-name
+      Name: security-group-name
