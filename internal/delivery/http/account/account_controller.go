@@ -38,5 +38,10 @@ func AddAccountController(i *AddAccountControllerInput) {
 		accountUsecase: i.AccountUsecase,
 	}
 
-	http.HandleFunc("//profile/handle/check", accountController.CheckHandle)
+	http.HandleFunc("/auth/google", accountController.CreateWithGoogleProvider)
+	http.HandleFunc("/auth/link/ludopedia", accountController.LinkLudopediaProvider)
+
+	http.HandleFunc("/profile", accountController.EditProfile)
+	http.HandleFunc("/profile/handle", accountController.EditHandle)
+	http.HandleFunc("/profile/handle/check", accountController.CheckHandle)
 }

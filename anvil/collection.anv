@@ -142,4 +142,4 @@ Delivery:
 
       - UsecaseMethod: GetCollectiveCollection
         Method: GET
-        Path: /collection/collective
+        Path: /collection/collective?after=:After&limit=:Limit
