@@ -1,4 +1,4 @@
-package collection_delivery_http
+package account_delivery_http
 
 import (
 	"context"
@@ -7,20 +7,20 @@ import (
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
-	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
+	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 )
 
-func (self *collectionController) AddToPersonalCollection(w http.ResponseWriter, r *http.Request) {
+func (self *accountController) ProfileHandle(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "AddToPersonalCollection").
+		Str("route", "EditHandle").
 		Str("reqId", reqId).
 		Logger()
 
-	if r.Method == http.MethodGet {
+	if r.Method == http.MethodPut {
 		session, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
 			Req: r,
 		})
@@ -38,20 +38,20 @@ func (self *collectionController) AddToPersonalCollection(w http.ResponseWriter,
 			return
 		}
 
-		addToPersonalCollectionInput := &collection_usecase.AddToPersonalCollectionInput{}
-		err = json.Unmarshal(body, addToPersonalCollectionInput)
+		editHandleInput := &account_usecase.EditHandleInput{}
+		err = json.Unmarshal(body, editHandleInput)
 		if err != nil {
 			logger.Info().Err(err).Msg("error unmarshalling body")
 			http.Error(w, "error unmarshalling body", http.StatusBadRequest)
 			return
 		}
 
-		addToPersonalCollectionInput.AccountId = session.AccountId
+		editHandleInput.AccountId = session.AccountId
 
-		logger.Trace().Msg("validate addToPersonalCollectionInput")
-		err = self.validator.Validate(addToPersonalCollectionInput)
+		logger.Trace().Msg("validate editHandleInput")
+		err = self.validator.Validate(editHandleInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("invalid addToPersonalCollectionInput")
+			logger.Info().Err(err).Msg("invalid editHandleInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -60,7 +60,7 @@ func (self *collectionController) AddToPersonalCollection(w http.ResponseWriter,
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		err = self.collectionUsecase.AddToPersonalCollection(reqCtx, addToPersonalCollectionInput)
+		err = self.accountUsecase.EditHandle(reqCtx, editHandleInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
 			logger.Warn().Err(err).Msg("usecase err")

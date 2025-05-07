@@ -2,23 +2,25 @@ package account_delivery_http
 
 import (
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 )
 
-func (self *accountController) LinkLudopediaProvider(w http.ResponseWriter, r *http.Request) {
+func (self *accountController) Profile(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "LinkLudopediaProvider").
+		Str("route", "EditProfile").
 		Str("reqId", reqId).
 		Logger()
 
-	if r.Method == http.MethodGet {
+	if r.Method == http.MethodPut {
 		session, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
 			Req: r,
 		})
@@ -28,18 +30,28 @@ func (self *accountController) LinkLudopediaProvider(w http.ResponseWriter, r *h
 			return
 		}
 
-		query := r.URL.Query()
-		code := query.Get("code")
-
-		linkLudopediaProviderInput := &account_usecase.LinkLudopediaProviderInput{
-			AccountId: session.AccountId,
-			Code:      code,
+		body, err := io.ReadAll(r.Body)
+		defer r.Body.Close()
+		if err != nil {
+			logger.Info().Err(err).Msg("error reading request body")
+			http.Error(w, "error reading request body", http.StatusInternalServerError)
+			return
 		}
 
-		logger.Trace().Msg("validate linkLudopediaProviderInput")
-		err = self.validator.Validate(linkLudopediaProviderInput)
+		editProfileInput := &account_usecase.EditProfileInput{}
+		err = json.Unmarshal(body, editProfileInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("invalid linkLudopediaProviderInput")
+			logger.Info().Err(err).Msg("error unmarshalling body")
+			http.Error(w, "error unmarshalling body", http.StatusBadRequest)
+			return
+		}
+
+		editProfileInput.AccountId = session.AccountId
+
+		logger.Trace().Msg("validate editProfileInput")
+		err = self.validator.Validate(editProfileInput)
+		if err != nil {
+			logger.Info().Err(err).Msg("invalid editProfileInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -48,7 +60,7 @@ func (self *accountController) LinkLudopediaProvider(w http.ResponseWriter, r *h
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		err = self.accountUsecase.LinkLudopediaProvider(reqCtx, linkLudopediaProviderInput)
+		err = self.accountUsecase.EditProfile(reqCtx, editProfileInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
 			logger.Warn().Err(err).Msg("usecase err")
@@ -56,7 +68,7 @@ func (self *accountController) LinkLudopediaProvider(w http.ResponseWriter, r *h
 			return
 		}
 
-		http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 

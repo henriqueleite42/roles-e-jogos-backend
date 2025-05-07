@@ -31,6 +31,7 @@ func SetTxInCtx(db *pgxpool.Pool, ctx context.Context) (pgx.Tx, context.Context,
 
 	tx, err := db.Begin(ctx)
 	if err != nil {
+		fmt.Println(err)
 		return nil, nil, errors.New("fail to create transaction")
 	}
 	ctx = context.WithValue(ctx, "tx", tx)

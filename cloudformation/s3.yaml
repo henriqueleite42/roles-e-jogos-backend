@@ -17,8 +17,7 @@ Resources:
         Fn::Join:
           - "-"
           - - Ref: Environment
-            - rolesejogos
-            - medias
+            - rolesejogos-medias
       Tags:
         - Key: environment
           Value:

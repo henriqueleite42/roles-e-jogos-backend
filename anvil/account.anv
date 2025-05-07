@@ -49,6 +49,8 @@ Types:
   ProfileData:
     Type: Map
     Properties:
+      AccountId:
+        Type: Int
       Handle:
         Type: String
       Name:
@@ -57,6 +59,19 @@ Types:
       AvatarUrl:
         Type: String
         Optional: true
+      Connections:
+        Type: List
+        Items:
+          Type: Map
+          Properties:
+            Provider:
+              Type: Enum
+              EnumRef: Enums.Provider
+            ExternalHandle:
+              Type: String
+              Optional: true
+            ExternalId:
+              Type: String
 
 Entities:
   NamingCase: snake
@@ -621,6 +636,10 @@ Delivery:
       # - UsecaseMethod: ExchangeSignInOtp
       #   Method: POST
       #   Path: /auth/exchange-sign-in-otp
+
+      - UsecaseMethod: GetProfile
+        Method: GET
+        Path: /profile
 
       - UsecaseMethod: EditProfile
         Method: PUT

@@ -188,3 +188,25 @@ Resources:
         - Key: environment
           Value:
             Ref: Environment
+
+  EmailTemplateSignInOtp:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - email-template-sign-in-otp
+      Tier: Standard
+      Type: String
+      Value:
+        Fn::ImportValue:
+          Fn::Join:
+            - "-"
+            - - Ref: Environment
+              - email-template-sign-in-otp
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment

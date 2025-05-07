@@ -1,21 +1,23 @@
-package account_delivery_http
+package collection_delivery_http
 
 import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
-	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/models"
+	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 )
 
-func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Request) {
+func (self *collectionController) CollectionCollective(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "CheckHandle").
+		Str("route", "GetCollectiveCollection").
 		Str("reqId", reqId).
 		Logger()
 
@@ -30,16 +32,33 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 		}
 
 		query := r.URL.Query()
-		handle := query.Get("handle")
 
-		checkHandleInput := &account_usecase.CheckHandleInput{
-			Handle: handle,
+		afterQuery := query.Get("after")
+		var after *string
+		if afterQuery != "" {
+			after = &afterQuery
 		}
 
-		logger.Trace().Msg("validate checkHandleInput")
-		err = self.validator.Validate(checkHandleInput)
+		limitQuery := query.Get("limit")
+		var limit *int
+		if limitQuery != "" {
+			limitInt, err := strconv.Atoi(limitQuery)
+			if err != nil {
+				limit = &limitInt
+			}
+		}
+
+		getCollectiveCollectionInput := &collection_usecase.GetCollectiveCollectionInput{
+			Pagination: &models.PaginationInputString{
+				After: after,
+				Limit: limit,
+			},
+		}
+
+		logger.Trace().Msg("validate getCollectiveCollectionInput")
+		err = self.validator.Validate(getCollectiveCollectionInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("invalid checkHandleInput")
+			logger.Info().Err(err).Msg("invalid getCollectiveCollectionInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -48,7 +67,7 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		checkHandleOutput, err := self.accountUsecase.CheckHandle(reqCtx, checkHandleInput)
+		getCollectiveCollectionOutput, err := self.collectionUsecase.GetCollectiveCollection(reqCtx, getCollectiveCollectionInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
 			logger.Warn().Err(err).Msg("usecase err")
@@ -56,7 +75,7 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 			return
 		}
 
-		jsonOutput, err := json.Marshal(checkHandleOutput)
+		jsonOutput, err := json.Marshal(getCollectiveCollectionOutput)
 		if err != nil {
 			logger.Error().Err(err).Msg("failed to marshal JSON")
 			http.Error(w, "failed to marshal JSON", http.StatusInternalServerError)

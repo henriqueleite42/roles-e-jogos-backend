@@ -9,7 +9,7 @@ import (
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 )
 
-func (self *accountController) CreateWithGoogleProvider(w http.ResponseWriter, r *http.Request) {
+func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().

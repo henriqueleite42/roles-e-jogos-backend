@@ -137,7 +137,7 @@ Resources:
   SecurityGroupTcp:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: security-group-ssh
+      GroupName: security-group-tcp
       GroupDescription: Enable TCP(80) access
       SecurityGroupIngress:
         - IpProtocol: tcp

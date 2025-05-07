@@ -30,9 +30,17 @@ type AccountDataDb struct {
 }
 
 type ProfileData struct {
-	AvatarUrl *string
-	Handle    string
-	Name      *string
+	AccountId   int
+	AvatarUrl   *string
+	Connections []*ProfileDataConnectionsItem `validate:"required"`
+	Handle      string
+	Name        *string
+}
+
+type ProfileDataConnectionsItem struct {
+	ExternalHandle *string
+	ExternalId     string
+	Provider       Provider `validate:"required" db:"provider"`
 }
 
 type Account struct {

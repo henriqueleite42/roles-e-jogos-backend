@@ -1,4 +1,4 @@
-package account_delivery_http
+package collection_delivery_http
 
 import (
 	"context"
@@ -7,16 +7,16 @@ import (
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
-	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
+	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 )
 
-func (self *accountController) EditProfile(w http.ResponseWriter, r *http.Request) {
+func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "EditProfile").
+		Str("route", "AddToPersonalCollection").
 		Str("reqId", reqId).
 		Logger()
 
@@ -38,20 +38,20 @@ func (self *accountController) EditProfile(w http.ResponseWriter, r *http.Reques
 			return
 		}
 
-		editProfileInput := &account_usecase.EditProfileInput{}
-		err = json.Unmarshal(body, editProfileInput)
+		addToPersonalCollectionInput := &collection_usecase.AddToPersonalCollectionInput{}
+		err = json.Unmarshal(body, addToPersonalCollectionInput)
 		if err != nil {
 			logger.Info().Err(err).Msg("error unmarshalling body")
 			http.Error(w, "error unmarshalling body", http.StatusBadRequest)
 			return
 		}
 
-		editProfileInput.AccountId = session.AccountId
+		addToPersonalCollectionInput.AccountId = session.AccountId
 
-		logger.Trace().Msg("validate editProfileInput")
-		err = self.validator.Validate(editProfileInput)
+		logger.Trace().Msg("validate addToPersonalCollectionInput")
+		err = self.validator.Validate(addToPersonalCollectionInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("invalid editProfileInput")
+			logger.Info().Err(err).Msg("invalid addToPersonalCollectionInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -60,7 +60,7 @@ func (self *accountController) EditProfile(w http.ResponseWriter, r *http.Reques
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		err = self.accountUsecase.EditProfile(reqCtx, editProfileInput)
+		err = self.collectionUsecase.AddToPersonalCollection(reqCtx, addToPersonalCollectionInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
 			logger.Warn().Err(err).Msg("usecase err")

@@ -64,7 +64,7 @@ func (self *secretmanagerParamstore) loadSecrets(cfg aws.Config) error {
 			switch localName {
 			case "DatabaseUsernamePassword":
 				value := databaseUsernamePassword{}
-				err := json.Unmarshal(v.SecretBinary, &value)
+				err = json.Unmarshal([]byte(*v.SecretString), &value)
 				if err != nil {
 					self.logger.Error().Msg("fail to parse json for \"DatabaseUsernamePassword\"")
 					return fmt.Errorf("fail to parse json for \"DatabaseUsernamePassword\"")

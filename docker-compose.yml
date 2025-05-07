@@ -21,11 +21,11 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
       test: curl -v localhost:4566/_localstack/init/ready --stderr - | grep SUCCESSFUL
-      interval: 1m30s
+      interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 30s
-      start_interval: 30s
+      retries: 100
+      # start_period: 30s
+      start_interval: 10s
     networks:
       - rolesejogos-api_network
 
@@ -43,35 +43,35 @@ services:
     networks:
       - rolesejogos-api_network
 
-  # api:
-  #   build:
-  #     context: "."
-  #     dockerfile: Dockerfile.dev
-  #   image: rolesejogos-api
-  #   container_name: rolesejogos-api
-  #   command: ./bin
-  #   depends_on:
-  #     localstack:
-  #       condition: service_healthy
-  #       required: true
-  #     postgres:
-  #       condition: service_started
-  #       required: true
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     - AWS_ENDPOINT_URL=http://localstack:4566
-  #     - AWS_ACCESS_KEY_ID=test
-  #     - AWS_SECRET_ACCESS_KEY=test
-  #     - AWS_SESSION_TOKEN=test
-  #     - AWS_REGION=us-east-1
-  #     - GRPC_GO_LOG_VERBOSITY_LEVEL=99
-  #     - GRPC_GO_LOG_SEVERITY_LEVEL=info
-  #     - GODEBUG=netdns=cgo
-  #   env_file:
-  #     - .env.docker
-  #   networks:
-  #     - rolesejogos-api_network
+  api:
+    build:
+      context: "."
+      dockerfile: Dockerfile.dev
+    image: rolesejogos-api
+    container_name: rolesejogos-api
+    command: ./bin
+    depends_on:
+      localstack:
+        condition: service_healthy
+        required: true
+      postgres:
+        condition: service_started
+        required: true
+    ports:
+      - 3001:3001
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_SESSION_TOKEN=test
+      - AWS_REGION=us-east-1
+      - GRPC_GO_LOG_VERBOSITY_LEVEL=99
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
+      - GODEBUG=netdns=cgo
+    env_file:
+      - .env.docker
+    networks:
+      - rolesejogos-api_network
 
 volumes:
   postgres:

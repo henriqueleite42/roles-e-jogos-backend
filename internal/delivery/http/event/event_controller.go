@@ -23,7 +23,7 @@ type AddEventControllerInput struct {
 }
 
 func AddEventController(i *AddEventControllerInput) {
-	eventController := &eventController{
+	_ = &eventController{
 		logger:       i.Logger,
 		validator:    i.Validator,
 		idAdapter:    i.IdAdapter,

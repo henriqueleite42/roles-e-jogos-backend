@@ -80,7 +80,10 @@ func main() {
 
 	logger.Trace().Msg("connecting to database")
 
-	db, err := pgxpool.New(context.Background(), secretsAdapter.DatabaseUrl)
+	db, err := pgxpool.New(
+		context.Background(),
+		"postgres://"+secretsAdapter.DatabaseUsername+":"+secretsAdapter.DatabasePassword+"@"+secretsAdapter.DatabaseUrl+":5432/database",
+	)
 	if err != nil {
 		logger.Fatal().
 			Err(err).
@@ -164,22 +167,6 @@ func main() {
 
 	// ----------------------------
 	//
-	// Adapters (repository dependents)
-	//
-	// ----------------------------
-
-	authPostgresAdapter, err := auth_postgres.NewAuthPostgres(&auth_postgres.NewAuthPostgresInput{
-		Logger:            &logger,
-		AccountRepository: accountRepository,
-	})
-	if err != nil {
-		logger.Fatal().
-			Err(err).
-			Msg("fail to initialize AuthPostgresAdapter")
-	}
-
-	// ----------------------------
-	//
 	// Services
 	//
 	// ----------------------------
@@ -220,6 +207,16 @@ func main() {
 
 	logger.Trace().Msg("initializing deliveries")
 
+	authPostgresAdapter, err := auth_postgres.NewAuthPostgres(&auth_postgres.NewAuthPostgresInput{
+		Logger:            &logger,
+		AccountRepository: accountRepository,
+	})
+	if err != nil {
+		logger.Fatal().
+			Err(err).
+			Msg("fail to initialize AuthPostgresAdapter")
+	}
+
 	logger.Trace().Msg("initializing http server")
 	httpDelivery := http_delivery.NewHttpDelivery(&http_delivery.NewHttpDeliveryInput{
 		Logger: &logger,
@@ -227,6 +224,7 @@ func main() {
 		Validator:      goValidatorAdapter,
 		SecretsAdapter: secretsAdapter,
 		AuthAdapter:    authPostgresAdapter,
+		IdAdapter:      xidAdapter,
 
 		AccountUsecase:    accountUsecase,
 		CollectionUsecase: collectionUsecase,

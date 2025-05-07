@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 )
@@ -11,6 +12,7 @@ import (
 type getUserDataApiOutput struct {
 	Sub           string `json:"sub"`
 	GivenName     string `json:"given_name"`
+	FamilyName    string `json:"family_name"`
 	Email         string `json:"email"`
 	EmailVerified bool   `json:"email_verified"`
 	Picture       string `json:"picture"`
@@ -51,9 +53,12 @@ func (self *googleAdapter) GetUserData(accessToken string) (*adapters.GetAuthent
 	}
 	self.logger.Trace().Msg("req body decoded")
 
+	handle := strings.Split(userData.Email, "@")[0]
+
 	output := &adapters.GetAuthenticatedUserDataOutput{
 		Id:              userData.Sub,
-		Name:            userData.GivenName,
+		Name:            userData.GivenName + " " + userData.FamilyName,
+		Handle:          &handle,
 		Email:           userData.Email,
 		IsEmailVerified: userData.EmailVerified,
 		AvatarUrl:       &userData.Picture,

@@ -58,3 +58,13 @@ Resources:
             - email-template-sign-in-otp
       SubjectPart: "{{otp}} - Seu código chegou!"
       HtmlPart: "{{otp}}"
+
+Outputs:
+  EmailTemplateSignInOtp:
+    Value:
+      Fn::Join:
+        - "-"
+        - - Ref: Environment
+          - email-template-sign-in-otp
+    Export:
+      Name: vpc-id

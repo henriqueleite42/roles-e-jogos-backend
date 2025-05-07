@@ -38,6 +38,6 @@ func AddCollectionController(i *AddCollectionControllerInput) {
 		collectionUsecase: i.CollectionUsecase,
 	}
 
-	http.HandleFunc("/collection/personal", collectionController.AddToPersonalCollection)
-	http.HandleFunc("/collection/collective", collectionController.GetCollectiveCollection)
+	http.HandleFunc("/collection/personal", collectionController.CollectionPersonal)
+	http.HandleFunc("/collection/collective", collectionController.CollectionCollective)
 }
