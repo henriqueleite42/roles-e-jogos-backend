@@ -7,6 +7,7 @@ Parameters:
     AllowedValues:
       - dev
       - prod
+
   Domain:
     Type: String
 
@@ -45,9 +46,18 @@ Resources:
 Outputs:
   DnsId:
     Value:
-      ReF: Dns
+      Ref: Dns
     Export:
       Name: dns-id
+
+  DnsUrl:
+    Value:
+      Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: Domain
+    Export:
+      Name: dns-url
 
   CertificateArn:
     Value:
@@ -57,4 +67,4 @@ Outputs:
         Fn::Join:
           - "-"
           - - Ref: Domain
-            - "certificate"
+            - certificate

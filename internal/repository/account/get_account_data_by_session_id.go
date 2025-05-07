@@ -29,7 +29,7 @@ func (self *accountRepositoryImplementation) GetAccountDataBySessionId(ctx conte
 	}
 
 	return &models.AccountDataDb{
-		Id:         int(row.ID.Int32),
+		AccountId:  int(row.ID.Int32),
 		IsAdmin:    row.IsAdmin.Bool,
 		AvatarPath: avatarPath,
 		Handle:     row.Handle.String,

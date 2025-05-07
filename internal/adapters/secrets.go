@@ -3,6 +3,8 @@ package adapters
 type Secrets struct {
 	Port string
 
+	WebsiteUrl string
+
 	DatabaseUrl      string
 	DatabaseUsername string
 	DatabasePassword string

@@ -30,6 +30,7 @@
 		"Rpcs",
 		"secretmanager",
 		"timestamptz",
+		"unmarshalling",
 		"Usecase",
 		"usecases",
 		"varchar",

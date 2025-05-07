@@ -73,6 +73,9 @@ func (self *secretmanagerParamstore) loadVariables(cfg aws.Config) error {
 			case "Port":
 				self.secrets.Port = *v.Value
 
+			case "WebsiteUrl":
+				self.secrets.WebsiteUrl = *v.Value
+
 			case "DatabaseUrl":
 				self.secrets.DatabaseUrl = *v.Value
 

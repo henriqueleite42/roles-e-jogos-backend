@@ -32,6 +32,24 @@ Resources:
           Value:
             Ref: Environment
 
+  WebsiteUrl:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - website-url
+      Tier: Standard
+      Type: String
+      Value:
+        Fn::ImportValue: dns-url
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
   DatabaseUrl:
     Type: AWS::SSM::Parameter
     Properties:

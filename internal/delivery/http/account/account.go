@@ -12,6 +12,7 @@ type accountController struct {
 	logger         *zerolog.Logger
 	validator      adapters.Validator
 	authAdapter    adapters.Auth
+	secretsAdapter *adapters.Secrets
 	idAdapter      adapters.Id
 	accountUsecase account_usecase.AccountUsecase
 }
@@ -19,9 +20,10 @@ type accountController struct {
 type AddAccountControllerInput struct {
 	Logger *zerolog.Logger
 
-	Validator   adapters.Validator
-	AuthAdapter adapters.Auth
-	IdAdapter   adapters.Id
+	Validator      adapters.Validator
+	AuthAdapter    adapters.Auth
+	SecretsAdapter *adapters.Secrets
+	IdAdapter      adapters.Id
 
 	AccountUsecase account_usecase.AccountUsecase
 }
@@ -31,6 +33,7 @@ func AddAccountController(i *AddAccountControllerInput) {
 		logger:         i.Logger,
 		validator:      i.Validator,
 		authAdapter:    i.AuthAdapter,
+		secretsAdapter: i.SecretsAdapter,
 		idAdapter:      i.IdAdapter,
 		accountUsecase: i.AccountUsecase,
 	}

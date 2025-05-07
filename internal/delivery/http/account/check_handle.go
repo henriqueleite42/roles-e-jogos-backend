@@ -14,7 +14,8 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 
 	logger := self.logger.With().
 		Str("dmn", "Account").
-		Str("mtd", "GetProfileByHandle").
+		Str("mtd", r.Method).
+		Str("route", "CheckHandle").
 		Str("reqId", reqId).
 		Logger()
 
@@ -65,6 +66,7 @@ func (self *accountController) CheckHandle(w http.ResponseWriter, r *http.Reques
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonOutput)
+		return
 	}
 
 	http.Error(w, "method not allowed", http.StatusMethodNotAllowed)

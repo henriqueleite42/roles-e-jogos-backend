@@ -21,10 +21,11 @@ import (
 type httpDelivery struct {
 	server *http.Server
 
-	logger      *zerolog.Logger
-	validator   adapters.Validator
-	authAdapter adapters.Auth
-	idAdapter   adapters.Id
+	logger         *zerolog.Logger
+	validator      adapters.Validator
+	authAdapter    adapters.Auth
+	secretsAdapter *adapters.Secrets
+	idAdapter      adapters.Id
 
 	accountUsecase    account_usecase.AccountUsecase
 	collectionUsecase collection_usecase.CollectionUsecase
@@ -54,6 +55,7 @@ func (self *httpDelivery) Listen() {
 			Logger:         self.logger,
 			Validator:      self.validator,
 			AuthAdapter:    self.authAdapter,
+			SecretsAdapter: self.secretsAdapter,
 			IdAdapter:      self.idAdapter,
 			AccountUsecase: self.accountUsecase,
 		})
@@ -113,6 +115,7 @@ func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
 		logger:            i.Logger,
 		validator:         i.Validator,
 		authAdapter:       i.AuthAdapter,
+		secretsAdapter:    i.SecretsAdapter,
 		idAdapter:         i.IdAdapter,
 		accountUsecase:    i.AccountUsecase,
 		collectionUsecase: i.CollectionUsecase,

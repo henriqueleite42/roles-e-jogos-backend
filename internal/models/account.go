@@ -23,9 +23,9 @@ type AccountData struct {
 }
 
 type AccountDataDb struct {
+	AccountId  int
 	AvatarPath *string
 	Handle     string
-	Id         int
 	IsAdmin    bool
 }
 

@@ -26,7 +26,7 @@ Types:
   AccountDataDb:
     Type: Map
     Properties:
-      Id:
+      AccountId:
         Type: Int
         AutoIncrement: true
       IsAdmin:
