@@ -179,6 +179,7 @@ func main() {
 		Db:                db,
 		AccountRepository: accountRepository,
 		GoogleAdapter:     googleAdapter,
+		LudopediaAdapter:  ludopediaAdapter,
 		IdAdapter:         xidAdapter,
 		StorageAdapter:    s3Adapter,
 		SecretsAdapter:    secretsAdapter,

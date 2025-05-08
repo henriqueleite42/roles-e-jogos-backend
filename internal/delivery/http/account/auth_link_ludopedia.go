@@ -18,7 +18,7 @@ func (self *accountController) AuthLinkLudopedia(w http.ResponseWriter, r *http.
 		Str("reqId", reqId).
 		Logger()
 
-	if r.Method == http.MethodPost {
+	if r.Method == http.MethodGet {
 		session, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
 			Req: r,
 		})

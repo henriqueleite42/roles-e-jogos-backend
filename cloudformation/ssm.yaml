@@ -8,6 +8,12 @@ Parameters:
       - dev
       - prod
 
+  LudopediaClientIdValue:
+    Type: String
+
+  LudopediaRedirectUriValue:
+    Type: String
+
   GoogleClientIdValue:
     Type: String
 
@@ -67,6 +73,42 @@ Resources:
             - "-"
             - - Ref: Environment
             - database-url
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  LudopediaClientId:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - ludopedia-client-id
+      Tier: Standard
+      Type: String
+      Value:
+        Ref: LudopediaClientIdValue
+      Tags:
+        - Key: environment
+          Value:
+            Ref: Environment
+
+  LudopediaRedirectUri:
+    Type: AWS::SSM::Parameter
+    Properties:
+      DataType: text
+      Name:
+        Fn::Join:
+          - "-"
+          - - Ref: Environment
+            - ludopedia-redirect-uri
+      Tier: Standard
+      Type: String
+      Value:
+        Ref: LudopediaRedirectUriValue
       Tags:
         - Key: environment
           Value:

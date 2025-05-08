@@ -19,6 +19,7 @@ type databaseUsernamePassword struct {
 // AwsName: LocalName
 var SECRETS_NAMES = []string{
 	"DatabaseUsernamePassword",
+	"LudopediaClientSecret",
 	"GoogleClientSecret",
 }
 
@@ -79,6 +80,8 @@ func (self *secretmanagerParamstore) loadSecrets(cfg aws.Config) error {
 				}
 				self.secrets.DatabaseUsername = value.Username
 				self.secrets.DatabasePassword = value.Password
+			case "LudopediaClientSecret":
+				self.secrets.LudopediaClientSecret = *v.SecretString
 			case "GoogleClientSecret":
 				self.secrets.GoogleClientSecret = *v.SecretString
 			}

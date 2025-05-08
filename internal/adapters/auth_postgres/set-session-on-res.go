@@ -26,6 +26,6 @@ func (self *authPostgresAdapter) SetSessionOnRes(i *adapters.SetSessionOnResInpu
 		Domain:   domain,
 		Secure:   isProd,
 		Expires:  time.Now().Add(10 * ONE_YEAR_IN_HOURS),
-		SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteLaxMode,
 	})
 }

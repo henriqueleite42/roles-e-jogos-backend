@@ -16,6 +16,8 @@ var VARIABLES_NAMES = []string{
 	"Port",
 	"DatabaseUrl",
 	"WebsiteUrl",
+	"LudopediaClientId",
+	"LudopediaRedirectUri",
 	"GoogleClientId",
 	"GoogleRedirectUri",
 	"MediasS3BucketName",
@@ -78,6 +80,11 @@ func (self *secretmanagerParamstore) loadVariables(cfg aws.Config) error {
 
 			case "DatabaseUrl":
 				self.secrets.DatabaseUrl = *v.Value
+
+			case "LudopediaClientId":
+				self.secrets.LudopediaClientId = *v.Value
+			case "LudopediaRedirectUri":
+				self.secrets.LudopediaRedirectUri = *v.Value
 
 			case "GoogleClientId":
 				self.secrets.GoogleClientId = *v.Value

@@ -1,11 +1,12 @@
 package ludopedia
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
@@ -21,24 +22,23 @@ func (self *ludopediaAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adap
 	self.logger.Trace().Msg("start ExchangeCode")
 
 	self.logger.Trace().Msg("building exchange code body")
-	body := map[string]string{
-		"code": i.Code,
-	}
+	// ALERT: The order of the properties is important, don't change it!
+	body := url.Values{}
+	body.Set("code", i.Code)
+	body.Set("client_id", self.secrets.LudopediaClientId)
+	body.Set("client_secret", self.secrets.LudopediaClientSecret)
+	body.Set("redirect_uri", self.secrets.LudopediaRedirectUri)
+	body.Set("grant_type", "authorization_code")
+	// ALERT: The order of the properties is important, don't change it!
 	self.logger.Trace().Msg("exchange code built")
-	encodedBody, err := json.Marshal(body)
-	if err != nil {
-		self.logger.Error().Err(err).Msg(
-			"json.Marshal failed",
-		)
-		return nil, errors.New("json.Marshal failed")
-	}
-	self.logger.Debug().Str("body", string(encodedBody)).Msg("Exchange code built")
+	encodedBody := body.Encode()
+	self.logger.Debug().Str("body", encodedBody).Msg("Exchange code built")
 
 	self.logger.Trace().Msg("building request to exchange code")
 	req, err := http.NewRequest(
 		http.MethodPost,
 		"https://ludopedia.com.br/tokenrequest",
-		bytes.NewReader(encodedBody),
+		strings.NewReader(body.Encode()),
 	)
 	if err != nil {
 		self.logger.Error().Err(err).Msg(
@@ -47,7 +47,7 @@ func (self *ludopediaAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adap
 		return nil, errors.New("fail to build request")
 	}
 	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	self.logger.Trace().Msg("request built")
 
 	self.logger.Trace().Msg("do request to exchange code")

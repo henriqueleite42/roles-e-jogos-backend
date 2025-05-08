@@ -9,6 +9,10 @@ type Secrets struct {
 	DatabaseUsername string
 	DatabasePassword string
 
+	LudopediaClientId     string
+	LudopediaClientSecret string
+	LudopediaRedirectUri  string
+
 	GoogleClientId     string
 	GoogleClientSecret string
 	GoogleRedirectUri  string

@@ -11,14 +11,14 @@ import (
 )
 
 func (self *AccountUsecaseImplementation) LinkLudopediaProvider(ctx context.Context, i *LinkLudopediaProviderInput) error {
-	exchangeResult, err := self.GoogleAdapter.ExchangeCode(&adapters.ExchangeCodeInput{
+	exchangeResult, err := self.LudopediaAdapter.ExchangeCode(&adapters.ExchangeCodeInput{
 		Code: i.Code,
 	})
 	if err != nil {
 		return err
 	}
 
-	err = self.GoogleAdapter.CheckRequiredScopes(exchangeResult.Scopes)
+	err = self.LudopediaAdapter.CheckRequiredScopes(exchangeResult.Scopes)
 	if err != nil {
 		return err
 	}

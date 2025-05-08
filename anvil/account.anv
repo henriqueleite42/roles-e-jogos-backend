@@ -651,8 +651,8 @@ Delivery:
         Path: /auth/google?code=:Code
 
       - UsecaseMethod: LinkLudopediaProvider
-        Method: POST
-        Path: /auth/link/ludopedia
+        Method: GET
+        Path: /auth/link/ludopedia?code=:Code
 
       # - UsecaseMethod: SendSignInOtp
       #   Method: POST

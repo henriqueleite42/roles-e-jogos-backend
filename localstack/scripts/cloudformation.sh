@@ -42,6 +42,16 @@ awslocal ssm put-parameter \
 	--value postgres
 
 awslocal ssm put-parameter \
+	--name dev-ludopedia-client-id \
+	--type String \
+	--value $LUDOPEDIA_CLIENT_ID
+
+awslocal ssm put-parameter \
+	--name dev-ludopedia-redirect-uri \
+	--type String \
+	--value $LUDOPEDIA_REDIRECT_URI
+
+awslocal ssm put-parameter \
 	--name dev-google-client-id \
 	--type String \
 	--value $GOOGLE_CLIENT_ID
@@ -81,6 +91,10 @@ awslocal ssm put-parameter \
 #  Secret Manager
 #
 # ---------------------------
+
+awslocal secretsmanager create-secret \
+	--name dev-ludopedia-client-secret \
+	--secret-string $LUDOPEDIA_CLIENT_SECRET
 
 awslocal secretsmanager create-secret \
 	--name dev-google-client-secret \
