@@ -15,6 +15,7 @@ import (
 var VARIABLES_NAMES = []string{
 	"Port",
 	"DatabaseUrl",
+	"WebsiteUrl",
 	"GoogleClientId",
 	"GoogleRedirectUri",
 	"MediasS3BucketName",

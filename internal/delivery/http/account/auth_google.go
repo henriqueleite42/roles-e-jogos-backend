@@ -2,6 +2,7 @@ package account_delivery_http
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
@@ -24,6 +25,7 @@ func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request
 		})
 		if session != nil && err == nil {
 			logger.Warn().Msg("user already logged")
+			fmt.Println(self.secretsAdapter.WebsiteUrl + "/conta")
 			http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
 			return
 		}
@@ -59,6 +61,7 @@ func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request
 			Res:       w,
 			SessionId: createWithGoogleProviderOutput.SessionId,
 		})
+		fmt.Println(self.secretsAdapter.WebsiteUrl + "/conta")
 		http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
 		return
 	}
