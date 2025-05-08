@@ -10,7 +10,7 @@ import (
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/utils"
 )
 
-func (self *AccountUsecaseImplementation) ExchangeSignInOtp(ctx context.Context, i *ExchangeSignInOtpInput) (*models.AccountData, error) {
+func (self *AccountUsecaseImplementation) ExchangeSignInOtp(ctx context.Context, i *ExchangeSignInOtpInput) (*models.SessionData, error) {
 	ctx, err := utils.SetDbInCtx(self.Db, ctx)
 	if err != nil {
 		return nil, err
@@ -40,5 +40,14 @@ func (self *AccountUsecaseImplementation) ExchangeSignInOtp(ctx context.Context,
 		return nil, err
 	}
 
-	return account, nil
+	session, err := self.AccountRepository.CreateSession(ctx, &account_repository.CreateSessionInput{
+		AccountId: account.AccountId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.SessionData{
+		SessionId: session.SessionId,
+	}, nil
 }

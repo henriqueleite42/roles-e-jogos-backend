@@ -43,6 +43,10 @@ type ProfileDataConnectionsItem struct {
 	Provider       Provider `validate:"required" db:"provider"`
 }
 
+type SessionData struct {
+	SessionId string
+}
+
 type Account struct {
 	AvatarPath *string   `db:"avatar_path"`
 	CreatedAt  time.Time `validate:"required" db:"created_at"`
@@ -53,6 +57,7 @@ type Account struct {
 }
 
 type Connection struct {
+	AccessToken    *string   `db:"access_token"`
 	AccountId      int       `db:"account_id"`
 	CreatedAt      time.Time `validate:"required" db:"created_at"`
 	ExternalHandle *string   `db:"external_handle"`

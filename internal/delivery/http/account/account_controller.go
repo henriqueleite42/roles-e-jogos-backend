@@ -41,7 +41,7 @@ func AddAccountController(i *AddAccountControllerInput) {
 	http.HandleFunc("/auth/google", accountController.AuthGoogle)
 	http.HandleFunc("/auth/link/ludopedia", accountController.AuthLinkLudopedia)
 
-	http.HandleFunc("/profile", accountController.Profile)
 	http.HandleFunc("/profile/handle", accountController.ProfileHandle)
 	http.HandleFunc("/profile/handle/check", accountController.ProfileHandleCheck)
+	http.HandleFunc("/profile/me", accountController.ProfileMe)
 }

@@ -34,7 +34,7 @@ awslocal ssm put-parameter \
 awslocal ssm put-parameter \
 	--name dev-website-url \
 	--type String \
-	--value http://localhost:3001
+	--value http://localhost:3000
 
 awslocal ssm put-parameter \
 	--name dev-database-url \

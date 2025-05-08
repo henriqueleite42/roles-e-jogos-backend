@@ -46,6 +46,12 @@ Types:
       IsAdmin:
         Type: Bool
 
+  SessionData:
+    Type: Map
+    Properties:
+      SessionId:
+        Type: String
+
   ProfileData:
     Type: Map
     Properties:
@@ -125,11 +131,16 @@ Entities:
         ExternalId:
           Type: String
           DbType: VARCHAR(255)
+        AccessToken:
+          Type: String
+          DbType: VARCHAR(500)
+          Optional: true
+          Confidentiality: HIGH
         RefreshToken:
           Type: String
           DbType: VARCHAR(500)
           Optional: true
-          Confidentiality: MEDIUM
+          Confidentiality: HIGH
         CreatedAt:
           Type: Timestamp
           Default: NOW()
@@ -244,6 +255,9 @@ Repository:
             Optional: true
           ExternalId:
             Type: String
+          AccessToken:
+            Type: String
+            Optional: true
           RefreshToken:
             Type: String
             Optional: true
@@ -308,6 +322,17 @@ Repository:
             Type: String
       Output:
         $ref: Entities.Connection
+
+    GetConnectionsByAccountId:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+      Output:
+        Type: List
+        Items:
+          $ref: Entities.Connection
 
     LinkConnectionWithAccount:
       Input:
@@ -475,7 +500,7 @@ Usecase:
             Validate:
               - min=1
       Output:
-        $ref: Types.AccountData
+        $ref: Types.SessionData
 
     LinkLudopediaProvider:
       Input:
@@ -510,7 +535,7 @@ Usecase:
           Otp:
             Type: String
       Output:
-        $ref: Types.AccountData
+        $ref: Types.SessionData
 
     EditProfile:
       Input:
@@ -637,13 +662,13 @@ Delivery:
       #   Method: POST
       #   Path: /auth/exchange-sign-in-otp
 
-      - UsecaseMethod: GetProfile
+      - UsecaseMethod: GetProfileById
         Method: GET
-        Path: /profile
+        Path: /profile/me
 
       - UsecaseMethod: EditProfile
         Method: PUT
-        Path: /profile
+        Path: /profile/me
 
       - UsecaseMethod: CheckHandle
         Method: GET

@@ -2,7 +2,6 @@ package account_delivery_http
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
@@ -25,7 +24,7 @@ func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request
 		})
 		if session != nil && err == nil {
 			logger.Warn().Msg("user already logged")
-			http.Error(w, "user already logged", http.StatusUnauthorized)
+			http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
 			return
 		}
 
@@ -56,16 +55,11 @@ func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		jsonOutput, err := json.Marshal(createWithGoogleProviderOutput)
-		if err != nil {
-			logger.Error().Err(err).Msg("failed to marshal JSON")
-			http.Error(w, "failed to marshal JSON", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonOutput)
+		self.authAdapter.SetSessionOnRes(&adapters.SetSessionOnResInput{
+			Res:       w,
+			SessionId: createWithGoogleProviderOutput.SessionId,
+		})
+		http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
 		return
 	}
 

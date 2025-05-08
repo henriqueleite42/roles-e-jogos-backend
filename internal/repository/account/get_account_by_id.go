@@ -23,12 +23,22 @@ func (self *accountRepositoryImplementation) GetAccountById(ctx context.Context,
 		return nil, err
 	}
 
+	var avatarPath *string
+	if row.AvatarPath.Valid {
+		avatarPath = &row.AvatarPath.String
+	}
+
+	var name *string
+	if row.Name.Valid {
+		name = &row.Name.String
+	}
+
 	return &models.Account{
 		Id:         int(row.ID),
 		IsAdmin:    row.IsAdmin,
-		AvatarPath: &row.AvatarPath.String,
+		AvatarPath: avatarPath,
 		CreatedAt:  row.CreatedAt.Time,
 		Handle:     row.Handle,
-		Name:       &row.Name.String,
+		Name:       name,
 	}, nil
 }

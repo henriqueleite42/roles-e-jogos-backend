@@ -9,7 +9,7 @@ import (
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/utils"
 )
 
-func (self *AccountUsecaseImplementation) CreateWithGoogleProvider(ctx context.Context, i *CreateWithGoogleProviderInput) (*models.AccountData, error) {
+func (self *AccountUsecaseImplementation) CreateWithGoogleProvider(ctx context.Context, i *CreateWithGoogleProviderInput) (*models.SessionData, error) {
 	exchangeResult, err := self.GoogleAdapter.ExchangeCode(&adapters.ExchangeCodeInput{
 		Code: i.Code,
 	})
@@ -42,8 +42,18 @@ func (self *AccountUsecaseImplementation) CreateWithGoogleProvider(ctx context.C
 		return nil, err
 	}
 	if account != nil {
+		session, err := self.AccountRepository.CreateSession(ctx, &account_repository.CreateSessionInput{
+			AccountId: account.AccountId,
+		})
+		if err != nil {
+			tx.Rollback(ctx)
+			return nil, err
+		}
+
 		tx.Commit(ctx)
-		return account, nil
+		return &models.SessionData{
+			SessionId: session.SessionId,
+		}, nil
 	}
 
 	newAccount, err := self.AccountRepository.CreateAccountWithConnection(ctx, &account_repository.CreateAccountWithConnectionInput{
@@ -64,6 +74,16 @@ func (self *AccountUsecaseImplementation) CreateWithGoogleProvider(ctx context.C
 		// Save image
 	}
 
+	session, err := self.AccountRepository.CreateSession(ctx, &account_repository.CreateSessionInput{
+		AccountId: newAccount.AccountId,
+	})
+	if err != nil {
+		tx.Rollback(ctx)
+		return nil, err
+	}
+
 	tx.Commit(ctx)
-	return newAccount, nil
+	return &models.SessionData{
+		SessionId: session.SessionId,
+	}, nil
 }

@@ -27,9 +27,27 @@ func (self *AccountUsecaseImplementation) GetProfileById(ctx context.Context, i 
 		avatarUrl = &str
 	}
 
+	connections, err := self.AccountRepository.GetConnectionsByAccountId(ctx, &account_repository.GetConnectionsByAccountIdInput{
+		AccountId: account.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	secureConnectionsData := make([]*models.ProfileDataConnectionsItem, len(connections))
+	for k, v := range connections {
+		secureConnectionsData[k] = &models.ProfileDataConnectionsItem{
+			ExternalHandle: v.ExternalHandle,
+			ExternalId:     v.ExternalId,
+			Provider:       v.Provider,
+		}
+	}
+
 	return &models.ProfileData{
-		AvatarUrl: avatarUrl,
-		Handle:    account.Handle,
-		Name:      account.Name,
+		AccountId:   account.Id,
+		Connections: secureConnectionsData,
+		AvatarUrl:   avatarUrl,
+		Handle:      account.Handle,
+		Name:        account.Name,
 	}, nil
 }

@@ -18,6 +18,8 @@ type NewAuthPostgresInput struct {
 	AccountRepository account_repository.AccountRepository
 }
 
+const SESSION_COOKIE_NAME = "session"
+
 func NewAuthPostgres(i *NewAuthPostgresInput) (adapters.Auth, error) {
 	newLogger := i.Logger.With().Str("adapter", "AuthPostgresAdapter").Logger()
 

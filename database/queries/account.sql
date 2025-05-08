@@ -52,13 +52,13 @@ WHERE
 	a."id" = $1
 LIMIT 1;
 
-
 -- name: GetConnection :one
 SELECT
 	c."account_id",
 	c."provider",
 	c."external_handle",
 	c."external_id",
+	c."access_token",
 	c."refresh_token",
 	c."created_at"
 FROM "connections" c
@@ -67,6 +67,19 @@ WHERE
 	AND
 	c."provider" = $2
 LIMIT 1;
+
+-- name: GetConnectionsByAccountId :many
+SELECT
+	c."account_id",
+	c."provider",
+	c."external_handle",
+	c."external_id",
+	c."access_token",
+	c."refresh_token",
+	c."created_at"
+FROM "connections" c
+WHERE
+	c."account_id" = $1;
 
 -- name: GetAccountDataByHandle :one
 SELECT
@@ -175,13 +188,15 @@ INSERT INTO "connections" (
 	"external_handle",
 	"external_id",
 	"provider",
+	"access_token",
 	"refresh_token"
 ) VALUES (
 	$1,
 	$2,
 	$3,
 	$4,
-	$5
+	$5,
+	$6
 );
 
 -- name: UpdateConnection :exec

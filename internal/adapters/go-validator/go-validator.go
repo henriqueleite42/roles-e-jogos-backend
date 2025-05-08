@@ -17,7 +17,13 @@ func (self *playgroundValidator) Validate(i interface{}) error {
 func NewGoValidator() (adapters.Validator, error) {
 	vald := validator.New(validator.WithRequiredStructEnabled())
 
-	// Add custom validations here
+	vald.RegisterValidation("handle", handleValidator)
+	vald.RegisterValidation("id", idValidator)
+	vald.RegisterValidation("id-list", idListValidator)
+	vald.RegisterValidation("fullname", fullNameValidator)
+	vald.RegisterValidation("xid", xidValidator)
+	vald.RegisterValidation("xid-list", xidListValidator)
+	vald.RegisterValidation("path", pathValidator)
 
 	return &playgroundValidator{
 		validator: vald,

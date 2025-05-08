@@ -145,8 +145,9 @@ func main() {
 	logger.Trace().Msg("initializing repositories")
 
 	accountRepository, err := account_repository.NewAccountRepository(&account_repository.NewAccountRepositoryInput{
-		Logger:  &logger,
-		Queries: sqlcQueries,
+		Logger:    &logger,
+		Queries:   sqlcQueries,
+		IdAdapter: xidAdapter,
 	})
 	if err != nil {
 		logger.Fatal().

@@ -11,7 +11,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_SESSION_TOKEN=test
       - AWS_REGION=us-east-1
-      # - DEBUG=1
+      - LOG_LEVEL=WARN
     env_file:
       - .env.docker
     volumes:
@@ -21,7 +21,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
       test: curl -v localhost:4566/_localstack/init/ready --stderr - | grep SUCCESSFUL
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 100
       # start_period: 30s

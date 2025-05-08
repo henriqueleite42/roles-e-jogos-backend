@@ -238,6 +238,7 @@ type Connection struct {
 	ExternalID     string
 	Provider       ProviderEnum
 	RefreshToken   pgtype.Text
+	AccessToken    pgtype.Text
 }
 
 type EmailAddress struct {

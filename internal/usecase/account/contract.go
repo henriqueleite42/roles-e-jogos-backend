@@ -55,10 +55,10 @@ type SendSignInOtpInput struct {
 
 type AccountUsecase interface {
 	CheckHandle(ctx context.Context, i *CheckHandleInput) (*CheckHandleOutput, error)
-	CreateWithGoogleProvider(ctx context.Context, i *CreateWithGoogleProviderInput) (*models.AccountData, error)
+	CreateWithGoogleProvider(ctx context.Context, i *CreateWithGoogleProviderInput) (*models.SessionData, error)
 	EditHandle(ctx context.Context, i *EditHandleInput) error
 	EditProfile(ctx context.Context, i *EditProfileInput) error
-	ExchangeSignInOtp(ctx context.Context, i *ExchangeSignInOtpInput) (*models.AccountData, error)
+	ExchangeSignInOtp(ctx context.Context, i *ExchangeSignInOtpInput) (*models.SessionData, error)
 	GetEmailListById(ctx context.Context, i *GetEmailListByIdInput) (*GetEmailListByIdOutput, error)
 	GetListById(ctx context.Context, i *GetListByIdInput) (*GetListByIdOutput, error)
 	GetProfileByHandle(ctx context.Context, i *GetProfileByHandleInput) (*models.ProfileData, error)

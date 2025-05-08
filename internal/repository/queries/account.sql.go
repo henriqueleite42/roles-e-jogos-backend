@@ -39,13 +39,15 @@ INSERT INTO "connections" (
 	"external_handle",
 	"external_id",
 	"provider",
+	"access_token",
 	"refresh_token"
 ) VALUES (
 	$1,
 	$2,
 	$3,
 	$4,
-	$5
+	$5,
+	$6
 )
 `
 
@@ -54,6 +56,7 @@ type CreateConnectionParams struct {
 	ExternalHandle pgtype.Text
 	ExternalID     string
 	Provider       ProviderEnum
+	AccessToken    pgtype.Text
 	RefreshToken   pgtype.Text
 }
 
@@ -63,6 +66,7 @@ func (q *Queries) CreateConnection(ctx context.Context, arg CreateConnectionPara
 		arg.ExternalHandle,
 		arg.ExternalID,
 		arg.Provider,
+		arg.AccessToken,
 		arg.RefreshToken,
 	)
 	return err
@@ -404,6 +408,7 @@ SELECT
 	c."provider",
 	c."external_handle",
 	c."external_id",
+	c."access_token",
 	c."refresh_token",
 	c."created_at"
 FROM "connections" c
@@ -424,6 +429,7 @@ type GetConnectionRow struct {
 	Provider       ProviderEnum
 	ExternalHandle pgtype.Text
 	ExternalID     string
+	AccessToken    pgtype.Text
 	RefreshToken   pgtype.Text
 	CreatedAt      pgtype.Timestamptz
 }
@@ -436,10 +442,63 @@ func (q *Queries) GetConnection(ctx context.Context, arg GetConnectionParams) (G
 		&i.Provider,
 		&i.ExternalHandle,
 		&i.ExternalID,
+		&i.AccessToken,
 		&i.RefreshToken,
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getConnectionsByAccountId = `-- name: GetConnectionsByAccountId :many
+SELECT
+	c."account_id",
+	c."provider",
+	c."external_handle",
+	c."external_id",
+	c."access_token",
+	c."refresh_token",
+	c."created_at"
+FROM "connections" c
+WHERE
+	c."account_id" = $1
+`
+
+type GetConnectionsByAccountIdRow struct {
+	AccountID      int32
+	Provider       ProviderEnum
+	ExternalHandle pgtype.Text
+	ExternalID     string
+	AccessToken    pgtype.Text
+	RefreshToken   pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+}
+
+func (q *Queries) GetConnectionsByAccountId(ctx context.Context, accountID int32) ([]GetConnectionsByAccountIdRow, error) {
+	rows, err := q.db.Query(ctx, getConnectionsByAccountId, accountID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetConnectionsByAccountIdRow
+	for rows.Next() {
+		var i GetConnectionsByAccountIdRow
+		if err := rows.Scan(
+			&i.AccountID,
+			&i.Provider,
+			&i.ExternalHandle,
+			&i.ExternalID,
+			&i.AccessToken,
+			&i.RefreshToken,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getEmailsByAccountsIds = `-- name: GetEmailsByAccountsIds :many

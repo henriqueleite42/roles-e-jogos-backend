@@ -21,11 +21,31 @@ func (self *accountRepositoryImplementation) CreateAccountWithConnection(ctx con
 			String: *i.Name,
 		}
 	}
+	var accessToken pgtype.Text
+	if i.AccessToken != nil {
+		accessToken = pgtype.Text{
+			Valid:  true,
+			String: *i.AccessToken,
+		}
+	}
 	var refreshToken pgtype.Text
 	if i.RefreshToken != nil {
 		refreshToken = pgtype.Text{
 			Valid:  true,
 			String: *i.RefreshToken,
+		}
+	}
+	var externalHandle pgtype.Text
+	if i.ExternalHandle != nil {
+		externalHandle = pgtype.Text{
+			Valid:  true,
+			String: *i.ExternalHandle,
+		}
+	}
+	if i.ExternalHandle == nil && i.Name != nil {
+		externalHandle = pgtype.Text{
+			Valid:  true,
+			String: *i.Name,
 		}
 	}
 
@@ -40,9 +60,10 @@ func (self *accountRepositoryImplementation) CreateAccountWithConnection(ctx con
 
 	err = db.CreateConnection(ctx, queries.CreateConnectionParams{
 		AccountID:      accountIdInt32,
-		ExternalHandle: name,
+		ExternalHandle: externalHandle,
 		ExternalID:     i.ExternalId,
 		Provider:       queries.ProviderEnum(i.Provider),
+		AccessToken:    accessToken,
 		RefreshToken:   refreshToken,
 	})
 	if err != nil {

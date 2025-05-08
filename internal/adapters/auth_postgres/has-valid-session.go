@@ -3,6 +3,7 @@ package auth_postgres
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/models"
@@ -10,12 +11,13 @@ import (
 )
 
 func (self *authPostgresAdapter) HasValidSession(i *adapters.HasValidSessionInput) (*models.AccountDataDb, error) {
-	cookie, err := i.Req.Cookie("session")
+	cookie, err := i.Req.Cookie(SESSION_COOKIE_NAME)
 	if err != nil {
 		return nil, err
 	}
 
-	if !cookie.HttpOnly {
+	// Applies extra security on prod
+	if os.Getenv("ENV") == "prod" && !cookie.HttpOnly {
 		return nil, fmt.Errorf("invalid auth cookie")
 	}
 

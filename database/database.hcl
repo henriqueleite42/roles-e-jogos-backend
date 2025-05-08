@@ -81,6 +81,10 @@ table "accounts" {
 }
 table "connections" {
 	schema = schema.public
+	column "access_token" {
+		type = sql("VARCHAR(500)")
+		null = true
+	}
 	column "account_id" {
 		type = sql("INTEGER")
 	}
