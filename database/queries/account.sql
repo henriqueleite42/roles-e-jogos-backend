@@ -136,13 +136,15 @@ WHERE
 	e."email_address" = $3
 LIMIT 1);
 
--- name: CreateAccountWithName :one
+-- name: CreateAccount :one
 INSERT INTO "accounts" (
 	"handle",
-	"name"
+	"name",
+	"avatar_path"
 ) VALUES (
 	$1,
-	$2
+	$2,
+	$3
 ) RETURNING "id";
 
 -- name: CreateValidatedEmailAddress :exec

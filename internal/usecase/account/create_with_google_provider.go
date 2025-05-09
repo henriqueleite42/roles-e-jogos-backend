@@ -2,6 +2,7 @@ package account_usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/models"
@@ -56,22 +57,35 @@ func (self *AccountUsecaseImplementation) CreateWithGoogleProvider(ctx context.C
 		}, nil
 	}
 
+	var avatarPath *string
+	if externalUserData.AvatarUrl != nil {
+		path := fmt.Sprintf("avatars/%s.{{ext}}", self.IdAdapter.GenId())
+		formattedPath, err := self.StorageAdapter.DownloadFromUrl(&adapters.DownloadFromUrlInput{
+			Url:       *externalUserData.AvatarUrl,
+			StorageId: self.SecretsAdapter.MediasS3BucketName,
+			FileName:  path,
+		})
+		if err == nil {
+			avatarPath = &formattedPath
+		} else {
+			self.Logger.Error().Err(err).Msg("fail to download avatar img")
+		}
+	}
+
 	newAccount, err := self.AccountRepository.CreateAccountWithConnection(ctx, &account_repository.CreateAccountWithConnectionInput{
 		Email:          externalUserData.Email,
 		ExternalHandle: externalUserData.Handle,
 		ExternalId:     externalUserData.Id,
 		Handle:         genHandle(),
 		Name:           &externalUserData.Name,
+		AccessToken:    &exchangeResult.AccessToken,
+		AvatarPath:     avatarPath,
 		Provider:       models.Provider_Google,
 		RefreshToken:   exchangeResult.RefreshToken,
 	})
 	if err != nil {
 		tx.Rollback(ctx)
 		return nil, err
-	}
-
-	if externalUserData.AvatarUrl != nil {
-		// Save image
 	}
 
 	session, err := self.AccountRepository.CreateSession(ctx, &account_repository.CreateSessionInput{

@@ -19,7 +19,18 @@ type UploadFileInput struct {
 	File     []byte
 }
 
+type DownloadFromUrlInput struct {
+	// Url from which the file should be downloaded
+	Url string
+	// The bucket name
+	StorageId string
+	// File path + name, ex: foo/bar/xyz.png
+	FileName string
+}
+
 type Storage interface {
 	GetFile(i *GetFileInput) ([]byte, error)
 	UploadFile(i *UploadFileInput) error
+	// Returns the formatted FileName
+	DownloadFromUrl(i *DownloadFromUrlInput) (string, error)
 }

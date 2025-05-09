@@ -99,11 +99,11 @@ Entities:
           DbType: VARCHAR(16)
         Name:
           Type: String
-          DbType: VARCHAR(50)
+          DbType: VARCHAR(64)
           Optional: true
         AvatarPath:
           Type: String
-          DbType: CHAR(20)
+          DbType: CHAR(128)
           Optional: true
         CreatedAt:
           Type: Timestamp
@@ -251,6 +251,9 @@ Repository:
             Type: Enum
             EnumRef: Enums.Provider
           ExternalHandle:
+            Type: String
+            Optional: true
+          AvatarPath:
             Type: String
             Optional: true
           ExternalId:

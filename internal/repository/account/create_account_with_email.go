@@ -13,7 +13,7 @@ func (self *accountRepositoryImplementation) CreateAccountWithEmail(ctx context.
 		return nil, err
 	}
 
-	accountIdInt32, err := db.CreateAccountWithName(ctx, queries.CreateAccountWithNameParams{
+	accountIdInt32, err := db.CreateAccount(ctx, queries.CreateAccountParams{
 		Handle: i.Handle,
 	})
 	if err != nil {

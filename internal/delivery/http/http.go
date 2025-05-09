@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/rs/cors"
 	"github.com/rs/zerolog"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
@@ -20,6 +21,7 @@ import (
 )
 
 type httpDelivery struct {
+	mux    *http.ServeMux
 	server *http.Server
 
 	logger         *zerolog.Logger
@@ -53,6 +55,7 @@ func (self *httpDelivery) Name() string {
 func (self *httpDelivery) Listen() {
 	go func() {
 		account_delivery_http.AddAccountController(&account_delivery_http.AddAccountControllerInput{
+			Mux:            self.mux,
 			Logger:         self.logger,
 			Validator:      self.validator,
 			AuthAdapter:    self.authAdapter,
@@ -61,6 +64,7 @@ func (self *httpDelivery) Listen() {
 			AccountUsecase: self.accountUsecase,
 		})
 		collection_delivery_http.AddCollectionController(&collection_delivery_http.AddCollectionControllerInput{
+			Mux:               self.mux,
 			Logger:            self.logger,
 			Validator:         self.validator,
 			AuthAdapter:       self.authAdapter,
@@ -110,9 +114,18 @@ func (self *httpDelivery) Cancel(timeout time.Duration) {
 func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
 	port := fmt.Sprintf(":%v", i.SecretsAdapter.Port)
 
+	mux := http.NewServeMux()
+
+	handler := cors.New(cors.Options{
+		AllowedOrigins:   []string{i.SecretsAdapter.WebsiteUrl}, // or ["*"] for all
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true, // only if using cookies
+	}).Handler(mux)
+
 	server := &http.Server{
 		Addr:    port,
-		Handler: nil, // Use the default ServeMux
+		Handler: handler,
 		// Optionally configure timeouts for graceful shutdown
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -120,6 +133,7 @@ func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
 	}
 
 	return &httpDelivery{
+		mux:               mux,
 		server:            server,
 		logger:            i.Logger,
 		validator:         i.Validator,

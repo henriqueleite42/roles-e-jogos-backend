@@ -18,6 +18,7 @@ type collectionController struct {
 }
 
 type AddCollectionControllerInput struct {
+	Mux    *http.ServeMux
 	Logger *zerolog.Logger
 
 	Validator      adapters.Validator
@@ -38,6 +39,6 @@ func AddCollectionController(i *AddCollectionControllerInput) {
 		collectionUsecase: i.CollectionUsecase,
 	}
 
-	http.HandleFunc("/collection/personal", collectionController.CollectionPersonal)
-	http.HandleFunc("/collection/collective", collectionController.CollectionCollective)
+	i.Mux.HandleFunc("/collection/personal", collectionController.CollectionPersonal)
+	i.Mux.HandleFunc("/collection/collective", collectionController.CollectionCollective)
 }

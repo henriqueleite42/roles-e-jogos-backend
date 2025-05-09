@@ -16,7 +16,7 @@ func (self *accountController) ProfileMe(w http.ResponseWriter, r *http.Request)
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "EditProfile").
+		Str("route", "ProfileMe").
 		Str("reqId", reqId).
 		Logger()
 

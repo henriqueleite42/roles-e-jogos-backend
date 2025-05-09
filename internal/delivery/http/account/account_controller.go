@@ -18,6 +18,7 @@ type accountController struct {
 }
 
 type AddAccountControllerInput struct {
+	Mux    *http.ServeMux
 	Logger *zerolog.Logger
 
 	Validator      adapters.Validator
@@ -38,10 +39,10 @@ func AddAccountController(i *AddAccountControllerInput) {
 		accountUsecase: i.AccountUsecase,
 	}
 
-	http.HandleFunc("/auth/google", accountController.AuthGoogle)
-	http.HandleFunc("/auth/link/ludopedia", accountController.AuthLinkLudopedia)
+	i.Mux.HandleFunc("/auth/google", accountController.AuthGoogle)
+	i.Mux.HandleFunc("/auth/link/ludopedia", accountController.AuthLinkLudopedia)
 
-	http.HandleFunc("/profile/handle", accountController.ProfileHandle)
-	http.HandleFunc("/profile/handle/check", accountController.ProfileHandleCheck)
-	http.HandleFunc("/profile/me", accountController.ProfileMe)
+	i.Mux.HandleFunc("/profile/handle", accountController.ProfileHandle)
+	i.Mux.HandleFunc("/profile/handle/check", accountController.ProfileHandleCheck)
+	i.Mux.HandleFunc("/profile/me", accountController.ProfileMe)
 }

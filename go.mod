@@ -10,7 +10,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ses v1.30.2
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.59.0
 	github.com/go-playground/validator/v10 v10.26.0
+	github.com/h2non/bimg v1.1.9
 	github.com/jackc/pgx/v5 v5.7.4
+	github.com/rs/cors v1.11.1
 	github.com/rs/xid v1.6.0
 	github.com/rs/zerolog v1.34.0
 )

@@ -16,7 +16,7 @@ func (self *accountController) ProfileHandle(w http.ResponseWriter, r *http.Requ
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "EditHandle").
+		Str("route", "ProfileHandle").
 		Str("reqId", reqId).
 		Logger()
 
@@ -63,6 +63,12 @@ func (self *accountController) ProfileHandle(w http.ResponseWriter, r *http.Requ
 		err = self.accountUsecase.EditHandle(reqCtx, editHandleInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
+
+			if err.Error() == "conflict" {
+				http.Error(w, "conflict", http.StatusConflict)
+				return
+			}
+
 			logger.Warn().Err(err).Msg("usecase err")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

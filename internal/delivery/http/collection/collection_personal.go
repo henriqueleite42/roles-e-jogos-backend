@@ -16,11 +16,11 @@ func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *h
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "AddToPersonalCollection").
+		Str("route", "CollectionPersonal").
 		Str("reqId", reqId).
 		Logger()
 
-	if r.Method == http.MethodGet {
+	if r.Method == http.MethodPost {
 		session, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
 			Req: r,
 		})

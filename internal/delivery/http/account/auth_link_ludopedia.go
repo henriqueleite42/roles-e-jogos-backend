@@ -14,7 +14,7 @@ func (self *accountController) AuthLinkLudopedia(w http.ResponseWriter, r *http.
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "LinkLudopediaProvider").
+		Str("route", "AuthLinkLudopedia").
 		Str("reqId", reqId).
 		Logger()
 

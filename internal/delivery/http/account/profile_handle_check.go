@@ -15,7 +15,7 @@ func (self *accountController) ProfileHandleCheck(w http.ResponseWriter, r *http
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "CheckHandle").
+		Str("route", "ProfileHandleCheck").
 		Str("reqId", reqId).
 		Logger()
 

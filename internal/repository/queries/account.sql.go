@@ -11,23 +11,26 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createAccountWithName = `-- name: CreateAccountWithName :one
+const createAccount = `-- name: CreateAccount :one
 INSERT INTO "accounts" (
 	"handle",
-	"name"
+	"name",
+	"avatar_path"
 ) VALUES (
 	$1,
-	$2
+	$2,
+	$3
 ) RETURNING "id"
 `
 
-type CreateAccountWithNameParams struct {
-	Handle string
-	Name   pgtype.Text
+type CreateAccountParams struct {
+	Handle     string
+	Name       pgtype.Text
+	AvatarPath pgtype.Text
 }
 
-func (q *Queries) CreateAccountWithName(ctx context.Context, arg CreateAccountWithNameParams) (int32, error) {
-	row := q.db.QueryRow(ctx, createAccountWithName, arg.Handle, arg.Name)
+func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createAccount, arg.Handle, arg.Name, arg.AvatarPath)
 	var id int32
 	err := row.Scan(&id)
 	return id, err

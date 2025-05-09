@@ -21,6 +21,13 @@ func (self *accountRepositoryImplementation) CreateAccountWithConnection(ctx con
 			String: *i.Name,
 		}
 	}
+	var avatarPath pgtype.Text
+	if i.AvatarPath != nil {
+		avatarPath = pgtype.Text{
+			Valid:  true,
+			String: *i.AvatarPath,
+		}
+	}
 	var accessToken pgtype.Text
 	if i.AccessToken != nil {
 		accessToken = pgtype.Text{
@@ -49,9 +56,10 @@ func (self *accountRepositoryImplementation) CreateAccountWithConnection(ctx con
 		}
 	}
 
-	accountIdInt32, err := db.CreateAccountWithName(ctx, queries.CreateAccountWithNameParams{
-		Handle: i.Handle,
-		Name:   name,
+	accountIdInt32, err := db.CreateAccount(ctx, queries.CreateAccountParams{
+		Handle:     i.Handle,
+		Name:       name,
+		AvatarPath: avatarPath,
 	})
 	if err != nil {
 		return nil, err

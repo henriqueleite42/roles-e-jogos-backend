@@ -1,7 +1,7 @@
 package adapters
 
 type Id interface {
-	GenId() (string, error)
+	GenId() string
 	GenReqId() string
 	GenSessionId() string
 }

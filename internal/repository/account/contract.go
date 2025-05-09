@@ -9,6 +9,7 @@ import (
 
 type CreateAccountWithConnectionInput struct {
 	AccessToken    *string
+	AvatarPath     *string
 	Email          string
 	ExternalHandle *string
 	ExternalId     string

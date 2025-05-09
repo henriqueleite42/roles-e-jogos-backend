@@ -68,6 +68,7 @@ services:
       - GRPC_GO_LOG_VERBOSITY_LEVEL=99
       - GRPC_GO_LOG_SEVERITY_LEVEL=info
       - GODEBUG=netdns=cgo
+      - LOG_LEVEL=TRACE
     env_file:
       - .env.docker
     networks:
@@ -75,7 +76,6 @@ services:
 
 volumes:
   postgres:
-  images:
 
 networks:
   rolesejogos-api_network:

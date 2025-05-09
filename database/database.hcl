@@ -41,7 +41,7 @@ enum "provider_enum" {
 table "accounts" {
 	schema = schema.public
 	column "avatar_path" {
-		type = sql("CHAR(20)")
+		type = sql("CHAR(128)")
 		null = true
 	}
 	column "created_at" {
@@ -64,7 +64,7 @@ table "accounts" {
 		default = sql("FALSE")
 	}
 	column "name" {
-		type = sql("VARCHAR(50)")
+		type = sql("VARCHAR(64)")
 		null = true
 	}
 	primary_key {

@@ -15,7 +15,7 @@ func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request
 	logger := self.logger.With().
 		Str("dmn", "Account").
 		Str("mtd", r.Method).
-		Str("route", "CreateWithGoogleProvider").
+		Str("route", "AuthGoogle").
 		Str("reqId", reqId).
 		Logger()
 
