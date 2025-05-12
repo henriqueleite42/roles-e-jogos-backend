@@ -309,7 +309,7 @@ table "games" {
 		type = sql("VARCHAR(1000)")
 	}
 	column "icon_path" {
-		type = sql("VARCHAR(250)")
+		type = sql("VARCHAR(256)")
 		null = true
 	}
 	column "id" {
@@ -328,7 +328,7 @@ table "games" {
 		null = true
 	}
 	column "ludopedia_url" {
-		type = sql("VARCHAR(500)")
+		type = sql("VARCHAR(512)")
 		null = true
 	}
 	column "max_amount_of_players" {
@@ -338,7 +338,7 @@ table "games" {
 		type = sql("INTEGER")
 	}
 	column "name" {
-		type = sql("VARCHAR(50)")
+		type = sql("VARCHAR(128)")
 	}
 	primary_key {
 		columns = [

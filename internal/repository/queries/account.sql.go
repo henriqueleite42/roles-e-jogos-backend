@@ -368,7 +368,6 @@ SELECT
 FROM "accounts" a
 WHERE
 	a."id" = ANY($1::int[])
-LIMIT 1
 `
 
 type GetAccountsListByIdsRow struct {

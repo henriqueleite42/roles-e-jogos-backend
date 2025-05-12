@@ -5,8 +5,17 @@ import (
 )
 
 type GroupCollectionItem struct {
-	Game   *Game                            `validate:"required"`
+	Game   *GroupCollectionItemGame         `validate:"required"`
 	Owners []*GroupCollectionItemOwnersItem `validate:"required"`
+}
+
+type GroupCollectionItemGame struct {
+	IconUrl            *string `validate:"omitempty"`
+	Id                 int
+	LudopediaUrl       string
+	MaxAmountOfPlayers int
+	MinAmountOfPlayers int
+	Name               string
 }
 
 type GroupCollectionItemOwnersItem struct {
@@ -17,9 +26,9 @@ type GroupCollectionItemOwnersItem struct {
 
 type PersonalCollection struct {
 	AccountId  int        `db:"account_id"`
-	AcquiredAt *time.Time `db:"acquired_at"`
+	AcquiredAt *time.Time `validate:"omitempty" db:"acquired_at"`
 	CreatedAt  time.Time  `validate:"required" db:"created_at"`
 	GameId     int        `db:"game_id"`
 	Id         int        `db:"id"`
-	Paid       *int       `db:"paid"`
+	Paid       *int       `validate:"omitempty" db:"paid"`
 }

@@ -30,13 +30,13 @@ Entities:
           DbType: INTEGER
         Name:
           Type: String
-          DbType: VARCHAR(50)
+          DbType: VARCHAR(128)
         Description:
           Type: String
           DbType: VARCHAR(1000)
         IconPath:
           Type: String
-          DbType: VARCHAR(250)
+          DbType: VARCHAR(256)
           Optional: true
         Kind:
           Type: Enum
@@ -47,7 +47,7 @@ Entities:
           Optional: true
         LudopediaUrl:
           Type: String
-          DbType: VARCHAR(500)
+          DbType: VARCHAR(512)
           Optional: true
         MinAmountOfPlayers:
           Type: Int

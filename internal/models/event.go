@@ -35,11 +35,11 @@ type Event struct {
 	CreatedAt          time.Time `validate:"required" db:"created_at"`
 	Date               time.Time `validate:"required" db:"date"`
 	Description        string    `db:"description"`
-	IconPath           *string   `db:"icon_path"`
+	IconPath           *string   `validate:"omitempty" db:"icon_path"`
 	Id                 int       `db:"id"`
 	LocationAddress    string    `db:"location_address"`
 	LocationName       string    `db:"location_name"`
-	MaxAmountOfPlayers *int      `db:"max_amount_of_players"`
+	MaxAmountOfPlayers *int      `validate:"omitempty" db:"max_amount_of_players"`
 	Name               string    `db:"name"`
 	OwnerId            int       `db:"owner_id"`
 }

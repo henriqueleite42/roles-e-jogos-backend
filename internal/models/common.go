@@ -5,45 +5,45 @@ import (
 )
 
 type PaginationInputId struct {
-	After *int
-	Limit *int `validate:"min=1,max=100"`
+	After *int `validate:"omitempty"`
+	Limit *int `validate:"omitempty,min=1,max=100"`
 }
 
 type PaginationInputInt struct {
-	After *int
-	Limit *int `validate:"min=1,max=100"`
+	After *int `validate:"omitempty"`
+	Limit *int `validate:"omitempty,min=1,max=100"`
 }
 
 type PaginationInputString struct {
-	After *string
-	Limit *int    `validate:"min=1,max=100"`
+	After *string `validate:"omitempty"`
+	Limit *int    `validate:"omitempty,min=1,max=100"`
 }
 
 type PaginationInputTimestamp struct {
-	After *time.Time
-	Limit *int       `validate:"min=1,max=100"`
+	After *time.Time `validate:"omitempty"`
+	Limit *int       `validate:"omitempty,min=1,max=100"`
 }
 
 type PaginationOutputId struct {
-	Limit    int
-	Next     *int
-	Previous *int
+	Current *int `validate:"omitempty"`
+	Limit   int
+	Next    *int `validate:"omitempty"`
 }
 
 type PaginationOutputInt struct {
-	Limit    int
-	Next     *int
-	Previous *int
+	Current *int `validate:"omitempty"`
+	Limit   int
+	Next    *int `validate:"omitempty"`
 }
 
 type PaginationOutputString struct {
-	Limit    int
-	Next     *string
-	Previous *string
+	Current *string `validate:"omitempty"`
+	Limit   int
+	Next    *string `validate:"omitempty"`
 }
 
 type PaginationOutputTimestamp struct {
-	Limit    int
-	Next     *time.Time
-	Previous *time.Time
+	Current *time.Time `validate:"omitempty"`
+	Limit   int
+	Next    *time.Time `validate:"omitempty"`
 }

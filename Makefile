@@ -5,9 +5,12 @@ build:
 	export GOOS=linux && \
 	go build -C ./cmd -o ../bin
 
+es:
+	docker compose up localstack postgres
+
 run:
 	make build && \
-	docker compose up --build
+	docker compose up api --build
 
 run-db:
 	docker compose up postgres

@@ -19,15 +19,15 @@ type CreateEventInput struct {
 	Icon               *CreateEventInputIcon `validate:"required"`
 	LocationAddress    string                `validate:"min=1,max=500"`
 	LocationName       string                `validate:"min=1,max=100"`
-	MaxAmountOfPlayers *int                  `validate:"min=1,max=9999"`
+	MaxAmountOfPlayers *int                  `validate:"omitempty,min=1,max=9999"`
 	Name               string                `validate:"min=1,max=50"`
 }
 type CreateEventInputIcon struct {
-	CustomIcon *string `validate:"path"`
-	GameIcon   *int
+	CustomIcon *string `validate:"omitempty,path"`
+	GameIcon   *int    `validate:"omitempty"`
 }
 type GetEventsInput struct {
-	Pagination *models.PaginationInputString
+	Pagination *models.PaginationInputString `validate:"omitempty"`
 }
 type GetEventsOutput struct {
 	Data       []*models.EventData            `validate:"required"`

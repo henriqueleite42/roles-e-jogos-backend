@@ -40,8 +40,7 @@ SELECT
 	a."name"
 FROM "accounts" a
 WHERE
-	a."id" = ANY($1::int[])
-LIMIT 1;
+	a."id" = ANY($1::int[]);
 
 -- name: GetAccountDataById :one
 SELECT

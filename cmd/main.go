@@ -155,8 +155,9 @@ func main() {
 			Msg("fail to initialize AccountRepository")
 	}
 	collectionRepository, err := collection_repository.NewCollectionRepository(&collection_repository.NewCollectionRepositoryInput{
-		Logger:  &logger,
-		Queries: sqlcQueries,
+		Logger:         &logger,
+		Queries:        sqlcQueries,
+		SecretsAdapter: secretsAdapter,
 	})
 	if err != nil {
 		logger.Fatal().

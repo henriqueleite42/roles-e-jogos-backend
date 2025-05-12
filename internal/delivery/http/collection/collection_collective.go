@@ -31,28 +31,44 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 			return
 		}
 
+		getCollectiveCollectionInput := &collection_usecase.GetCollectiveCollectionInput{
+			Pagination: models.GetDefaultPaginationInputString(),
+		}
+
 		query := r.URL.Query()
 
 		afterQuery := query.Get("after")
-		var after *string
 		if afterQuery != "" {
-			after = &afterQuery
+			getCollectiveCollectionInput.Pagination.After = &afterQuery
 		}
-
 		limitQuery := query.Get("limit")
-		var limit *int
 		if limitQuery != "" {
 			limitInt, err := strconv.Atoi(limitQuery)
 			if err != nil {
-				limit = &limitInt
+				getCollectiveCollectionInput.Pagination.Limit = &limitInt
 			}
 		}
-
-		getCollectiveCollectionInput := &collection_usecase.GetCollectiveCollectionInput{
-			Pagination: &models.PaginationInputString{
-				After: after,
-				Limit: limit,
-			},
+		accountIdQuery := query.Get("accountId")
+		if accountIdQuery != "" {
+			accountIdInt, err := strconv.Atoi(accountIdQuery)
+			if err != nil {
+				getCollectiveCollectionInput.AccountId = &accountIdInt
+			}
+		}
+		gameNameQuery := query.Get("gameName")
+		if gameNameQuery != "" {
+			getCollectiveCollectionInput.GameName = &gameNameQuery
+		}
+		kindQuery := query.Get("kind")
+		if kindQuery != "" {
+			getCollectiveCollectionInput.Kind = models.Kind(kindQuery)
+		}
+		maxAmountOfPlayersQuery := query.Get("maxAmountOfPlayers")
+		if maxAmountOfPlayersQuery != "" {
+			maxAmountOfPlayersInt, err := strconv.Atoi(maxAmountOfPlayersQuery)
+			if err != nil {
+				getCollectiveCollectionInput.MaxAmountOfPlayers = &maxAmountOfPlayersInt
+			}
 		}
 
 		logger.Trace().Msg("validate getCollectiveCollectionInput")

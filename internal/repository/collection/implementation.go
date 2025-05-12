@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/queries"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
@@ -12,11 +13,15 @@ import (
 type collectionRepositoryImplementation struct {
 	logger  *zerolog.Logger
 	queries *queries.Queries
+
+	secretsAdapter *adapters.Secrets
 }
 
 type NewCollectionRepositoryInput struct {
 	Logger  *zerolog.Logger
 	Queries *queries.Queries
+
+	SecretsAdapter *adapters.Secrets
 }
 
 // Applies the transaction if it's needed
@@ -39,7 +44,8 @@ func NewCollectionRepository(i *NewCollectionRepositoryInput) (CollectionReposit
 	}
 
 	return &collectionRepositoryImplementation{
-		logger:  i.Logger,
-		queries: i.Queries,
+		logger:         i.Logger,
+		queries:        i.Queries,
+		secretsAdapter: i.SecretsAdapter,
 	}, nil
 }

@@ -21,20 +21,20 @@ type EditHandleInput struct {
 }
 type EditProfileInput struct {
 	AccountId int     `validate:"id"`
-	Name      *string `validate:"max=24"`
+	Name      *string `validate:"omitempty,max=24"`
 }
 type ExchangeSignInOtpInput struct {
 	AccountId int    `validate:"id"`
 	Otp       string
 }
 type GetEmailListByIdInput struct {
-	AccountsIds []int `validate:"gt=0,dive,min=1,required"`
+	AccountsIds []int `validate:"required,gt=0,dive,min=1"`
 }
 type GetEmailListByIdOutput struct {
 	Data []*models.EmailAddress `validate:"required"`
 }
 type GetListByIdInput struct {
-	AccountsIds []int `validate:"gt=0,dive,min=1,required"`
+	AccountsIds []int `validate:"required,gt=0,dive,min=1"`
 }
 type GetListByIdOutput struct {
 	Data []*models.AccountDataDb `validate:"required"`

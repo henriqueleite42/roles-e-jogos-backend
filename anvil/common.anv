@@ -23,7 +23,7 @@ Types:
   PaginationOutputId:
     Type: Map
     Properties:
-      Previous:
+      Current:
         Type: Int
         Optional: true
       Next:
@@ -49,7 +49,7 @@ Types:
   PaginationOutputInt:
     Type: Map
     Properties:
-      Previous:
+      Current:
         Type: Int
         Optional: true
       Next:
@@ -75,7 +75,7 @@ Types:
   PaginationOutputString:
     Type: Map
     Properties:
-      Previous:
+      Current:
         Type: String
         Optional: true
       Next:
@@ -101,7 +101,7 @@ Types:
   PaginationOutputTimestamp:
     Type: Map
     Properties:
-      Previous:
+      Current:
         Type: Timestamp
         Optional: true
       Next:

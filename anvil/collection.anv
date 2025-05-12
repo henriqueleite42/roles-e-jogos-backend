@@ -10,7 +10,21 @@ Types:
     Type: Map
     Properties:
       Game:
-        $ref: Game.Entities.Game
+        Type: Map
+        Properties:
+          Id:
+            Type: Int
+          Name:
+            Type: String
+          IconUrl:
+            Type: String
+            Optional: true
+          LudopediaUrl:
+            Type: String
+          MinAmountOfPlayers:
+            Type: Int
+          MaxAmountOfPlayers:
+            Type: Int
       Owners:
         Type: List
         Items:
@@ -87,6 +101,18 @@ Repository:
         Properties:
           Pagination:
             $ref: Common.Types.PaginationInputString
+          Kind:
+            Type: Enum
+            EnumRef: Game.Enums.Kind
+          AccountId:
+            Type: Int
+            Optional: true
+          MaxAmountOfPlayers:
+            Type: Int
+            Optional: true
+          GameName:
+            Type: String
+            Optional: true
       Output:
         Type: Map
         Properties:
@@ -118,6 +144,26 @@ Usecase:
         Properties:
           Pagination:
             $ref: Common.Types.PaginationInputString
+          Kind:
+            Type: Enum
+            EnumRef: Game.Enums.Kind
+          AccountId:
+            Type: Int
+            Validate:
+              - id
+            Optional: true
+          MaxAmountOfPlayers:
+            Type: Int
+            Validate:
+              - min=1
+              - max=99
+            Optional: true
+          GameName:
+            Type: String
+            Validate:
+              - min=1
+              - max=128
+            Optional: true
       Output:
         Type: Map
         Properties:

@@ -8,10 +8,10 @@ import (
 
 type CreateGameInput struct {
 	Description        string      `validate:"max=1000"`
-	IconPath           *string     `db:"icon_path"`
+	IconPath           *string     `validate:"omitempty" db:"icon_path"`
 	Kind               models.Kind `validate:"required" db:"kind"`
-	LudopediaId        *int
-	LudopediaUrl       *string     `validate:"max=500"`
+	LudopediaId        *int        `validate:"omitempty"`
+	LudopediaUrl       *string     `validate:"omitempty,max=500"`
 	MaxAmountOfPlayers int
 	MinAmountOfPlayers int
 	Name               string

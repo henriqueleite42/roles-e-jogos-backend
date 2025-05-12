@@ -8,15 +8,15 @@ import (
 )
 
 type CreateAccountWithConnectionInput struct {
-	AccessToken    *string
-	AvatarPath     *string
+	AccessToken    *string         `validate:"omitempty"`
+	AvatarPath     *string         `validate:"omitempty"`
 	Email          string
-	ExternalHandle *string
+	ExternalHandle *string         `validate:"omitempty"`
 	ExternalId     string
 	Handle         string
-	Name           *string
+	Name           *string         `validate:"omitempty"`
 	Provider       models.Provider `validate:"required" db:"provider"`
-	RefreshToken   *string
+	RefreshToken   *string         `validate:"omitempty"`
 }
 type CreateAccountWithEmailInput struct {
 	Email  string
@@ -36,7 +36,7 @@ type EditAccountHandleInput struct {
 }
 type EditProfileInput struct {
 	AccountId int
-	Name      *string
+	Name      *string `validate:"omitempty"`
 }
 type GetAccountByHandleInput struct {
 	Handle string
@@ -96,10 +96,10 @@ type GetOtpOutput struct {
 type LinkConnectionWithAccountInput struct {
 	AccountId      int
 	Email          string
-	ExternalHandle *string
+	ExternalHandle *string         `validate:"omitempty"`
 	ExternalId     string
 	Provider       models.Provider `validate:"required" db:"provider"`
-	RefreshToken   *string
+	RefreshToken   *string         `validate:"omitempty"`
 }
 
 type AccountRepository interface {
