@@ -119,7 +119,7 @@ func NewHttpDelivery(i *NewHttpDeliveryInput) delivery.Delivery {
 	handler := cors.New(cors.Options{
 		AllowedOrigins:   []string{i.SecretsAdapter.WebsiteUrl}, // or ["*"] for all
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "Access-Control-Allow-Credentials"},
 		AllowCredentials: true, // only if using cookies
 	}).Handler(mux)
 

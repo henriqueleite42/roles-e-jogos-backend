@@ -41,7 +41,7 @@ enum "provider_enum" {
 table "accounts" {
 	schema = schema.public
 	column "avatar_path" {
-		type = sql("CHAR(128)")
+		type = sql("VARCHAR(128)")
 		null = true
 	}
 	column "created_at" {
@@ -488,7 +488,7 @@ table "sessions" {
 		default = sql("NOW()")
 	}
 	column "session_id" {
-		type = sql("CHAR(32)")
+		type = sql("CHAR(128)")
 	}
 	primary_key {
 		columns = [

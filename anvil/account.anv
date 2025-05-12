@@ -103,7 +103,7 @@ Entities:
           Optional: true
         AvatarPath:
           Type: String
-          DbType: CHAR(128)
+          DbType: VARCHAR(128)
           Optional: true
         CreatedAt:
           Type: Timestamp
@@ -217,7 +217,7 @@ Entities:
       Columns:
         SessionId:
           Type: String
-          DbType: CHAR(32)
+          DbType: CHAR(128)
         AccountId:
           Type: Int
           DbType: INTEGER

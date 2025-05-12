@@ -44,15 +44,19 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 		limitQuery := query.Get("limit")
 		if limitQuery != "" {
 			limitInt, err := strconv.Atoi(limitQuery)
-			if err != nil {
+			if err == nil {
 				getCollectiveCollectionInput.Pagination.Limit = &limitInt
+			} else {
+				logger.Info().Err(err).Msg("fail to convert limit")
 			}
 		}
 		accountIdQuery := query.Get("accountId")
 		if accountIdQuery != "" {
 			accountIdInt, err := strconv.Atoi(accountIdQuery)
-			if err != nil {
+			if err == nil {
 				getCollectiveCollectionInput.AccountId = &accountIdInt
+			} else {
+				logger.Info().Err(err).Msg("fail to convert accountId")
 			}
 		}
 		gameNameQuery := query.Get("gameName")
@@ -66,8 +70,10 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 		maxAmountOfPlayersQuery := query.Get("maxAmountOfPlayers")
 		if maxAmountOfPlayersQuery != "" {
 			maxAmountOfPlayersInt, err := strconv.Atoi(maxAmountOfPlayersQuery)
-			if err != nil {
+			if err == nil {
 				getCollectiveCollectionInput.MaxAmountOfPlayers = &maxAmountOfPlayersInt
+			} else {
+				logger.Info().Err(err).Msg("fail to convert maxAmountOfPlayers")
 			}
 		}
 
