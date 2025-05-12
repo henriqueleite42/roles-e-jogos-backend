@@ -42,6 +42,16 @@ FROM "accounts" a
 WHERE
 	a."id" = ANY($1::int[]);
 
+-- name: GetProfilesListByHandle :many
+SELECT
+	a."avatar_path",
+	a."handle",
+	a."id"
+FROM "accounts" a
+WHERE
+	LOWER(a."handle") LIKE LOWER('%' || $1 || '%')
+LIMIT 10;
+
 -- name: GetAccountDataById :one
 SELECT
 	a."id",

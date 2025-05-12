@@ -28,14 +28,7 @@ Types:
       Owners:
         Type: List
         Items:
-          Type: Map
-          Properties:
-            AccountId:
-              Type: Int
-            Handle:
-              Type: String
-            AvatarUrl:
-              Type: String
+          $ref: Account.Types.MinimumProfileData
 
 Entities:
   NamingCase: snake

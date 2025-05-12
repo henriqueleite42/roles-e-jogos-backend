@@ -45,4 +45,5 @@ func AddAccountController(i *AddAccountControllerInput) {
 	i.Mux.HandleFunc("/profile/handle", accountController.ProfileHandle)
 	i.Mux.HandleFunc("/profile/handle/check", accountController.ProfileHandleCheck)
 	i.Mux.HandleFunc("/profile/me", accountController.ProfileMe)
+	i.Mux.HandleFunc("/profile/list/by-handle", accountController.ProfileListByHandle)
 }

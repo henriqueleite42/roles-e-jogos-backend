@@ -59,11 +59,17 @@ func (self *collectionRepositoryImplementation) GetCollectiveCollection(ctx cont
 			return nil, fmt.Errorf("fail to decode owners json")
 		}
 
-		owners := make([]*models.GroupCollectionItemOwnersItem, len(ownerJsonParsed))
+		owners := make([]*models.MinimumProfileData, len(ownerJsonParsed))
 		for kk, vv := range ownerJsonParsed {
-			owners[kk] = &models.GroupCollectionItemOwnersItem{
+			var avatarUrl *string
+			if vv.AvatarPath != nil {
+				url := self.secretsAdapter.MediasCloudfrontUrl + *vv.AvatarPath
+				avatarUrl = &url
+			}
+
+			owners[kk] = &models.MinimumProfileData{
 				AccountId: vv.AccountId,
-				AvatarUrl: *vv.AvatarPath,
+				AvatarUrl: avatarUrl,
 				Handle:    vv.Handle,
 			}
 		}

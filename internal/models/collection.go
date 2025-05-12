@@ -5,8 +5,8 @@ import (
 )
 
 type GroupCollectionItem struct {
-	Game   *GroupCollectionItemGame         `validate:"required"`
-	Owners []*GroupCollectionItemOwnersItem `validate:"required"`
+	Game   *GroupCollectionItemGame `validate:"required"`
+	Owners []*MinimumProfileData    `validate:"required"`
 }
 
 type GroupCollectionItemGame struct {
@@ -16,12 +16,6 @@ type GroupCollectionItemGame struct {
 	MaxAmountOfPlayers int
 	MinAmountOfPlayers int
 	Name               string
-}
-
-type GroupCollectionItemOwnersItem struct {
-	AccountId int
-	AvatarUrl string
-	Handle    string
 }
 
 type PersonalCollection struct {

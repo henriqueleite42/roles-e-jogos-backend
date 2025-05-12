@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/models"
 	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 )
@@ -22,15 +21,6 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 		Logger()
 
 	if r.Method == http.MethodGet {
-		_, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
-			Req: r,
-		})
-		if err != nil {
-			logger.Warn().Err(err).Msg("invalid cookie")
-			http.Error(w, err.Error(), http.StatusUnauthorized)
-			return
-		}
-
 		getCollectiveCollectionInput := &collection_usecase.GetCollectiveCollectionInput{
 			Pagination: models.GetDefaultPaginationInputString(),
 		}
@@ -78,7 +68,7 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 		}
 
 		logger.Trace().Msg("validate getCollectiveCollectionInput")
-		err = self.validator.Validate(getCollectiveCollectionInput)
+		err := self.validator.Validate(getCollectiveCollectionInput)
 		if err != nil {
 			logger.Info().Err(err).Msg("invalid getCollectiveCollectionInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)

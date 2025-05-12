@@ -93,6 +93,12 @@ type GetOtpInput struct {
 type GetOtpOutput struct {
 	CreatedAt time.Time `validate:"required"`
 }
+type GetProfilesListByHandleInput struct {
+	Handle string
+}
+type GetProfilesListByHandleOutput struct {
+	Data []*models.MinimumProfileData `validate:"required"`
+}
 type LinkConnectionWithAccountInput struct {
 	AccountId      int
 	Email          string
@@ -122,5 +128,6 @@ type AccountRepository interface {
 	GetEmailListByIds(ctx context.Context, i *GetEmailListByIdsInput) (*GetEmailListByIdsOutput, error)
 	GetListByIds(ctx context.Context, i *GetListByIdsInput) (*GetListByIdsOutput, error)
 	GetOtp(ctx context.Context, i *GetOtpInput) (*GetOtpOutput, error)
+	GetProfilesListByHandle(ctx context.Context, i *GetProfilesListByHandleInput) (*GetProfilesListByHandleOutput, error)
 	LinkConnectionWithAccount(ctx context.Context, i *LinkConnectionWithAccountInput) error
 }

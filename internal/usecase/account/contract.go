@@ -45,6 +45,12 @@ type GetProfileByHandleInput struct {
 type GetProfileByIdInput struct {
 	AccountId int `validate:"id"`
 }
+type GetProfilesListByHandleInput struct {
+	Handle string
+}
+type GetProfilesListByHandleOutput struct {
+	Data []*models.MinimumProfileData `validate:"required"`
+}
 type LinkLudopediaProviderInput struct {
 	AccountId int    `validate:"id"`
 	Code      string `validate:"min=1"`
@@ -63,6 +69,7 @@ type AccountUsecase interface {
 	GetListById(ctx context.Context, i *GetListByIdInput) (*GetListByIdOutput, error)
 	GetProfileByHandle(ctx context.Context, i *GetProfileByHandleInput) (*models.ProfileData, error)
 	GetProfileById(ctx context.Context, i *GetProfileByIdInput) (*models.ProfileData, error)
+	GetProfilesListByHandle(ctx context.Context, i *GetProfilesListByHandleInput) (*GetProfilesListByHandleOutput, error)
 	LinkLudopediaProvider(ctx context.Context, i *LinkLudopediaProviderInput) error
 	SendSignInOtp(ctx context.Context, i *SendSignInOtpInput) error
 }

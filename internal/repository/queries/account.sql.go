@@ -574,6 +574,43 @@ func (q *Queries) GetOtp(ctx context.Context, arg GetOtpParams) (pgtype.Timestam
 	return created_at, err
 }
 
+const getProfilesListByHandle = `-- name: GetProfilesListByHandle :many
+SELECT
+	a."avatar_path",
+	a."handle",
+	a."id"
+FROM "accounts" a
+WHERE
+	LOWER(a."handle") LIKE LOWER('%' || $1 || '%')
+LIMIT 10
+`
+
+type GetProfilesListByHandleRow struct {
+	AvatarPath pgtype.Text
+	Handle     string
+	ID         int32
+}
+
+func (q *Queries) GetProfilesListByHandle(ctx context.Context, dollar_1 pgtype.Text) ([]GetProfilesListByHandleRow, error) {
+	rows, err := q.db.Query(ctx, getProfilesListByHandle, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetProfilesListByHandleRow
+	for rows.Next() {
+		var i GetProfilesListByHandleRow
+		if err := rows.Scan(&i.AvatarPath, &i.Handle, &i.ID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getValidatedEmailsByAccountsIds = `-- name: GetValidatedEmailsByAccountsIds :many
 SELECT DISTINCT ON (ea."account_id")
 	ea."email_address",

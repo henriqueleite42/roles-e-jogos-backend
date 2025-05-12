@@ -79,6 +79,17 @@ Types:
             ExternalId:
               Type: String
 
+  MinimumProfileData:
+    Type: Map
+    Properties:
+      AccountId:
+        Type: Int
+      Handle:
+        Type: String
+      AvatarUrl:
+        Type: String
+        Optional: true
+
 Entities:
   NamingCase: snake
   Entities:
@@ -492,6 +503,20 @@ Repository:
       Output:
         $ref: Types.AccountDataDb
 
+    GetProfilesListByHandle:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.MinimumProfileData
+
 Usecase:
   Methods:
     CreateWithGoogleProvider:
@@ -641,6 +666,20 @@ Usecase:
       Output:
         $ref: Types.ProfileData
 
+    GetProfilesListByHandle:
+      Input:
+        Type: Map
+        Properties:
+          Handle:
+            Type: String
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.MinimumProfileData
+
 Delivery:
   Servers:
     Prod:
@@ -680,3 +719,7 @@ Delivery:
       - UsecaseMethod: EditHandle
         Method: PUT
         Path: /profile/handle
+
+      - UsecaseMethod: GetProfilesListByHandle
+        Method: GET
+        Path: /profile/list/by-handle?handle=:Handle

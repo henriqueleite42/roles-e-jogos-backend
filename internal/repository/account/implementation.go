@@ -14,14 +14,16 @@ type accountRepositoryImplementation struct {
 	logger  *zerolog.Logger
 	queries *queries.Queries
 
-	idAdapter adapters.Id
+	idAdapter      adapters.Id
+	secretsAdapter *adapters.Secrets
 }
 
 type NewAccountRepositoryInput struct {
 	Logger  *zerolog.Logger
 	Queries *queries.Queries
 
-	IdAdapter adapters.Id
+	IdAdapter      adapters.Id
+	SecretsAdapter *adapters.Secrets
 }
 
 // Applies the transaction if it's needed
@@ -44,8 +46,9 @@ func NewAccountRepository(i *NewAccountRepositoryInput) (AccountRepository, erro
 	}
 
 	return &accountRepositoryImplementation{
-		logger:    i.Logger,
-		queries:   i.Queries,
-		idAdapter: i.IdAdapter,
+		logger:         i.Logger,
+		queries:        i.Queries,
+		idAdapter:      i.IdAdapter,
+		secretsAdapter: i.SecretsAdapter,
 	}, nil
 }

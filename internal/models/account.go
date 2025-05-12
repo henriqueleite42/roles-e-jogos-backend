@@ -29,6 +29,12 @@ type AccountDataDb struct {
 	IsAdmin    bool
 }
 
+type MinimumProfileData struct {
+	AccountId int
+	AvatarUrl *string `validate:"omitempty"`
+	Handle    string
+}
+
 type ProfileData struct {
 	AccountId   int
 	AvatarUrl   *string                       `validate:"omitempty"`

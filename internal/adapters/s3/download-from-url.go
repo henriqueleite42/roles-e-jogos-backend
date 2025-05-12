@@ -44,5 +44,5 @@ func (self *s3Adapter) DownloadFromUrl(i *adapters.DownloadFromUrlInput) (string
 		return "", err
 	}
 
-	return fileName, nil
+	return "/" + fileName, nil
 }
