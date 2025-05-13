@@ -101,6 +101,7 @@ Entities:
             - OwnerId
           RefColumns:
             - Account.Entities.Account.Id
+          OnDelete: CASCADE
 
     EventGame:
       Columns:
@@ -123,10 +124,12 @@ Entities:
             - EventId
           RefColumns:
             - Event.Id
+          OnDelete: CASCADE
         - Columns:
             - GameId
           RefColumns:
             - Game.Entities.Game.Id
+          OnDelete: CASCADE
 
     EventAttendance:
       Columns:
@@ -156,10 +159,12 @@ Entities:
             - EventId
           RefColumns:
             - Event.Id
+          OnDelete: CASCADE
         - Columns:
             - AccountId
           RefColumns:
             - Account.Entities.Account.Id
+          OnDelete: CASCADE
 
 Usecase:
   Methods:

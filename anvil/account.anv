@@ -348,6 +348,20 @@ Repository:
         Items:
           $ref: Entities.Connection
 
+    GetConnectionsByAccountIdAndProvider:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+      Output:
+        Type: List
+        Items:
+          $ref: Entities.Connection
+
     LinkConnectionWithAccount:
       Input:
         Type: Map

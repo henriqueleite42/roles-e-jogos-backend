@@ -13,6 +13,7 @@ const (
 )
 
 type Game struct {
+	AverageDuration    int       `db:"average_duration"`
 	CreatedAt          time.Time `validate:"required" db:"created_at"`
 	Description        string    `db:"description"`
 	IconPath           *string   `validate:"omitempty" db:"icon_path"`
@@ -21,6 +22,7 @@ type Game struct {
 	LudopediaId        *int      `validate:"omitempty" db:"ludopedia_id"`
 	LudopediaUrl       *string   `validate:"omitempty" db:"ludopedia_url"`
 	MaxAmountOfPlayers int       `db:"max_amount_of_players"`
+	MinAge             int       `db:"min_age"`
 	MinAmountOfPlayers int       `db:"min_amount_of_players"`
 	Name               string    `db:"name"`
 }

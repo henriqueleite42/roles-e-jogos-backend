@@ -42,3 +42,4 @@ Entities:
             - OwnerId
           RefColumns:
             - Account.Entities.Account.Id
+          OnDelete: CASCADE

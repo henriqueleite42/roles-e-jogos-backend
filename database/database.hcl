@@ -195,6 +195,7 @@ table "event_attendances" {
 		ref_columns = [
 			table.events.column.id
 		]
+		on_delete = CASCADE
 	}
 	foreign_key "event_attendances_account_id_fk" {
 		columns = [
@@ -203,6 +204,7 @@ table "event_attendances" {
 		ref_columns = [
 			table.accounts.column.id
 		]
+		on_delete = CASCADE
 	}
 }
 table "event_games" {
@@ -235,6 +237,7 @@ table "event_games" {
 		ref_columns = [
 			table.events.column.id
 		]
+		on_delete = CASCADE
 	}
 	foreign_key "event_games_game_id_fk" {
 		columns = [
@@ -243,6 +246,7 @@ table "event_games" {
 		ref_columns = [
 			table.games.column.id
 		]
+		on_delete = CASCADE
 	}
 }
 table "events" {
@@ -297,10 +301,14 @@ table "events" {
 		ref_columns = [
 			table.accounts.column.id
 		]
+		on_delete = CASCADE
 	}
 }
 table "games" {
 	schema = schema.public
+	column "average_duration" {
+		type = sql("INTEGER")
+	}
 	column "created_at" {
 		type = sql("TIMESTAMPTZ")
 		default = sql("NOW()")
@@ -332,6 +340,9 @@ table "games" {
 		null = true
 	}
 	column "max_amount_of_players" {
+		type = sql("INTEGER")
+	}
+	column "min_age" {
 		type = sql("INTEGER")
 	}
 	column "min_amount_of_players" {
@@ -394,6 +405,7 @@ table "medias" {
 		ref_columns = [
 			table.accounts.column.id
 		]
+		on_delete = CASCADE
 	}
 }
 table "one_time_passwords" {
@@ -468,6 +480,7 @@ table "personal_collections" {
 		ref_columns = [
 			table.accounts.column.id
 		]
+		on_delete = CASCADE
 	}
 	foreign_key "personal_collections_game_id_fk" {
 		columns = [
@@ -476,6 +489,7 @@ table "personal_collections" {
 		ref_columns = [
 			table.games.column.id
 		]
+		on_delete = CASCADE
 	}
 }
 table "sessions" {

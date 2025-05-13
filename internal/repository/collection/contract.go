@@ -8,8 +8,9 @@ import (
 )
 
 type AddToPersonalCollectionInput struct {
-	AccountId  int        `validate:"id" db:"id"`
+	AccountId  int
 	AcquiredAt *time.Time `validate:"omitempty"`
+	GameId     int
 	Paid       *int       `validate:"omitempty"`
 }
 type GetCollectiveCollectionInput struct {

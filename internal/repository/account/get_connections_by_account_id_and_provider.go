@@ -1,0 +1,53 @@
+package account_repository
+
+import (
+	"context"
+
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/models"
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/queries"
+)
+
+func (self *accountRepositoryImplementation) GetConnectionsByAccountIdAndProvider(ctx context.Context, i *GetConnectionsByAccountIdAndProviderInput) ([]*models.Connection, error) {
+	db, err := self.getSlcQueries(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := db.GetConnectionsByAccountIdAndProvider(ctx, queries.GetConnectionsByAccountIdAndProviderParams{
+		AccountID: int32(i.AccountId),
+		Provider:  queries.ProviderEnum(i.Provider),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	connections := make([]*models.Connection, len(result))
+	for k, v := range result {
+		var externalHandle *string
+		if v.ExternalHandle.Valid {
+			externalHandle = &v.ExternalHandle.String
+		}
+
+		var accessToken *string
+		if v.AccessToken.Valid {
+			accessToken = &v.AccessToken.String
+		}
+
+		var refreshToken *string
+		if v.RefreshToken.Valid {
+			refreshToken = &v.RefreshToken.String
+		}
+
+		connections[k] = &models.Connection{
+			AccountId:      int(v.AccountID),
+			CreatedAt:      v.CreatedAt.Time,
+			AccessToken:    accessToken,
+			RefreshToken:   refreshToken,
+			ExternalHandle: externalHandle,
+			ExternalId:     v.ExternalID,
+			Provider:       models.Provider(v.Provider),
+		}
+	}
+
+	return connections, nil
+}

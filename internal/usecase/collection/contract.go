@@ -8,8 +8,9 @@ import (
 )
 
 type AddToPersonalCollectionInput struct {
-	AccountId  int        `validate:"id" db:"id"`
+	AccountId  int
 	AcquiredAt *time.Time `validate:"omitempty"`
+	GameId     int
 	Paid       *int       `validate:"omitempty"`
 }
 type GetCollectiveCollectionInput struct {
@@ -23,8 +24,12 @@ type GetCollectiveCollectionOutput struct {
 	Data       []*models.GroupCollectionItem  `validate:"required"`
 	Pagination *models.PaginationOutputString `validate:"required"`
 }
+type ImportPersonalCollectionFromLudopediaInput struct {
+	AccountId int
+}
 
 type CollectionUsecase interface {
 	AddToPersonalCollection(ctx context.Context, i *AddToPersonalCollectionInput) error
 	GetCollectiveCollection(ctx context.Context, i *GetCollectiveCollectionInput) (*GetCollectiveCollectionOutput, error)
+	ImportPersonalCollectionFromLudopedia(ctx context.Context, i *ImportPersonalCollectionFromLudopediaInput) error
 }

@@ -13,12 +13,14 @@ type ludopediaAdapter struct {
 	secrets    *adapters.Secrets
 }
 
-func NewLudopedia(logger *zerolog.Logger, secretsAdapter *adapters.Secrets) (adapters.SignInProvider, error) {
+func NewLudopedia(logger *zerolog.Logger, secretsAdapter *adapters.Secrets) (adapters.SignInProvider, adapters.Ludopedia, error) {
 	newLogger := logger.With().Str("adapter", "LudopediaAdapter").Logger()
 
-	return &ludopediaAdapter{
+	adapter := &ludopediaAdapter{
 		logger:     &newLogger,
 		httpClient: &http.Client{},
 		secrets:    secretsAdapter,
-	}, nil
+	}
+
+	return adapter, adapter, nil
 }

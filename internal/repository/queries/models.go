@@ -286,6 +286,8 @@ type Game struct {
 	MaxAmountOfPlayers int32
 	MinAmountOfPlayers int32
 	Name               string
+	AverageDuration    int32
+	MinAge             int32
 }
 
 type Media struct {

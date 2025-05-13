@@ -7,19 +7,22 @@ import (
 )
 
 type CreateGameInput struct {
+	AverageDuration    int
 	Description        string      `validate:"max=1000"`
 	IconPath           *string     `validate:"omitempty" db:"icon_path"`
 	Kind               models.Kind `validate:"required" db:"kind"`
 	LudopediaId        *int        `validate:"omitempty"`
 	LudopediaUrl       *string     `validate:"omitempty,max=500"`
 	MaxAmountOfPlayers int
+	MinAge             int
 	MinAmountOfPlayers int
 	Name               string
 }
-type CreateGameOutput struct {
-	Id int
+type GetGameByLudopediaIdInput struct {
+	LudopediaId int
 }
 
 type GameRepository interface {
-	CreateGame(ctx context.Context, i *CreateGameInput) (*CreateGameOutput, error)
+	CreateGame(ctx context.Context, i *CreateGameInput) (*models.Game, error)
+	GetGameByLudopediaId(ctx context.Context, i *GetGameByLudopediaIdInput) (*models.Game, error)
 }

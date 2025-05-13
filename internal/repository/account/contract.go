@@ -69,6 +69,10 @@ type GetConnectionInput struct {
 	ExternalId string
 	Provider   models.Provider `validate:"required" db:"provider"`
 }
+type GetConnectionsByAccountIdAndProviderInput struct {
+	AccountId int
+	Provider  models.Provider `validate:"required" db:"provider"`
+}
 type GetConnectionsByAccountIdInput struct {
 	AccountId int
 }
@@ -125,6 +129,7 @@ type AccountRepository interface {
 	GetAccountDataBySessionId(ctx context.Context, i *GetAccountDataBySessionIdInput) (*models.AccountDataDb, error)
 	GetConnection(ctx context.Context, i *GetConnectionInput) (*models.Connection, error)
 	GetConnectionsByAccountId(ctx context.Context, i *GetConnectionsByAccountIdInput) ([]*models.Connection, error)
+	GetConnectionsByAccountIdAndProvider(ctx context.Context, i *GetConnectionsByAccountIdAndProviderInput) ([]*models.Connection, error)
 	GetEmailListByIds(ctx context.Context, i *GetEmailListByIdsInput) (*GetEmailListByIdsOutput, error)
 	GetListByIds(ctx context.Context, i *GetListByIdsInput) (*GetListByIdsOutput, error)
 	GetOtp(ctx context.Context, i *GetOtpInput) (*GetOtpOutput, error)

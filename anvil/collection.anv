@@ -66,10 +66,12 @@ Entities:
             - AccountId
           RefColumns:
             - Account.Entities.Account.Id
+          OnDelete: CASCADE
         - Columns:
             - GameId
           RefColumns:
             - Game.Entities.Game.Id
+          OnDelete: CASCADE
 
 Repository:
   Methods:
@@ -78,7 +80,9 @@ Repository:
         Type: Map
         Properties:
           AccountId:
-            $ref: Account.Entities.Account.Id
+            Type: Int
+          GameId:
+            Type: Int
           Paid:
             Type: Int
             Optional: true
@@ -123,7 +127,9 @@ Usecase:
         Type: Map
         Properties:
           AccountId:
-            $ref: Account.Entities.Account.Id
+            Type: Int
+          GameId:
+            Type: Int
           Paid:
             Type: Int
             Optional: true
@@ -167,6 +173,15 @@ Usecase:
           Pagination:
             $ref: Common.Types.PaginationOutputString
 
+    ImportPersonalCollectionFromLudopedia:
+      Description: |
+        Imports personal_collections of all linked users from ludopedia
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+
 Delivery:
   Servers:
     Prod:
@@ -182,3 +197,7 @@ Delivery:
       - UsecaseMethod: GetCollectiveCollection
         Method: GET
         Path: /collection/collective?after=:After&limit=:Limit
+
+      - UsecaseMethod: ImportPersonalCollectionFromLudopedia
+        Method: POST
+        Path: /collection/personal/import/ludopedia

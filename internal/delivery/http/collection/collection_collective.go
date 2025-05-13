@@ -14,7 +14,7 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
-		Str("dmn", "Account").
+		Str("dmn", "Collection").
 		Str("mtd", r.Method).
 		Str("route", "CollectionCollective").
 		Str("reqId", reqId).

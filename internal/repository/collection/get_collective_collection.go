@@ -73,9 +73,6 @@ func (self *collectionRepositoryImplementation) GetCollectiveCollection(ctx cont
 				Handle:    vv.Handle,
 			}
 		}
-		if err != nil {
-			return nil, err
-		}
 
 		var iconUrl *string
 		if v.IconPath.Valid {

@@ -503,6 +503,64 @@ func (q *Queries) GetConnectionsByAccountId(ctx context.Context, accountID int32
 	return items, nil
 }
 
+const getConnectionsByAccountIdAndProvider = `-- name: GetConnectionsByAccountIdAndProvider :many
+SELECT
+	c."account_id",
+	c."provider",
+	c."external_handle",
+	c."external_id",
+	c."access_token",
+	c."refresh_token",
+	c."created_at"
+FROM "connections" c
+WHERE
+	c."account_id" = $1
+	AND c."provider" = $2
+`
+
+type GetConnectionsByAccountIdAndProviderParams struct {
+	AccountID int32
+	Provider  ProviderEnum
+}
+
+type GetConnectionsByAccountIdAndProviderRow struct {
+	AccountID      int32
+	Provider       ProviderEnum
+	ExternalHandle pgtype.Text
+	ExternalID     string
+	AccessToken    pgtype.Text
+	RefreshToken   pgtype.Text
+	CreatedAt      pgtype.Timestamptz
+}
+
+func (q *Queries) GetConnectionsByAccountIdAndProvider(ctx context.Context, arg GetConnectionsByAccountIdAndProviderParams) ([]GetConnectionsByAccountIdAndProviderRow, error) {
+	rows, err := q.db.Query(ctx, getConnectionsByAccountIdAndProvider, arg.AccountID, arg.Provider)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetConnectionsByAccountIdAndProviderRow
+	for rows.Next() {
+		var i GetConnectionsByAccountIdAndProviderRow
+		if err := rows.Scan(
+			&i.AccountID,
+			&i.Provider,
+			&i.ExternalHandle,
+			&i.ExternalID,
+			&i.AccessToken,
+			&i.RefreshToken,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getEmailsByAccountsIds = `-- name: GetEmailsByAccountsIds :many
 SELECT DISTINCT ON (ea."account_id")
 	ea."email_address",

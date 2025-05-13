@@ -109,7 +109,7 @@ func main() {
 			Err(err).
 			Msg("fail to initialize GoogleAdapter")
 	}
-	ludopediaAdapter, err := ludopedia.NewLudopedia(&logger, secretsAdapter)
+	ludopediaSignInAdapter, ludopediaAdapter, err := ludopedia.NewLudopedia(&logger, secretsAdapter)
 	if err != nil {
 		logger.Fatal().
 			Err(err).
@@ -181,7 +181,7 @@ func main() {
 		Db:                db,
 		AccountRepository: accountRepository,
 		GoogleAdapter:     googleAdapter,
-		LudopediaAdapter:  ludopediaAdapter,
+		LudopediaAdapter:  ludopediaSignInAdapter,
 		IdAdapter:         xidAdapter,
 		StorageAdapter:    s3Adapter,
 		SecretsAdapter:    secretsAdapter,
@@ -189,6 +189,7 @@ func main() {
 	collectionUsecase := &collection_usecase.CollectionUsecaseImplementation{
 		Logger:               &logger,
 		Db:                   db,
+		AccountRepository:    accountRepository,
 		CollectionRepository: collectionRepository,
 		LudopediaAdapter:     ludopediaAdapter,
 		IdAdapter:            xidAdapter,

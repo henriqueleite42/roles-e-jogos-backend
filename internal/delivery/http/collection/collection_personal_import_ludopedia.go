@@ -2,21 +2,18 @@ package collection_delivery_http
 
 import (
 	"context"
-	"encoding/json"
-	"io"
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
 	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 )
 
-func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *http.Request) {
+func (self *collectionController) CollectionPersonalImportLudopedia(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
 		Str("dmn", "Collection").
-		Str("mtd", r.Method).
-		Str("route", "CollectionPersonal").
+		Str("mtd", "CollectionPersonalImportLudopedia").
 		Str("reqId", reqId).
 		Logger()
 
@@ -30,28 +27,14 @@ func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *h
 			return
 		}
 
-		body, err := io.ReadAll(r.Body)
-		defer r.Body.Close()
-		if err != nil {
-			logger.Info().Err(err).Msg("error reading request body")
-			http.Error(w, "error reading request body", http.StatusInternalServerError)
-			return
+		importPersonalCollectionFromLudopediaInput := &collection_usecase.ImportPersonalCollectionFromLudopediaInput{
+			AccountId: session.AccountId,
 		}
 
-		addToPersonalCollectionInput := &collection_usecase.AddToPersonalCollectionInput{}
-		err = json.Unmarshal(body, addToPersonalCollectionInput)
+		logger.Trace().Msg("validate importPersonalCollectionFromLudopediaInput")
+		err = self.validator.Validate(importPersonalCollectionFromLudopediaInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("error unmarshalling body")
-			http.Error(w, "error unmarshalling body", http.StatusBadRequest)
-			return
-		}
-
-		addToPersonalCollectionInput.AccountId = session.AccountId
-
-		logger.Trace().Msg("validate addToPersonalCollectionInput")
-		err = self.validator.Validate(addToPersonalCollectionInput)
-		if err != nil {
-			logger.Info().Err(err).Msg("invalid addToPersonalCollectionInput")
+			logger.Info().Err(err).Msg("invalid importPersonalCollectionFromLudopediaInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -60,7 +43,7 @@ func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *h
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		err = self.collectionUsecase.AddToPersonalCollection(reqCtx, addToPersonalCollectionInput)
+		err = self.collectionUsecase.ImportPersonalCollectionFromLudopedia(reqCtx, importPersonalCollectionFromLudopediaInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
 			logger.Warn().Err(err).Msg("usecase err")
@@ -68,7 +51,7 @@ func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *h
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 

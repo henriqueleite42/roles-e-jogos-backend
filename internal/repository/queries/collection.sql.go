@@ -11,6 +11,37 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addToPersonalCollection = `-- name: AddToPersonalCollection :exec
+INSERT INTO "personal_collections" (
+	"account_id",
+	"game_id",
+	"paid",
+	"acquired_at"
+) VALUES (
+	$1,
+	$2,
+	$3,
+	$4
+)
+`
+
+type AddToPersonalCollectionParams struct {
+	AccountID  int32
+	GameID     int32
+	Paid       pgtype.Int4
+	AcquiredAt pgtype.Timestamptz
+}
+
+func (q *Queries) AddToPersonalCollection(ctx context.Context, arg AddToPersonalCollectionParams) error {
+	_, err := q.db.Exec(ctx, addToPersonalCollection,
+		arg.AccountID,
+		arg.GameID,
+		arg.Paid,
+		arg.AcquiredAt,
+	)
+	return err
+}
+
 const getCollectiveCollection = `-- name: GetCollectiveCollection :many
 SELECT
   g."id" AS "game_id",

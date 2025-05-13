@@ -33,3 +33,16 @@ GROUP BY
 ORDER BY
 	g."name" ASC
 LIMIT $6;
+
+-- name: AddToPersonalCollection :exec
+INSERT INTO "personal_collections" (
+	"account_id",
+	"game_id",
+	"paid",
+	"acquired_at"
+) VALUES (
+	$1,
+	$2,
+	$3,
+	$4
+);
