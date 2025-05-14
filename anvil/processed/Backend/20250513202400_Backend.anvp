@@ -174,7 +174,7 @@ Enums:
                   Index: 2
                   Deprecated: false
 Types:
-    StateHash: 2f0e35ade3e2a1b1c29998cfb8d38703917a0472
+    StateHash: 29b955e13aa594de33a126e2f0b3c1e1c36ded4c
     Types:
         0aec3de061e64d58222079d289dda3622c1d7d68:
             Ref: Collection.Repository.GetCollectiveCollection.Input.GameName
@@ -862,7 +862,7 @@ Types:
             OriginalPath: Collection.Events.ImportCollectionEvent
             RootNode: Events
             Domain: Collection
-            StateHash: 748fb11adf3501a97215006a8f8a1f859a64c8f7
+            StateHash: 943d5554031b248887dde115f544ae096af1e654
             Name: ImportCollectionEvent
             Confidentiality: LOW
             Optional: false
@@ -873,8 +873,6 @@ Types:
                   TypeHash: e044949161b48853f7311ad34b28f367d02c1768
                 - PropName: ExternalId
                   TypeHash: 7d04e0e3d22bb9a7fbd0c7286948e94cbc8c9601
-                - PropName: Trigger
-                  TypeHash: 43e6517ebb54c22b06b957f99dc9c0766c659f24
         5f3a7235cddc73b17cd823d1adc9dbb619291ab6:
             Ref: Account.Types.AccountDataDb.AvatarPath
             OriginalPath: Account.Types.Types.AccountDataDb.Properties.AvatarPath
@@ -1638,20 +1636,6 @@ Types:
                   TypeHash: 578d770f06435f9a812f2cb79287742ad686114d
                 - PropName: Provider
                   TypeHash: 8b98caaeee84005a8b525ca72031f53acfcaa52a
-        43e6517ebb54c22b06b957f99dc9c0766c659f24:
-            Ref: Collection.Events.ImportCollectionEvent.Trigger
-            OriginalPath: Collection.Events.ImportCollectionEvent.Properties.Trigger
-            RootNode: Events
-            Domain: Collection
-            StateHash: 906d1b694ce33a85308c9ab8f29f679aabc6041d
-            Name: Trigger
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Enum
-            DbName: trigger
-            DbType: collection_import_trigger_enum
-            EnumHash: cd6136da35eea5b6e281442a5979ae530b7ecc37
         44f7c41572b3a9d09cea3b2e3649336a229b2383:
             Ref: Account.Usecase.GetProfilesListByHandle.Output
             OriginalPath: Account.Usecase.Methods.GetProfilesListByHandle.Output
@@ -5255,7 +5239,7 @@ Events:
                 - json
             TypeHash: 5edb1465e367cf955803964fe64698526378e125
 Entities:
-    StateHash: 28443d64065b50d333aaa4c92ec5900ce6b8af39
+    StateHash: a203ac09beda575553ace628890aeea8fde3b52a
     Metadata:
         NamingCase: snake
     Entities:
@@ -5264,8 +5248,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Connection
             Domain: Account
             RootNode: Entities
-            StateHash: ee7d889f9ceb9cfb4fabbf8b1d914152bd7631e0
-            Order: 3
+            StateHash: 0c17db5adc7be5051560dad8eaa462e7859aefea
+            Order: 1
             Name: Connection
             TypeHash: 1c3a15db7a8e1f3f0c0e29c97364307305c51f14
             DbName: connections
@@ -5351,8 +5335,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.EmailAddress
             Domain: Account
             RootNode: Entities
-            StateHash: 984cdeeb380d9046c735439ffa9df098675ce763
-            Order: 4
+            StateHash: 16e895b7d9fdd429e56d5ef9bed31c8e84b832a1
+            Order: 2
             Name: EmailAddress
             TypeHash: 4b6ef13483a6c567097eada4c8a459671c690dfe
             DbName: email_addresses
@@ -5407,8 +5391,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.Event
             Domain: Event
             RootNode: Entities
-            StateHash: 7464319f98f7172c6fe6740f9d78e8ff90efcf06
-            Order: 9
+            StateHash: 83a0f03aee0d35251f4ceb24152fb6419ed2edcc
+            Order: 7
             Name: Event
             TypeHash: 6d987db707682a8d7b15914ef1d601db6b52bf57
             DbName: events
@@ -5505,8 +5489,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Session
             Domain: Account
             RootNode: Entities
-            StateHash: 25be31411d32ded60fe341e8223d101f5c8fa306
-            Order: 6
+            StateHash: 42dbeb458f05371976df4d73a2d890261c897c90
+            Order: 4
             Name: Session
             TypeHash: 8fdbf1e936b0b5ced9c2714b61dd924658e4cc95
             DbName: sessions
@@ -5554,8 +5538,8 @@ Entities:
             OriginalPath: Game.Entities.Entities.Game
             Domain: Game
             RootNode: Entities
-            StateHash: 0744323ff912862e430d5d92ea1a49cf3d419a4b
-            Order: 1
+            StateHash: 00c25a7d0efccbb1d700e9bb2c3548830e9d6630
+            Order: 11
             Name: Game
             TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
             DbName: games
@@ -5663,8 +5647,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Account
             Domain: Account
             RootNode: Entities
-            StateHash: 5b21dd5db5cd753c4cb8c6f562d482540bed97f7
-            Order: 2
+            StateHash: 060f89e166f6ad09b9f45874153304968ba46fa9
+            Order: 0
             Name: Account
             TypeHash: 948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5
             DbName: accounts
@@ -5730,8 +5714,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.PersonalCollection
             Domain: Collection
             RootNode: Entities
-            StateHash: d278499ed0c8a3939e252c7da19c13ec1d8e8405
-            Order: 8
+            StateHash: 862c81c111e3c77ecd6984055bde3cc54dea5809
+            Order: 6
             Name: PersonalCollection
             TypeHash: 7692916db8c983a1ec09d50ac41bcc40df2ee8fd
             DbName: personal_collections
@@ -5821,8 +5805,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventAttendance
             Domain: Event
             RootNode: Entities
-            StateHash: 8869dafa224c11fbbb05b799dffab14452414317
-            Order: 10
+            StateHash: 056509a9fc468419551c6591f8f887ee7b3c35de
+            Order: 8
             Name: EventAttendance
             TypeHash: ba427435768ee5c6811035c1e8bef2f960ed9173
             DbName: event_attendances
@@ -5897,8 +5881,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.ImportCollectionLog
             Domain: Collection
             RootNode: Entities
-            StateHash: 725186fa2127e5951a76693a4012b39888001638
-            Order: 7
+            StateHash: a954adc17238c3a2eaed2baf8f4a7923cb05f557
+            Order: 5
             Name: ImportCollectionLog
             TypeHash: c0b9b4fff44a645683823c07f6475e2a1a808484
             DbName: import_collection_logs
@@ -5981,8 +5965,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventGame
             Domain: Event
             RootNode: Entities
-            StateHash: 58ab5fe85f494bd5cf6df8b9f346f963f1acf784
-            Order: 11
+            StateHash: 49d84f09aa7bd325efbd86ba1fefe90639c82a19
+            Order: 9
             Name: EventGame
             TypeHash: cd7138056ba65b462f4c696752f7ce1c46c35b97
             DbName: event_games
@@ -6043,8 +6027,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.OneTimePassword
             Domain: Account
             RootNode: Entities
-            StateHash: a8842701c612be6a2daf2190ad6ab3717111dee2
-            Order: 5
+            StateHash: 8deaf09223f4b53ac6f2078930ddd71de4ac80a2
+            Order: 3
             Name: OneTimePassword
             TypeHash: ce86052d641eedf3e7b0e624cb24abae8b246ec6
             DbName: one_time_passwords
@@ -6101,8 +6085,8 @@ Entities:
             OriginalPath: Gallery.Entities.Entities.Media
             Domain: Gallery
             RootNode: Entities
-            StateHash: 4100ff0cedcf33d1dbab8f7f06ba62fb1538829d
-            Order: 0
+            StateHash: a33df4a460de46382b12bb61fe33633dc7e6dddf
+            Order: 10
             Name: Media
             TypeHash: d4a719990056e08446b07132ff0a0e1565f8dbfc
             DbName: medias

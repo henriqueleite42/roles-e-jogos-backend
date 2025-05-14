@@ -20,4 +20,5 @@ type AccountUsecaseImplementation struct {
 	EmailAdapter     adapters.Email
 	SecretsAdapter   *adapters.Secrets
 	StorageAdapter   adapters.Storage
+	MessagingAdapter adapters.Messaging
 }

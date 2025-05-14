@@ -174,7 +174,7 @@ Enums:
                   Index: 2
                   Deprecated: false
 Types:
-    StateHash: 2f0e35ade3e2a1b1c29998cfb8d38703917a0472
+    StateHash: 9ef57bdee769bf4bec9981b0a652d7913bdd2b9c
     Types:
         0aec3de061e64d58222079d289dda3622c1d7d68:
             Ref: Collection.Repository.GetCollectiveCollection.Input.GameName
@@ -862,7 +862,7 @@ Types:
             OriginalPath: Collection.Events.ImportCollectionEvent
             RootNode: Events
             Domain: Collection
-            StateHash: 748fb11adf3501a97215006a8f8a1f859a64c8f7
+            StateHash: 943d5554031b248887dde115f544ae096af1e654
             Name: ImportCollectionEvent
             Confidentiality: LOW
             Optional: false
@@ -873,8 +873,6 @@ Types:
                   TypeHash: e044949161b48853f7311ad34b28f367d02c1768
                 - PropName: ExternalId
                   TypeHash: 7d04e0e3d22bb9a7fbd0c7286948e94cbc8c9601
-                - PropName: Trigger
-                  TypeHash: 43e6517ebb54c22b06b957f99dc9c0766c659f24
         5f3a7235cddc73b17cd823d1adc9dbb619291ab6:
             Ref: Account.Types.AccountDataDb.AvatarPath
             OriginalPath: Account.Types.Types.AccountDataDb.Properties.AvatarPath
@@ -1139,17 +1137,6 @@ Types:
                   TypeHash: c4c6f5e114598f78419bc2a530f72ce5c6345cd0
                 - PropName: Confirmation
                   TypeHash: 371ff8a554737b27298a91041149516db365d59e
-        7f72e38e45898898a85c02c49204dabb1d3081a1:
-            Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input.Ids.IdsItem
-            OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input.Properties.Ids.Items.IdsItem
-            RootNode: Repository
-            Domain: Collection
-            StateHash: 0bf8d5f100a88880308a5cfabe5b2a1ae44a9e8e
-            Name: IdsItem
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Int
         7f8744193c5b9807522f41473ec346964fdf2497:
             Ref: Event.Types.EventData.Attendances.AttendancesItem.Handle
             OriginalPath: Event.Types.Types.EventData.Properties.Attendances.Items.AttendancesItem.Properties.Handle
@@ -1161,6 +1148,20 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        7ff7fc6da02fed3165aaf7f265af9202806fea2f:
+            Ref: Collection.Repository.UpdateImportCollectionLog.Input.Status
+            OriginalPath: Collection.Repository.Methods.UpdateImportCollectionLog.Input.Properties.Status
+            RootNode: Repository
+            Domain: Collection
+            StateHash: bb1ef97ed3eaa664e068eb1a929340134dad80e2
+            Name: Status
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Enum
+            DbName: status
+            DbType: collection_import_status_enum
+            EnumHash: e15f9f7dd003dfb17c09fe91bbe08d677c2f6ee2
         8a033f7ca66de0c06ee6f666af9a9024874c8e3f:
             Ref: Account.Usecase.GetProfileById.Input.AccountId
             OriginalPath: Account.Usecase.Methods.GetProfileById.Input.Properties.AccountId
@@ -1288,12 +1289,12 @@ Types:
             OriginalPath: Game.Repository.Methods.GetGamesListByLudopediaId.Output.Properties.Data.Items.DataItem.Properties.ExternalId
             RootNode: Repository
             Domain: Game
-            StateHash: a612824d3a2356c7a8fc9f9c20b0bc523eda6abf
+            StateHash: 711c24e8e34509525784b93616b1c5aef5cfff22
             Name: ExternalId
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
-            Type: String
+            Type: Int
         8fdbf1e936b0b5ced9c2714b61dd924658e4cc95:
             Ref: Account.Entities.Session
             OriginalPath: Account.Entities.Entities.Session
@@ -1638,20 +1639,6 @@ Types:
                   TypeHash: 578d770f06435f9a812f2cb79287742ad686114d
                 - PropName: Provider
                   TypeHash: 8b98caaeee84005a8b525ca72031f53acfcaa52a
-        43e6517ebb54c22b06b957f99dc9c0766c659f24:
-            Ref: Collection.Events.ImportCollectionEvent.Trigger
-            OriginalPath: Collection.Events.ImportCollectionEvent.Properties.Trigger
-            RootNode: Events
-            Domain: Collection
-            StateHash: 906d1b694ce33a85308c9ab8f29f679aabc6041d
-            Name: Trigger
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Enum
-            DbName: trigger
-            DbType: collection_import_trigger_enum
-            EnumHash: cd6136da35eea5b6e281442a5979ae530b7ecc37
         44f7c41572b3a9d09cea3b2e3649336a229b2383:
             Ref: Account.Usecase.GetProfilesListByHandle.Output
             OriginalPath: Account.Usecase.Methods.GetProfilesListByHandle.Output
@@ -2293,22 +2280,6 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
-        636ef8f22ed5db18c31bcf0fad514f9da244cbf1:
-            Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input
-            OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input
-            RootNode: Repository
-            Domain: Collection
-            StateHash: d47f17694a499c3148d7eeef9850116d01ab00b8
-            Name: UpdateManyImportCollectionsLogsInput
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Map
-            ChildTypes:
-                - PropName: Ids
-                  TypeHash: abf73bd020da70c60f1279f0ca072eb632d0a611
-                - PropName: Status
-                  TypeHash: f4bd86ac7bf7dc138cfa6f43947c8034aa1cd88c
         653eda860dc30437c610ce010cfe9ab7485db793:
             Ref: Account.Repository.EditAccountHandle.Input
             OriginalPath: Account.Repository.Methods.EditAccountHandle.Input
@@ -2584,6 +2555,17 @@ Types:
             DbName: provider
             DbType: provider_enum
             EnumHash: 1d5729102f3561d854eb625555849c32a6e1a11d
+        3234b8aef2240636b7ee08f3da1ad6309a69c4d2:
+            Ref: Collection.Repository.UpdateImportCollectionLog.Input.Id
+            OriginalPath: Collection.Repository.Methods.UpdateImportCollectionLog.Input.Properties.Id
+            RootNode: Repository
+            Domain: Collection
+            StateHash: f0864a50e32feb8c7c7ece7114ddf9b8625f99a1
+            Name: Id
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         3255bb8e00f95dd9ba09ca04970a6078633cd369:
             Ref: Account.Usecase.EditProfile.Input.AccountId
             OriginalPath: Account.Usecase.Methods.EditProfile.Input.Properties.AccountId
@@ -3613,19 +3595,6 @@ Types:
             DbName: status
             DbType: collection_import_status_enum
             EnumHash: e15f9f7dd003dfb17c09fe91bbe08d677c2f6ee2
-        abf73bd020da70c60f1279f0ca072eb632d0a611:
-            Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input.Ids
-            OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input.Properties.Ids
-            RootNode: Repository
-            Domain: Collection
-            StateHash: 82b005d9209c5342325196e928cf3c5a7d58cfb8
-            Name: Ids
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: List
-            ChildTypes:
-                - TypeHash: 7f72e38e45898898a85c02c49204dabb1d3081a1
         ac878d8d378006ce6a5b329462f06fa70dc3f877:
             Ref: Game.Entities.Game.MinAmountOfPlayers
             OriginalPath: Game.Entities.Entities.Game.Columns.MinAmountOfPlayers
@@ -4816,6 +4785,22 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Timestamp
+        e89f135fd352983ef72aceaf11250b5e06641874:
+            Ref: Collection.Repository.UpdateImportCollectionLog.Input
+            OriginalPath: Collection.Repository.Methods.UpdateImportCollectionLog.Input
+            RootNode: Repository
+            Domain: Collection
+            StateHash: 07ad3cdc770371165d484969ac4a40230773e810
+            Name: UpdateImportCollectionLogInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Id
+                  TypeHash: 3234b8aef2240636b7ee08f3da1ad6309a69c4d2
+                - PropName: Status
+                  TypeHash: 7ff7fc6da02fed3165aaf7f265af9202806fea2f
         e116a0221f113e2de0ef1fc9f07b8a5a06f2988f:
             Ref: Event.Entities.Event.IconPath
             OriginalPath: Event.Entities.Entities.Event.Columns.IconPath
@@ -4948,20 +4933,6 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
-        f4bd86ac7bf7dc138cfa6f43947c8034aa1cd88c:
-            Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input.Status
-            OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input.Properties.Status
-            RootNode: Repository
-            Domain: Collection
-            StateHash: 145b050f1c91263f0ed8c053c4ebc3e7d76d59f4
-            Name: Status
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Enum
-            DbName: status
-            DbType: collection_import_status_enum
-            EnumHash: e15f9f7dd003dfb17c09fe91bbe08d677c2f6ee2
         f4d1141d2e2049de4373c06f29f2269ee80e2df6:
             Ref: Account.Repository.EditAccountHandle.Input.AccountId
             OriginalPath: Account.Repository.Methods.EditAccountHandle.Input.Properties.AccountId
@@ -5255,7 +5226,7 @@ Events:
                 - json
             TypeHash: 5edb1465e367cf955803964fe64698526378e125
 Entities:
-    StateHash: 28443d64065b50d333aaa4c92ec5900ce6b8af39
+    StateHash: c7a558eeb7dbea98519587299abfa49316a82abf
     Metadata:
         NamingCase: snake
     Entities:
@@ -5264,8 +5235,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Connection
             Domain: Account
             RootNode: Entities
-            StateHash: ee7d889f9ceb9cfb4fabbf8b1d914152bd7631e0
-            Order: 3
+            StateHash: 0f5209bd5fab05398332eeea84b89900c9818a25
+            Order: 6
             Name: Connection
             TypeHash: 1c3a15db7a8e1f3f0c0e29c97364307305c51f14
             DbName: connections
@@ -5351,8 +5322,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.EmailAddress
             Domain: Account
             RootNode: Entities
-            StateHash: 984cdeeb380d9046c735439ffa9df098675ce763
-            Order: 4
+            StateHash: 2e4138df71c75eec4366e4acf039290b1be3dd88
+            Order: 7
             Name: EmailAddress
             TypeHash: 4b6ef13483a6c567097eada4c8a459671c690dfe
             DbName: email_addresses
@@ -5407,8 +5378,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.Event
             Domain: Event
             RootNode: Entities
-            StateHash: 7464319f98f7172c6fe6740f9d78e8ff90efcf06
-            Order: 9
+            StateHash: 11ac1d5ec7d6380e94e91513575cd19ee917ad0a
+            Order: 0
             Name: Event
             TypeHash: 6d987db707682a8d7b15914ef1d601db6b52bf57
             DbName: events
@@ -5505,8 +5476,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Session
             Domain: Account
             RootNode: Entities
-            StateHash: 25be31411d32ded60fe341e8223d101f5c8fa306
-            Order: 6
+            StateHash: 16f237c34ca2f554fc7dfd71495aba094b5388c6
+            Order: 9
             Name: Session
             TypeHash: 8fdbf1e936b0b5ced9c2714b61dd924658e4cc95
             DbName: sessions
@@ -5554,8 +5525,8 @@ Entities:
             OriginalPath: Game.Entities.Entities.Game
             Domain: Game
             RootNode: Entities
-            StateHash: 0744323ff912862e430d5d92ea1a49cf3d419a4b
-            Order: 1
+            StateHash: 9060603b6882e416ff23746f9814e921a752b215
+            Order: 4
             Name: Game
             TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
             DbName: games
@@ -5663,8 +5634,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Account
             Domain: Account
             RootNode: Entities
-            StateHash: 5b21dd5db5cd753c4cb8c6f562d482540bed97f7
-            Order: 2
+            StateHash: 5816e4b79801e0eb8bd3309ab05fd5f7d57efeb2
+            Order: 5
             Name: Account
             TypeHash: 948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5
             DbName: accounts
@@ -5730,8 +5701,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.PersonalCollection
             Domain: Collection
             RootNode: Entities
-            StateHash: d278499ed0c8a3939e252c7da19c13ec1d8e8405
-            Order: 8
+            StateHash: 175af012ec71cb20ab9e523cfbe41b7edea1672d
+            Order: 11
             Name: PersonalCollection
             TypeHash: 7692916db8c983a1ec09d50ac41bcc40df2ee8fd
             DbName: personal_collections
@@ -5783,16 +5754,6 @@ Entities:
                 ConstraintName: personal_collections_pk
                 ColumnsHashes:
                     - 46452cbc65d7b1bb92cd75ed8410b1954b85f8e0
-            Indexes:
-                6ff939975da4ebad11215d1c452dc0c3f2c3bf28:
-                    OriginalPath: Collection.Entities.Entities.PersonalCollection.Indexes.0
-                    StateHash: dea04b1b859788a006d6342aa41b40266c7efc13
-                    Order: 0
-                    ConstraintName: personal_collections_account_id_game_id_idx
-                    ColumnsHashes:
-                        - c15f84c6645f2a592108090cffc3a79c51f483af
-                        - 4f3207634993f8341dc6a45b68c53086334005a9
-                    Unique: true
             ForeignKeys:
                 76de2f0681eb13cef42d034fdf78e84fc12673e7:
                     OriginalPath: Collection.Entities.Entities.ForeignKeys.0
@@ -5821,8 +5782,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventAttendance
             Domain: Event
             RootNode: Entities
-            StateHash: 8869dafa224c11fbbb05b799dffab14452414317
-            Order: 10
+            StateHash: 51783c8ec6b473b2999773551396877b509087c9
+            Order: 1
             Name: EventAttendance
             TypeHash: ba427435768ee5c6811035c1e8bef2f960ed9173
             DbName: event_attendances
@@ -5897,8 +5858,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.ImportCollectionLog
             Domain: Collection
             RootNode: Entities
-            StateHash: 725186fa2127e5951a76693a4012b39888001638
-            Order: 7
+            StateHash: 09c52d8bb806a55c4b03de477f26f3f5ac94a502
+            Order: 10
             Name: ImportCollectionLog
             TypeHash: c0b9b4fff44a645683823c07f6475e2a1a808484
             DbName: import_collection_logs
@@ -5981,8 +5942,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventGame
             Domain: Event
             RootNode: Entities
-            StateHash: 58ab5fe85f494bd5cf6df8b9f346f963f1acf784
-            Order: 11
+            StateHash: 4531c9a1d72b8e94f0b31f023b93f5785abe9e06
+            Order: 2
             Name: EventGame
             TypeHash: cd7138056ba65b462f4c696752f7ce1c46c35b97
             DbName: event_games
@@ -6043,8 +6004,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.OneTimePassword
             Domain: Account
             RootNode: Entities
-            StateHash: a8842701c612be6a2daf2190ad6ab3717111dee2
-            Order: 5
+            StateHash: efc405d8b30371ef6a10569547c46215baab7f66
+            Order: 8
             Name: OneTimePassword
             TypeHash: ce86052d641eedf3e7b0e624cb24abae8b246ec6
             DbName: one_time_passwords
@@ -6101,8 +6062,8 @@ Entities:
             OriginalPath: Gallery.Entities.Entities.Media
             Domain: Gallery
             RootNode: Entities
-            StateHash: 4100ff0cedcf33d1dbab8f7f06ba62fb1538829d
-            Order: 0
+            StateHash: a4800f842da82a691f7e6f0c68632f132494c254
+            Order: 3
             Name: Media
             TypeHash: d4a719990056e08446b07132ff0a0e1565f8dbfc
             DbName: medias
@@ -6174,7 +6135,7 @@ Entities:
                         - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
                     OnDelete: CASCADE
 Repository:
-    StateHash: ba387b70be648430875b161e67edc43c0b305b2f
+    StateHash: 8d5091964bc03917b933222a1c5cf6990d867118
     Repositories:
         Account:
             StateHash: e4a56704ae09c3ac4871c0fd5ad0c5017947f78f
@@ -6427,19 +6388,10 @@ Repository:
                         Output:
                             TypeHash: a6fa1c050a76696ac25f23a364d9b4e0b02e4cbb
         Collection:
-            StateHash: bd683cc96344a40db1476febb2c2ecd236d958d6
+            StateHash: 55786fe01bc7548a05938ecbe97dd9c89e2ac058
             Methods:
-                StateHash: 070f50bd3b47ae43849cf67452f810eed7404751
+                StateHash: 3b3059684cdd650d9ab9b2cc687b2b779763472c
                 Methods:
-                    1a08c6cdb84e1ef33a27a17ccfea20eac608e627:
-                        Ref: Collection.Repository.UpdateManyImportCollectionsLogs
-                        OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs
-                        Domain: Collection
-                        StateHash: 0ae4cd3cf053fa1b2a0478006fcee5bae3d8433f
-                        Order: 4
-                        Name: UpdateManyImportCollectionsLogs
-                        Input:
-                            TypeHash: 636ef8f22ed5db18c31bcf0fad514f9da244cbf1
                     6c604f8439ce04282a65aeb148b0ad7464481eab:
                         Ref: Collection.Repository.AddToPersonalCollection
                         OriginalPath: Collection.Repository.Methods.AddToPersonalCollection
@@ -6484,6 +6436,15 @@ Repository:
                             TypeHash: 5df23805ea508d864f2b8349325673aa712d805c
                         Output:
                             TypeHash: 27bf62d718627b14c45f61d82225f0e4cc2172a1
+                    e9adc3bc3e49f14e117af54b532f536ffdb6403a:
+                        Ref: Collection.Repository.UpdateImportCollectionLog
+                        OriginalPath: Collection.Repository.Methods.UpdateImportCollectionLog
+                        Domain: Collection
+                        StateHash: 75deed1b7e868e4c08de0771813838685a6323af
+                        Order: 4
+                        Name: UpdateImportCollectionLog
+                        Input:
+                            TypeHash: e89f135fd352983ef72aceaf11250b5e06641874
         Game:
             StateHash: d7f5afb7deda6d5829ea5834fdae66974c60dca2
             Methods:
@@ -6523,7 +6484,7 @@ Repository:
                         Output:
                             TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
 Usecase:
-    StateHash: 27ff5ff9d11c0df6becdcc48e3117d1e61427d08
+    StateHash: c39079db70797a1136e83f67ded9d2ff902a13ef
     Usecases:
         Account:
             StateHash: 793354ec08973a7195f905fb2fa53d1d973b1364
@@ -6732,7 +6693,7 @@ Usecase:
                         Input:
                             TypeHash: d9c76753350ea1bfb9e4b940f225772b688e374f
 Delivery:
-    StateHash: 2db67d54faf0d700a3a098d267297d649a39edf7
+    StateHash: bfffec41d3c7d9e530dc9cfdf723aeef697ad484
     Deliveries:
         Account:
             StateHash: e826b946de60762c4c830b3b45cc97ed9dec9e49

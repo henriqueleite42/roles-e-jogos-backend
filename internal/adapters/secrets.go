@@ -24,4 +24,6 @@ type Secrets struct {
 	EmailAddressSystemMessages string
 	NameSystemMessages         string
 	EmailTemplateSignInOtp     string
+
+	CollectionImportPersonalCollectionFromLudopediaQueueId string
 }

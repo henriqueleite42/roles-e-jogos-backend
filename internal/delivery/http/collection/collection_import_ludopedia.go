@@ -8,12 +8,12 @@ import (
 	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 )
 
-func (self *collectionController) CollectionPersonalImportLudopedia(w http.ResponseWriter, r *http.Request) {
+func (self *collectionController) CollectionImportLudopedia(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
 		Str("dmn", "Collection").
-		Str("mtd", "CollectionPersonalImportLudopedia").
+		Str("mtd", "CollectionImportLudopedia").
 		Str("reqId", reqId).
 		Logger()
 
@@ -27,14 +27,14 @@ func (self *collectionController) CollectionPersonalImportLudopedia(w http.Respo
 			return
 		}
 
-		importPersonalCollectionFromLudopediaInput := &collection_usecase.ImportPersonalCollectionFromLudopediaInput{
+		requestImportPersonalCollectionFromLudopediaInput := &collection_usecase.RequestImportPersonalCollectionFromLudopediaInput{
 			AccountId: session.AccountId,
 		}
 
-		logger.Trace().Msg("validate importPersonalCollectionFromLudopediaInput")
-		err = self.validator.Validate(importPersonalCollectionFromLudopediaInput)
+		logger.Trace().Msg("validate requestImportPersonalCollectionFromLudopediaInput")
+		err = self.validator.Validate(requestImportPersonalCollectionFromLudopediaInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("invalid importPersonalCollectionFromLudopediaInput")
+			logger.Info().Err(err).Msg("invalid requestImportPersonalCollectionFromLudopediaInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -43,7 +43,7 @@ func (self *collectionController) CollectionPersonalImportLudopedia(w http.Respo
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		err = self.collectionUsecase.ImportPersonalCollectionFromLudopedia(reqCtx, importPersonalCollectionFromLudopediaInput)
+		err = self.collectionUsecase.RequestImportPersonalCollectionFromLudopedia(reqCtx, requestImportPersonalCollectionFromLudopediaInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
 			logger.Warn().Err(err).Msg("usecase err")

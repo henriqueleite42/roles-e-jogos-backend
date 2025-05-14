@@ -1,11 +1,11 @@
 package adapters
 
 type LudopediaCollectionItem struct {
-	Id           int    `json:"id_jogo"`
-	Name         string `json:"nm_jogo"`
-	ImageUrl     string `json:"thumb"`
-	LudopediaUrl string `json:"link"`
-	Paid         int    `json:"vl_custo"`
+	Id           int     `json:"id_jogo"`
+	Name         string  `json:"nm_jogo"`
+	ImageUrl     *string `json:"thumb"`
+	LudopediaUrl *string `json:"link"`
+	Paid         *int    `json:"vl_custo"`
 }
 
 type GetCollectionOutput struct {

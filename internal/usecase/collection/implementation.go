@@ -14,13 +14,14 @@ type CollectionUsecaseImplementation struct {
 
 	Db *pgxpool.Pool
 
-	AccountRepository    account_repository.AccountRepository
-	GameRepository       game_repository.GameRepository
-	CollectionRepository collection_repository.CollectionRepository
-
 	LudopediaAdapter adapters.Ludopedia
 	IdAdapter        adapters.Id
 	EmailAdapter     adapters.Email
 	SecretsAdapter   *adapters.Secrets
 	StorageAdapter   adapters.Storage
+	MessagingAdapter adapters.Messaging
+
+	AccountRepository    account_repository.AccountRepository
+	GameRepository       game_repository.GameRepository
+	CollectionRepository collection_repository.CollectionRepository
 }

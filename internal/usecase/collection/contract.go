@@ -24,12 +24,14 @@ type GetCollectiveCollectionOutput struct {
 	Data       []*models.GroupCollectionItem  `validate:"required"`
 	Pagination *models.PaginationOutputString `validate:"required"`
 }
-type ImportPersonalCollectionFromLudopediaInput struct {
-	AccountId int
+type RequestImportPersonalCollectionFromLudopediaInput struct {
+	AccountId   int `validate:"id"`
+	LudopediaId int
 }
 
 type CollectionUsecase interface {
 	AddToPersonalCollection(ctx context.Context, i *AddToPersonalCollectionInput) error
 	GetCollectiveCollection(ctx context.Context, i *GetCollectiveCollectionInput) (*GetCollectiveCollectionOutput, error)
-	ImportPersonalCollectionFromLudopedia(ctx context.Context, i *ImportPersonalCollectionFromLudopediaInput) error
+	ImportPersonalCollectionFromLudopedia(ctx context.Context, i []*models.ImportCollectionEvent) error
+	RequestImportPersonalCollectionFromLudopedia(ctx context.Context, i *RequestImportPersonalCollectionFromLudopediaInput) error
 }

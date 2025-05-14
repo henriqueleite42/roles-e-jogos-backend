@@ -104,6 +104,20 @@ WHERE
 	c."account_id" = $1
 	AND c."provider" = $2;
 
+-- name: GetConnectionsByExternalIdsAndProvider :many
+SELECT
+	c."account_id",
+	c."provider",
+	c."external_handle",
+	c."external_id",
+	c."access_token",
+	c."refresh_token",
+	c."created_at"
+FROM "connections" c
+WHERE
+	c."external_id" = ANY($1::text[])
+	AND c."provider" = $2;
+
 -- name: GetAccountDataByHandle :one
 SELECT
 	a."id",

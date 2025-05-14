@@ -45,4 +45,42 @@ INSERT INTO "personal_collections" (
 	$2,
 	$3,
 	$4
-);
+) ON CONFLICT ("account_id", "game_id") DO NOTHING;
+
+-- name: GetOngoingImportCollectionLog :many
+SELECT
+	icl."id",
+	icl."account_id",
+	icl."external_id",
+	icl."provider",
+	icl."trigger",
+	icl."status",
+	icl."created_at"
+FROM "import_collection_logs" icl
+WHERE
+	icl."external_id" = ANY($1::text[])
+	AND icl."provider" = $2
+	AND icl."ended_at" IS NULL;
+
+-- name: CreateImportCollectionLog :one
+INSERT INTO "import_collection_logs" (
+	"account_id",
+	"external_id",
+	"trigger",
+	"provider",
+	"status"
+) VALUES (
+	$1,
+	$2,
+	$3,
+	$4,
+	$5
+) RETURNING "id";
+
+-- name: UpdateManyImportCollectionsLogs :exec
+UPDATE "import_collection_logs"
+SET
+	"status" = $2
+WHERE
+	"external_id" = ANY($1::int[])
+	AND "ended_at" IS NULL;

@@ -11,6 +11,91 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type CollectionImportStatusEnum string
+
+const (
+	CollectionImportStatusEnumSTARTED   CollectionImportStatusEnum = "STARTED"
+	CollectionImportStatusEnumCOMPLETED CollectionImportStatusEnum = "COMPLETED"
+	CollectionImportStatusEnumFAILED    CollectionImportStatusEnum = "FAILED"
+)
+
+func (e *CollectionImportStatusEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = CollectionImportStatusEnum(s)
+	case string:
+		*e = CollectionImportStatusEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for CollectionImportStatusEnum: %T", src)
+	}
+	return nil
+}
+
+type NullCollectionImportStatusEnum struct {
+	CollectionImportStatusEnum CollectionImportStatusEnum
+	Valid                      bool // Valid is true if CollectionImportStatusEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullCollectionImportStatusEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.CollectionImportStatusEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.CollectionImportStatusEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullCollectionImportStatusEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.CollectionImportStatusEnum), nil
+}
+
+type CollectionImportTriggerEnum string
+
+const (
+	CollectionImportTriggerEnumACCOUNTCREATION CollectionImportTriggerEnum = "ACCOUNT_CREATION"
+	CollectionImportTriggerEnumMANUALBYUSER    CollectionImportTriggerEnum = "MANUAL_BY_USER"
+)
+
+func (e *CollectionImportTriggerEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = CollectionImportTriggerEnum(s)
+	case string:
+		*e = CollectionImportTriggerEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for CollectionImportTriggerEnum: %T", src)
+	}
+	return nil
+}
+
+type NullCollectionImportTriggerEnum struct {
+	CollectionImportTriggerEnum CollectionImportTriggerEnum
+	Valid                       bool // Valid is true if CollectionImportTriggerEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullCollectionImportTriggerEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.CollectionImportTriggerEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.CollectionImportTriggerEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullCollectionImportTriggerEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.CollectionImportTriggerEnum), nil
+}
+
 type EventAttendanceStatusEnum string
 
 const (
@@ -288,6 +373,17 @@ type Game struct {
 	Name               string
 	AverageDuration    int32
 	MinAge             int32
+}
+
+type ImportCollectionLog struct {
+	AccountID  int32
+	CreatedAt  pgtype.Timestamptz
+	EndedAt    pgtype.Timestamptz
+	ExternalID string
+	ID         int32
+	Provider   ProviderEnum
+	Status     CollectionImportStatusEnum
+	Trigger    CollectionImportTriggerEnum
 }
 
 type Media struct {

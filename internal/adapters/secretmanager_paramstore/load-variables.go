@@ -25,6 +25,7 @@ var VARIABLES_NAMES = []string{
 	"EmailAddressSystemMessages",
 	"NameSystemMessages",
 	"EmailTemplateSignInOtp",
+	"CollectionImportPersonalCollectionFromLudopediaQueueId",
 }
 
 func (self *secretmanagerParamstore) loadVariables(cfg aws.Config) error {
@@ -103,6 +104,9 @@ func (self *secretmanagerParamstore) loadVariables(cfg aws.Config) error {
 				self.secrets.NameSystemMessages = *v.Value
 			case "EmailTemplateSignInOtp":
 				self.secrets.EmailTemplateSignInOtp = *v.Value
+
+			case "CollectionImportPersonalCollectionFromLudopediaQueueId":
+				self.secrets.CollectionImportPersonalCollectionFromLudopediaQueueId = *v.Value
 			}
 		}
 	}

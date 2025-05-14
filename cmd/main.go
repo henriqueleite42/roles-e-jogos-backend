@@ -11,11 +11,15 @@ import (
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/ludopedia"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/s3"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/secretmanager_paramstore"
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/ses"
+	sqs_sns "github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/sqs-sns"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters/xid"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery"
 	http_delivery "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/http"
+	queue_delivery "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/queue"
 	account_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/account"
 	collection_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/collection"
+	game_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/game"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/queries"
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
@@ -127,6 +131,20 @@ func main() {
 			Err(err).
 			Msg("fail to initialize S3Adapter")
 	}
+	sesAdapter, err := ses.NewSes(&logger)
+	if err != nil {
+		logger.Fatal().
+			Err(err).
+			Msg("fail to initialize S3Adapter")
+	}
+	sqsSnsAdapter, err := sqs_sns.NewSqsSnsService(&sqs_sns.NewSqsSnsServiceInput{
+		Logger: &logger,
+	})
+	if err != nil {
+		logger.Fatal().
+			Err(err).
+			Msg("fail to initialize sqsSnsAdapter")
+	}
 	xidAdapter, err := xid.NewXid(&logger)
 	if err != nil {
 		logger.Fatal().
@@ -165,6 +183,15 @@ func main() {
 			Err(err).
 			Msg("fail to initialize CollectionRepository")
 	}
+	gameRepository, err := game_repository.NewGameRepository(&game_repository.NewGameRepositoryInput{
+		Logger:  &logger,
+		Queries: sqlcQueries,
+	})
+	if err != nil {
+		logger.Fatal().
+			Err(err).
+			Msg("fail to initialize GameRepository")
+	}
 
 	logger.Info().Msg("repositories initialized")
 
@@ -179,22 +206,27 @@ func main() {
 	accountUsecase := &account_usecase.AccountUsecaseImplementation{
 		Logger:            &logger,
 		Db:                db,
-		AccountRepository: accountRepository,
 		GoogleAdapter:     googleAdapter,
 		LudopediaAdapter:  ludopediaSignInAdapter,
 		IdAdapter:         xidAdapter,
 		StorageAdapter:    s3Adapter,
 		SecretsAdapter:    secretsAdapter,
+		MessagingAdapter:  sqsSnsAdapter,
+		EmailAdapter:      sesAdapter,
+		AccountRepository: accountRepository,
 	}
 	collectionUsecase := &collection_usecase.CollectionUsecaseImplementation{
 		Logger:               &logger,
 		Db:                   db,
-		AccountRepository:    accountRepository,
-		CollectionRepository: collectionRepository,
 		LudopediaAdapter:     ludopediaAdapter,
 		IdAdapter:            xidAdapter,
 		StorageAdapter:       s3Adapter,
 		SecretsAdapter:       secretsAdapter,
+		EmailAdapter:         sesAdapter,
+		MessagingAdapter:     sqsSnsAdapter,
+		AccountRepository:    accountRepository,
+		CollectionRepository: collectionRepository,
+		GameRepository:       gameRepository,
 	}
 	eventUsecase := &event_usecase.EventUsecaseImplementation{
 		Logger:         &logger,
@@ -221,6 +253,18 @@ func main() {
 			Err(err).
 			Msg("fail to initialize AuthPostgresAdapter")
 	}
+
+	logger.Trace().Msg("initializing queue server")
+	queueDelivery := queue_delivery.NewQueueDelivery(&queue_delivery.NewQueueDeliveryInput{
+		Logger: &logger,
+
+		SecretsAdapter:   secretsAdapter,
+		MessagingAdapter: sqsSnsAdapter,
+
+		CollectionUsecase: collectionUsecase,
+	})
+	queueDelivery.Listen()
+	logger.Info().Msg("queue server initialized")
 
 	logger.Trace().Msg("initializing http server")
 	httpDelivery := http_delivery.NewHttpDelivery(&http_delivery.NewHttpDeliveryInput{
@@ -252,6 +296,7 @@ func main() {
 		Logger:  &logger,
 		Timeout: 15 * time.Second,
 		Deliveries: []delivery.Delivery{
+			queueDelivery,
 			httpDelivery,
 		},
 	})

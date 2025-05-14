@@ -4,6 +4,21 @@ import (
 	"time"
 )
 
+type CollectionImportStatus string
+
+const (
+	CollectionImportStatus_Started   CollectionImportStatus = "STARTED"
+	CollectionImportStatus_Completed CollectionImportStatus = "COMPLETED"
+	CollectionImportStatus_Failed    CollectionImportStatus = "FAILED"
+)
+
+type CollectionImportTrigger string
+
+const (
+	CollectionImportTrigger_AccountCreation CollectionImportTrigger = "ACCOUNT_CREATION"
+	CollectionImportTrigger_ManualByUser    CollectionImportTrigger = "MANUAL_BY_USER"
+)
+
 type GroupCollectionItem struct {
 	Game   *GroupCollectionItemGame `validate:"required"`
 	Owners []*MinimumProfileData    `validate:"required"`
@@ -18,6 +33,17 @@ type GroupCollectionItemGame struct {
 	Name               string
 }
 
+type ImportCollectionLog struct {
+	AccountId  int                     `db:"account_id"`
+	CreatedAt  time.Time               `validate:"required" db:"created_at"`
+	EndedAt    *time.Time              `validate:"omitempty" db:"ended_at"`
+	ExternalId string                  `db:"external_id"`
+	Id         int                     `db:"id"`
+	Provider   Provider                `validate:"required" db:"provider"`
+	Status     CollectionImportStatus  `validate:"required" db:"status"`
+	Trigger    CollectionImportTrigger `validate:"required" db:"trigger"`
+}
+
 type PersonalCollection struct {
 	AccountId  int        `db:"account_id"`
 	AcquiredAt *time.Time `validate:"omitempty" db:"acquired_at"`
@@ -25,4 +51,10 @@ type PersonalCollection struct {
 	GameId     int        `db:"game_id"`
 	Id         int        `db:"id"`
 	Paid       *int       `validate:"omitempty" db:"paid"`
+}
+
+type ImportCollectionEvent struct {
+	AccountId  int                     `validate:"id"`
+	ExternalId string
+	Trigger    CollectionImportTrigger `validate:"required" db:"trigger"`
 }

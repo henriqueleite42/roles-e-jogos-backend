@@ -5,6 +5,30 @@ Domain: Collection
 Description: |
   Controls game collections of users
 
+Enums:
+  CollectionImportTrigger:
+    Type: String
+    Values:
+      AccountCreation:
+        Index: 0
+        Value: ACCOUNT_CREATION
+      ManualByUser:
+        Index: 1
+        Value: MANUAL_BY_USER
+
+  CollectionImportStatus:
+    Type: String
+    Values:
+      Started:
+        Index: 0
+        Value: STARTED
+      Completed:
+        Index: 1
+        Value: COMPLETED
+      Failed:
+        Index: 2
+        Value: FAILED
+
 Types:
   GroupCollectionItem:
     Type: Map
@@ -29,6 +53,25 @@ Types:
         Type: List
         Items:
           $ref: Account.Types.MinimumProfileData
+
+Events:
+  ImportCollectionEvent:
+    Description: |
+      Imports a user's collection from Ludopedia
+    Formats:
+      - json
+    Type:
+      Type: Map
+      Properties:
+        AccountId:
+          Type: Int
+          Validate:
+            - id
+        ExternalId:
+          Type: String
+        Trigger:
+          Type: Enum
+          EnumRef: Enums.CollectionImportTrigger
 
 Entities:
   NamingCase: snake
@@ -61,6 +104,11 @@ Entities:
           DbType: TIMESTAMPTZ
       PrimaryKey:
         - Id
+      Indexes:
+        - Columns:
+            - AccountId
+            - GameId
+          Unique: true
       ForeignKeys:
         - Columns:
             - AccountId
@@ -71,6 +119,46 @@ Entities:
             - GameId
           RefColumns:
             - Game.Entities.Game.Id
+          OnDelete: CASCADE
+
+    ImportCollectionLog:
+      Description: |
+        Describes the status of a collection's import
+      Columns:
+        Id:
+          Type: Int
+          AutoIncrement: true
+          DbType: INTEGER
+        AccountId:
+          Type: Int
+          DbType: INTEGER
+        ExternalId:
+          Type: String
+          DbType: VARCHAR(255)
+        Trigger:
+          Type: Enum
+          EnumRef: Enums.CollectionImportTrigger
+        Provider:
+          Type: Enum
+          EnumRef: Account.Enums.Provider
+        Status:
+          Type: Enum
+          EnumRef: Enums.CollectionImportStatus
+        CreatedAt:
+          Type: Timestamp
+          Default: NOW()
+          DbType: TIMESTAMPTZ
+        EndedAt:
+          Type: Timestamp
+          Optional: true
+          DbType: TIMESTAMPTZ
+      PrimaryKey:
+        - Id
+      ForeignKeys:
+        - Columns:
+            - AccountId
+          RefColumns:
+            - Account.Entities.Account.Id
           OnDelete: CASCADE
 
 Repository:
@@ -119,6 +207,60 @@ Repository:
               $ref: Types.GroupCollectionItem
           Pagination:
             $ref: Common.Types.PaginationOutputString
+
+    GetOngoingImportCollectionLog:
+      Input:
+        Type: Map
+        Properties:
+          ExternalIds:
+            Type: List
+            Items:
+              Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Account.Enums.Provider
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Entities.ImportCollectionLog
+
+    CreateImportCollectionLog:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          ExternalId:
+            Type: String
+          Trigger:
+            Type: Enum
+            EnumRef: Enums.CollectionImportTrigger
+          Provider:
+            Type: Enum
+            EnumRef: Account.Enums.Provider
+          Status:
+            Type: Enum
+            EnumRef: Enums.CollectionImportStatus
+      Output:
+        Type: Map
+        Properties:
+          Id:
+            Type: Int
+
+    UpdateManyImportCollectionsLogs:
+      Input:
+        Type: Map
+        Properties:
+          Ids:
+            Type: List
+            Items:
+              Type: Int
+          Status:
+            Type: Enum
+            EnumRef: Enums.CollectionImportStatus
 
 Usecase:
   Methods:
@@ -173,14 +315,22 @@ Usecase:
           Pagination:
             $ref: Common.Types.PaginationOutputString
 
-    ImportPersonalCollectionFromLudopedia:
-      Description: |
-        Imports personal_collections of all linked users from ludopedia
+    RequestImportPersonalCollectionFromLudopedia:
       Input:
         Type: Map
         Properties:
           AccountId:
             Type: Int
+            Validate:
+              - id
+          LudopediaId:
+            Type: Int
+
+    ImportPersonalCollectionFromLudopedia:
+      Input:
+        Type: List
+        Items:
+          $ref: Events.ImportCollectionEvent
 
 Delivery:
   Servers:
@@ -198,6 +348,12 @@ Delivery:
         Method: GET
         Path: /collection/collective?after=:After&limit=:Limit
 
-      - UsecaseMethod: ImportPersonalCollectionFromLudopedia
-        Method: POST
-        Path: /collection/personal/import/ludopedia
+      - UsecaseMethod: RequestImportPersonalCollectionFromLudopedia
+        Method: GET
+        Path: /collection/import/ludopedia
+  Queue:
+    Queues:
+      - Id: import-personal-collection-from-ludopedia
+        Description: |
+          Imports a user collection from ludopedia
+        UsecaseMethod: ImportPersonalCollectionFromLudopedia

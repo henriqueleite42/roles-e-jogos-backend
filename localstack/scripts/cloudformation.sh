@@ -20,6 +20,10 @@ awslocal cloudformation deploy \
 	--stack-name dev-rolesejogos-cloudfront \
 	--template-file "/etc/localstack/cloudformation/cloudfront.yaml"
 
+awslocal cloudformation deploy \
+	--stack-name dev-rolesejogos-sqs \
+	--template-file "/etc/localstack/cloudformation/sqs.yaml"
+
 # ---------------------------
 #
 #  Parameter Store
@@ -85,6 +89,11 @@ awslocal ssm put-parameter \
 	--name dev-email-template-sign-in-otp \
 	--type String \
 	--value foo
+
+awslocal ssm put-parameter \
+	--name dev-collection-import-personal-collection-from-ludopedia-queue-id \
+	--type String \
+	--value CollectionImportPersonalCollectionFromLudopediaQueueId
 
 # ---------------------------
 #

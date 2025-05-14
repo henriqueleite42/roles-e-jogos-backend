@@ -1,5 +1,20 @@
 schema "public" {}
 
+enum "collection_import_status_enum" {
+	schema = schema.public
+	values = [
+		"STARTED",
+		"COMPLETED",
+		"FAILED",
+	]
+}
+enum "collection_import_trigger_enum" {
+	schema = schema.public
+	values = [
+		"ACCOUNT_CREATION",
+		"MANUAL_BY_USER",
+	]
+}
 enum "event_attendance_status_enum" {
 	schema = schema.public
 	values = [
@@ -362,6 +377,54 @@ table "games" {
 		]
 	}
 }
+table "import_collection_logs" {
+	schema = schema.public
+	column "account_id" {
+		type = sql("INTEGER")
+	}
+	column "created_at" {
+		type = sql("TIMESTAMPTZ")
+		default = sql("NOW()")
+	}
+	column "ended_at" {
+		type = sql("TIMESTAMPTZ")
+		null = true
+	}
+	column "external_id" {
+		type = sql("VARCHAR(255)")
+	}
+	column "id" {
+		type = sql("INTEGER")
+    identity {
+			generated = ALWAYS
+			start = 0
+			increment = 1
+    }
+	}
+	column "provider" {
+		type = enum.provider_enum
+	}
+	column "status" {
+		type = enum.collection_import_status_enum
+	}
+	column "trigger" {
+		type = enum.collection_import_trigger_enum
+	}
+	primary_key {
+		columns = [
+			column.id,
+		]
+	}
+	foreign_key "import_collection_logs_account_id_fk" {
+		columns = [
+			column.account_id
+		]
+		ref_columns = [
+			table.accounts.column.id
+		]
+		on_delete = CASCADE
+	}
+}
 table "medias" {
 	schema = schema.public
 	column "created_at" {
@@ -472,6 +535,13 @@ table "personal_collections" {
 		columns = [
 			column.id,
 		]
+	}
+	index "personal_collections_account_id_game_id_idx" {
+		columns = [
+			column.account_id,
+			column.game_id,
+		]
+		unique = true
 	}
 	foreign_key "personal_collections_account_id_fk" {
 		columns = [

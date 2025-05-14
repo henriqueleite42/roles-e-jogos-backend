@@ -122,3 +122,70 @@ func (q *Queries) GetGameByLudopediaId(ctx context.Context, ludopediaID pgtype.I
 	)
 	return i, err
 }
+
+const getGamesListByLudopediaId = `-- name: GetGamesListByLudopediaId :many
+SELECT
+	g."id",
+	g."name",
+	g."description",
+	g."icon_path",
+	g."kind",
+	g."ludopedia_id",
+	g."ludopedia_url",
+	g."min_amount_of_players",
+	g."max_amount_of_players",
+	g."average_duration",
+	g."min_age",
+	g."created_at"
+FROM "games" g
+WHERE
+	g."ludopedia_id" = ANY($1::int[])
+`
+
+type GetGamesListByLudopediaIdRow struct {
+	ID                 int32
+	Name               string
+	Description        string
+	IconPath           pgtype.Text
+	Kind               KindEnum
+	LudopediaID        pgtype.Int4
+	LudopediaUrl       pgtype.Text
+	MinAmountOfPlayers int32
+	MaxAmountOfPlayers int32
+	AverageDuration    int32
+	MinAge             int32
+	CreatedAt          pgtype.Timestamptz
+}
+
+func (q *Queries) GetGamesListByLudopediaId(ctx context.Context, dollar_1 []int32) ([]GetGamesListByLudopediaIdRow, error) {
+	rows, err := q.db.Query(ctx, getGamesListByLudopediaId, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetGamesListByLudopediaIdRow
+	for rows.Next() {
+		var i GetGamesListByLudopediaIdRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.IconPath,
+			&i.Kind,
+			&i.LudopediaID,
+			&i.LudopediaUrl,
+			&i.MinAmountOfPlayers,
+			&i.MaxAmountOfPlayers,
+			&i.AverageDuration,
+			&i.MinAge,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

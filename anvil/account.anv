@@ -531,6 +531,25 @@ Repository:
             Items:
               $ref: Types.MinimumProfileData
 
+    GetConnectionsListByExternalIdAndProvider:
+      Input:
+        Type: Map
+        Properties:
+          ExternalIds:
+            Type: List
+            Items:
+              Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Enums.Provider
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Entities.Connection
+
 Usecase:
   Methods:
     CreateWithGoogleProvider:

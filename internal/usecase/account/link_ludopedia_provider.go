@@ -63,6 +63,19 @@ func (self *AccountUsecaseImplementation) LinkLudopediaProvider(ctx context.Cont
 		return err
 	}
 
+	err = self.MessagingAdapter.SendPublicEvent(&adapters.SendEventInput{
+		ListenerId: self.SecretsAdapter.CollectionImportPersonalCollectionFromLudopediaQueueId,
+		EventName:  "import-collection-from-ludopedia",
+		Event: models.ImportCollectionEvent{
+			AccountId:  i.AccountId,
+			ExternalId: externalUserData.Id,
+			Trigger:    models.CollectionImportTrigger_AccountCreation,
+		},
+	})
+	if err != nil {
+		self.Logger.Error().Err(err).Msg("fail to send queue message to import collection from ludopedia")
+	}
+
 	tx.Commit(ctx)
 	return nil
 }

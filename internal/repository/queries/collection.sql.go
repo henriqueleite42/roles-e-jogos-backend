@@ -22,7 +22,7 @@ INSERT INTO "personal_collections" (
 	$2,
 	$3,
 	$4
-)
+) ON CONFLICT ("account_id", "game_id") DO NOTHING
 `
 
 type AddToPersonalCollectionParams struct {
@@ -40,6 +40,43 @@ func (q *Queries) AddToPersonalCollection(ctx context.Context, arg AddToPersonal
 		arg.AcquiredAt,
 	)
 	return err
+}
+
+const createImportCollectionLog = `-- name: CreateImportCollectionLog :one
+INSERT INTO "import_collection_logs" (
+	"account_id",
+	"external_id",
+	"trigger",
+	"provider",
+	"status"
+) VALUES (
+	$1,
+	$2,
+	$3,
+	$4,
+	$5
+) RETURNING "id"
+`
+
+type CreateImportCollectionLogParams struct {
+	AccountID  int32
+	ExternalID string
+	Trigger    CollectionImportTriggerEnum
+	Provider   ProviderEnum
+	Status     CollectionImportStatusEnum
+}
+
+func (q *Queries) CreateImportCollectionLog(ctx context.Context, arg CreateImportCollectionLogParams) (int32, error) {
+	row := q.db.QueryRow(ctx, createImportCollectionLog,
+		arg.AccountID,
+		arg.ExternalID,
+		arg.Trigger,
+		arg.Provider,
+		arg.Status,
+	)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getCollectiveCollection = `-- name: GetCollectiveCollection :many
@@ -137,4 +174,82 @@ func (q *Queries) GetCollectiveCollection(ctx context.Context, arg GetCollective
 		return nil, err
 	}
 	return items, nil
+}
+
+const getOngoingImportCollectionLog = `-- name: GetOngoingImportCollectionLog :many
+SELECT
+	icl."id",
+	icl."account_id",
+	icl."external_id",
+	icl."provider",
+	icl."trigger",
+	icl."status",
+	icl."created_at"
+FROM "import_collection_logs" icl
+WHERE
+	icl."external_id" = ANY($1::text[])
+	AND icl."provider" = $2
+	AND icl."ended_at" IS NULL
+`
+
+type GetOngoingImportCollectionLogParams struct {
+	Column1  []string
+	Provider ProviderEnum
+}
+
+type GetOngoingImportCollectionLogRow struct {
+	ID         int32
+	AccountID  int32
+	ExternalID string
+	Provider   ProviderEnum
+	Trigger    CollectionImportTriggerEnum
+	Status     CollectionImportStatusEnum
+	CreatedAt  pgtype.Timestamptz
+}
+
+func (q *Queries) GetOngoingImportCollectionLog(ctx context.Context, arg GetOngoingImportCollectionLogParams) ([]GetOngoingImportCollectionLogRow, error) {
+	rows, err := q.db.Query(ctx, getOngoingImportCollectionLog, arg.Column1, arg.Provider)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetOngoingImportCollectionLogRow
+	for rows.Next() {
+		var i GetOngoingImportCollectionLogRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.AccountID,
+			&i.ExternalID,
+			&i.Provider,
+			&i.Trigger,
+			&i.Status,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateManyImportCollectionsLogs = `-- name: UpdateManyImportCollectionsLogs :exec
+UPDATE "import_collection_logs"
+SET
+	"status" = $2
+WHERE
+	"external_id" = ANY($1::int[])
+	AND "ended_at" IS NULL
+`
+
+type UpdateManyImportCollectionsLogsParams struct {
+	Column1 []int32
+	Status  CollectionImportStatusEnum
+}
+
+func (q *Queries) UpdateManyImportCollectionsLogs(ctx context.Context, arg UpdateManyImportCollectionsLogsParams) error {
+	_, err := q.db.Exec(ctx, updateManyImportCollectionsLogs, arg.Column1, arg.Status)
+	return err
 }
