@@ -2,7 +2,6 @@ package sqs_sns
 
 import (
 	"context"
-	"encoding/json"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
@@ -133,15 +132,17 @@ func (self *sqsSnsImplementation) CreateListener(i *adapters.CreateListenerInput
 
 	go func() {
 		for event := range ch {
-			eventJsonDecoded := SqsEvent{}
-			err := json.Unmarshal([]byte(*event), &eventJsonDecoded)
-			if err != nil {
-				self.logger.Error().Err(err).Msg("error on unmarshalling messages")
-				continue
-			}
+			// eventJsonDecoded := SqsEvent{}
+			// self.logger.Debug().Str("event", *event).Msg("event")
+			// err := json.Unmarshal([]byte(*event), &eventJsonDecoded)
+			// if err != nil {
+			// 	self.logger.Error().Err(err).Msg("error on unmarshalling messages")
+			// 	continue
+			// }
 
-			eventBytes := []byte(eventJsonDecoded.Message)
-			events = append(events, eventBytes)
+			// eventBytes := []byte(eventJsonDecoded.Message)
+			// events = append(events, eventBytes)
+			events = append(events, []byte(*event))
 			startTicker()
 
 			if len(events) >= i.MaxEvents {

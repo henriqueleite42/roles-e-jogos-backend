@@ -80,7 +80,8 @@ INSERT INTO "import_collection_logs" (
 -- name: UpdateManyImportCollectionsLogs :exec
 UPDATE "import_collection_logs"
 SET
-	"status" = $2
+	"status" = $2,
+	"ended_at" = NOW()
 WHERE
-	"external_id" = ANY($1::int[])
+	"id" = ANY($1::int[])
 	AND "ended_at" IS NULL;

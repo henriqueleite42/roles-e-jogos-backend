@@ -93,7 +93,7 @@ awslocal ssm put-parameter \
 awslocal ssm put-parameter \
 	--name dev-collection-import-personal-collection-from-ludopedia-queue-id \
 	--type String \
-	--value CollectionImportPersonalCollectionFromLudopediaQueueId
+	--value https://localhost.localstack.cloud:4566/000000000000/dev-import-personal-collection-from-ludopedia
 
 # ---------------------------
 #

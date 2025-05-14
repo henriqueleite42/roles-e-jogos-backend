@@ -111,6 +111,7 @@ type GetProfilesListByHandleOutput struct {
 	Data []*models.MinimumProfileData `validate:"required"`
 }
 type LinkConnectionWithAccountInput struct {
+	AccessToken    *string         `validate:"omitempty"`
 	AccountId      int
 	Email          string
 	ExternalHandle *string         `validate:"omitempty"`

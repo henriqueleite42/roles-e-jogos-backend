@@ -57,12 +57,14 @@ func (self *accountController) AuthGoogle(w http.ResponseWriter, r *http.Request
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		self.authAdapter.SetSessionOnRes(&adapters.SetSessionOnResInput{
 			Res:       w,
 			SessionId: createWithGoogleProviderOutput.SessionId,
 		})
 		fmt.Println(self.secretsAdapter.WebsiteUrl + "/conta")
 		http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
+		logger.Trace().Msg("finish")
 		return
 	}
 

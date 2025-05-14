@@ -20,6 +20,13 @@ func (self *accountRepositoryImplementation) LinkConnectionWithAccount(ctx conte
 			String: *i.ExternalHandle,
 		}
 	}
+	var accessToken pgtype.Text
+	if i.AccessToken != nil {
+		accessToken = pgtype.Text{
+			Valid:  true,
+			String: *i.AccessToken,
+		}
+	}
 	var refreshToken pgtype.Text
 	if i.RefreshToken != nil {
 		refreshToken = pgtype.Text{
@@ -35,6 +42,7 @@ func (self *accountRepositoryImplementation) LinkConnectionWithAccount(ctx conte
 		ExternalHandle: externalHandle,
 		ExternalID:     i.ExternalId,
 		Provider:       queries.ProviderEnum(i.Provider),
+		AccessToken:    accessToken,
 		RefreshToken:   refreshToken,
 	})
 	if err != nil {

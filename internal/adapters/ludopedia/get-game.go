@@ -3,6 +3,7 @@ package ludopedia
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -33,6 +34,24 @@ func (self *ludopediaAdapter) GetGame(i *adapters.GetGameInput) (*adapters.GetGa
 	}
 	defer gameDataRes.Body.Close()
 	self.logger.Trace().Msg("request to get ludopedia game done")
+
+	if gameDataRes.StatusCode != http.StatusOK {
+		bodyBytes, err := io.ReadAll(gameDataRes.Body)
+		if err != nil {
+			self.logger.Error().
+				Int("status", gameDataRes.StatusCode).
+				Err(err).
+				Msg("fail to read response body")
+			return nil, errors.New("fail to make request")
+		}
+
+		bodyString := string(bodyBytes)
+		self.logger.Error().
+			Int("status", gameDataRes.StatusCode).
+			Str("body", bodyString).
+			Msg("fail to make request")
+		return nil, errors.New("fail to make request")
+	}
 
 	self.logger.Trace().Msg("decode req body")
 	game := &adapters.GetGameOutput{}

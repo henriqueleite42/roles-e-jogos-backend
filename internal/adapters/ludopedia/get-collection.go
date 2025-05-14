@@ -3,6 +3,7 @@ package ludopedia
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
@@ -37,6 +38,24 @@ func (self *ludopediaAdapter) GetCollection(i *adapters.GetCollectionInput) (*ad
 	}
 	defer collectionDataRes.Body.Close()
 	self.logger.Trace().Msg("request to get ludopedia collection done")
+
+	if collectionDataRes.StatusCode != http.StatusOK {
+		bodyBytes, err := io.ReadAll(collectionDataRes.Body)
+		if err != nil {
+			self.logger.Error().
+				Int("status", collectionDataRes.StatusCode).
+				Err(err).
+				Msg("fail to read response body")
+			return nil, errors.New("fail to make request")
+		}
+
+		bodyString := string(bodyBytes)
+		self.logger.Error().
+			Int("status", collectionDataRes.StatusCode).
+			Str("body", bodyString).
+			Msg("fail to make request")
+		return nil, errors.New("fail to make request")
+	}
 
 	self.logger.Trace().Msg("decode req body")
 	collection := &adapters.GetCollectionOutput{}

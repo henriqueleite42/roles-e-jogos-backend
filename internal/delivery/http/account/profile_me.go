@@ -115,7 +115,9 @@ func (self *accountController) ProfileMe(w http.ResponseWriter, r *http.Request)
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		w.WriteHeader(http.StatusOK)
+		logger.Trace().Msg("finish")
 		return
 	}
 

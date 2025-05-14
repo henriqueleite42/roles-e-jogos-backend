@@ -20,6 +20,7 @@ type queueDelivery struct {
 
 	logger *zerolog.Logger
 
+	idAdapter        adapters.Id
 	messagingAdapter adapters.Messaging
 	secretsAdapter   *adapters.Secrets
 
@@ -29,6 +30,7 @@ type queueDelivery struct {
 type NewQueueDeliveryInput struct {
 	Logger *zerolog.Logger
 
+	IdAdapter        adapters.Id
 	MessagingAdapter adapters.Messaging
 	SecretsAdapter   *adapters.Secrets
 
@@ -40,7 +42,7 @@ func (self *queueDelivery) Name() string {
 }
 
 func (self *queueDelivery) Listen() {
-	// Add routers here
+	self.CollectionImportPersonalCollectionFromLudopedia()
 }
 
 func (self *queueDelivery) Cancel(timeout time.Duration) {
@@ -60,6 +62,7 @@ func NewQueueDelivery(i *NewQueueDeliveryInput) delivery.Delivery {
 		cancel:            cancel,
 		wg:                &wg,
 		logger:            i.Logger,
+		idAdapter:         i.IdAdapter,
 		messagingAdapter:  i.MessagingAdapter,
 		secretsAdapter:    i.SecretsAdapter,
 		collectionUsecase: i.CollectionUsecase,

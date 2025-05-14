@@ -54,9 +54,11 @@ func (self *accountController) ProfileListByHandle(w http.ResponseWriter, r *htt
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonOutput)
+		logger.Trace().Msg("finish")
 		return
 	}
 

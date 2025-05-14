@@ -258,6 +258,7 @@ func main() {
 	queueDelivery := queue_delivery.NewQueueDelivery(&queue_delivery.NewQueueDeliveryInput{
 		Logger: &logger,
 
+		IdAdapter:        xidAdapter,
 		SecretsAdapter:   secretsAdapter,
 		MessagingAdapter: sqsSnsAdapter,
 

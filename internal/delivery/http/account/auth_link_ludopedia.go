@@ -56,7 +56,9 @@ func (self *accountController) AuthLinkLudopedia(w http.ResponseWriter, r *http.
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		http.Redirect(w, r, self.secretsAdapter.WebsiteUrl+"/conta", http.StatusSeeOther)
+		logger.Trace().Msg("finish")
 		return
 	}
 

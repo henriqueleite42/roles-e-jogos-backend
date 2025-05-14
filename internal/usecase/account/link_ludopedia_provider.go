@@ -11,6 +11,8 @@ import (
 )
 
 func (self *AccountUsecaseImplementation) LinkLudopediaProvider(ctx context.Context, i *LinkLudopediaProviderInput) error {
+	logger := utils.GetLoggerFromCtx(ctx, self.Logger)
+
 	exchangeResult, err := self.LudopediaAdapter.ExchangeCode(&adapters.ExchangeCodeInput{
 		Code: i.Code,
 	})
@@ -52,18 +54,22 @@ func (self *AccountUsecaseImplementation) LinkLudopediaProvider(ctx context.Cont
 		}
 	}
 
+	logger.Trace().Msg("try to link connection with account")
 	err = self.AccountRepository.LinkConnectionWithAccount(ctx, &account_repository.LinkConnectionWithAccountInput{
 		AccountId:      i.AccountId,
 		Provider:       models.Provider_Ludopedia,
 		ExternalHandle: externalUserData.Handle,
 		ExternalId:     externalUserData.Id,
+		AccessToken:    &exchangeResult.AccessToken,
 	})
 	if err != nil {
 		tx.Rollback(ctx)
 		return err
 	}
+	logger.Trace().Msg("account successfully linked with connection")
 
-	err = self.MessagingAdapter.SendPublicEvent(&adapters.SendEventInput{
+	logger.Trace().Msg("try to send queue message to import ludopedia collection")
+	err = self.MessagingAdapter.SendPrivateEvent(&adapters.SendEventInput{
 		ListenerId: self.SecretsAdapter.CollectionImportPersonalCollectionFromLudopediaQueueId,
 		EventName:  "import-collection-from-ludopedia",
 		Event: models.ImportCollectionEvent{
@@ -73,7 +79,9 @@ func (self *AccountUsecaseImplementation) LinkLudopediaProvider(ctx context.Cont
 		},
 	})
 	if err != nil {
-		self.Logger.Error().Err(err).Msg("fail to send queue message to import collection from ludopedia")
+		logger.Error().Err(err).Msg("fail to send queue message to import collection from ludopedia")
+	} else {
+		logger.Trace().Msg("queue message to import ludopedia collection successfully sent")
 	}
 
 	tx.Commit(ctx)

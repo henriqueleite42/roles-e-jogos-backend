@@ -74,7 +74,9 @@ func (self *accountController) ProfileHandle(w http.ResponseWriter, r *http.Requ
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		w.WriteHeader(http.StatusOK)
+		logger.Trace().Msg("finish")
 		return
 	}
 

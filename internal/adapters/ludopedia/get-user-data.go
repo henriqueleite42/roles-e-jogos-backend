@@ -3,6 +3,7 @@ package ludopedia
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -40,6 +41,22 @@ func (self *ludopediaAdapter) GetUserData(accessToken string) (*adapters.GetAuth
 	}
 	defer userDataRes.Body.Close()
 	self.logger.Trace().Msg("request to get ludopedia user data done")
+
+	if userDataRes.StatusCode != http.StatusOK {
+		bodyBytes, err := io.ReadAll(userDataRes.Body)
+		if err != nil {
+			self.logger.Error().Err(err).Msg(
+				"fail to read response body",
+			)
+			return nil, errors.New("fail to make request")
+		}
+
+		bodyString := string(bodyBytes)
+		self.logger.Error().Str("body", bodyString).Msg(
+			"fail to make request",
+		)
+		return nil, errors.New("fail to make request")
+	}
 
 	self.logger.Trace().Msg("decode req body")
 	userData := getUserDataApiOutput{}

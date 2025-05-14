@@ -51,7 +51,9 @@ func (self *collectionController) CollectionImportLudopedia(w http.ResponseWrite
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		w.WriteHeader(http.StatusNoContent)
+		logger.Trace().Msg("finish")
 		return
 	}
 

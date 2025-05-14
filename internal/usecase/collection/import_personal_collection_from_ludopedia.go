@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
@@ -12,6 +13,7 @@ import (
 	collection_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/collection"
 	game_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/game"
 	collection_utils "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection/utils"
+	"github.com/henriqueleite42/roles-e-jogos-backend/internal/utils"
 )
 
 type filteredEvent struct {
@@ -21,6 +23,36 @@ type filteredEvent struct {
 	ImportCollectionLogId int
 	// Step 2
 	AccessToken string
+}
+
+func convertLudopediaPaidToOurPaid(paid *float64) (*int, error) {
+	if paid == nil {
+		return nil, nil
+	}
+
+	// Convert float64 to string with precision
+	str := strconv.FormatFloat(*paid, 'f', -1, 64)
+
+	var paidStr string
+
+	parts := strings.Split(str, ".")
+	if len(parts) >= 1 {
+		paidStr += parts[0]
+	}
+	if len(parts) >= 2 {
+		frac := parts[1]
+		if len(frac) > 2 {
+			frac = frac[:2]
+		}
+		paidStr += frac
+	}
+
+	paidInt, err := strconv.Atoi(paidStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &paidInt, nil
 }
 
 func (self *CollectionUsecaseImplementation) importGame(
@@ -37,21 +69,25 @@ func (self *CollectionUsecaseImplementation) importGame(
 		return nil, err
 	}
 
-	path := fmt.Sprintf("games/%s.{{ext}}", self.IdAdapter.GenId())
-	iconPath, err := self.StorageAdapter.DownloadFromUrl(&adapters.DownloadFromUrlInput{
-		Url:       ludopediaGameToImport.ImageUrl,
-		StorageId: self.SecretsAdapter.MediasS3BucketName,
-		FileName:  path,
-	})
-	if err != nil {
-		self.Logger.Error().Err(err).Msg("fail to download game img")
-		return nil, err
+	var iconPath *string
+	if ludopediaGameToImport.ImageUrl != nil {
+		path := fmt.Sprintf("games/%s.{{ext}}", self.IdAdapter.GenId())
+		iconPathStr, err := self.StorageAdapter.DownloadFromUrl(&adapters.DownloadFromUrlInput{
+			Url:       *ludopediaGameToImport.ImageUrl,
+			StorageId: self.SecretsAdapter.MediasS3BucketName,
+			FileName:  path,
+		})
+		if err != nil {
+			self.Logger.Error().Err(err).Msg("fail to download game img")
+		} else {
+			iconPath = &iconPathStr
+		}
 	}
 
 	newGame, err := self.GameRepository.CreateGame(ctx, &game_repository.CreateGameInput{
 		Name:               ludopediaGameToImport.Name,
 		Description:        "",
-		IconPath:           &iconPath,
+		IconPath:           iconPath,
 		Kind:               models.Kind_Game,
 		LudopediaId:        &ludopediaGameToImport.Id,
 		LudopediaUrl:       &ludopediaGameToImport.LudopediaUrl,
@@ -89,11 +125,16 @@ func (self *CollectionUsecaseImplementation) getFullLudopediaCollection(
 		}
 
 		for _, v := range collectionPage.Collection {
+			paid, err := convertLudopediaPaidToOurPaid(v.Paid)
+			if err != nil {
+				self.Logger.Error().Err(err).Msg("fail to convert ludopedia paid")
+			}
+
 			collectionManager.AddAccountLudopediaGame(&collection_utils.AddAccountLudopediaGameInput{
 				AccountId:       i.AccountId,
 				AccessToken:     i.AccessToken,
 				LudopediaGameId: v.Id,
-				Paid:            v.Paid,
+				Paid:            paid,
 			})
 		}
 
@@ -113,9 +154,9 @@ func (self *CollectionUsecaseImplementation) updateOngoingImports(
 	events []*filteredEvent,
 	newStatus models.CollectionImportStatus,
 ) {
-	ids := make([]int, 0, len(events))
-	for k, v := range events {
-		ids[k] = v.ImportCollectionLogId
+	ids := make([]int, len(events))
+	for _, v := range events {
+		ids = append(ids, v.ImportCollectionLogId)
 	}
 
 	err := self.CollectionRepository.UpdateManyImportCollectionsLogs(ctx, &collection_repository.UpdateManyImportCollectionsLogsInput{
@@ -165,6 +206,8 @@ func (self *CollectionUsecaseImplementation) updateOngoingImports(
 // - With the map map[accountId]: []ludopediaGameId, save all the games on the database
 // - Update import_log
 func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudopedia(ctx context.Context, i []*models.ImportCollectionEvent) error {
+	logger := utils.GetLoggerFromCtx(ctx, self.Logger)
+
 	// =====================================
 	//
 	// Step 1
@@ -172,10 +215,13 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	// =====================================
 
 	// Group all external IDs into an slice
-	externalIds := make([]string, 0, len(i))
+	externalIds := make([]string, len(i))
 	for k, v := range i {
 		externalIds[k] = v.ExternalId
 	}
+	logger.Trace().
+		Any("externalIds", externalIds).
+		Msg("externalIds")
 
 	// Get all the ongoing imports
 	ongoingImports, err := self.CollectionRepository.GetOngoingImportCollectionLog(ctx, &collection_repository.GetOngoingImportCollectionLogInput{
@@ -183,7 +229,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 		Provider:    models.Provider_Ludopedia,
 	})
 	if err != nil {
-		self.Logger.Error().Err(err).Msg("fail to get ongoing imports")
+		logger.Error().Err(err).Msg("fail to get ongoing imports")
 		return err
 	}
 
@@ -192,6 +238,9 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	for _, v := range ongoingImports.Data {
 		ongoingImportsMap[v.ExternalId] = true
 	}
+	logger.Trace().
+		Any("ongoingImportsMap", ongoingImportsMap).
+		Msg("got ongoing imports")
 
 	// Filter all events: If the connection already has an import in progress, ignore the event
 	filteredLength := len(i) - len(ongoingImportsMap)
@@ -211,7 +260,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 			Trigger:    models.CollectionImportTrigger_AccountCreation,
 		})
 		if err != nil {
-			self.Logger.Error().Err(err).Msg("fail to create import collection log")
+			logger.Error().Err(err).Msg("fail to create import collection log")
 			continue
 		}
 
@@ -222,6 +271,10 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 		})
 		filteredExternalIds = append(filteredExternalIds, v.ExternalId)
 	}
+	logger.Trace().
+		Int("len(step1Events)", len(step1Events)).
+		Any("filteredExternalIds", filteredExternalIds).
+		Msg("got step1Events")
 
 	// =====================================
 	//
@@ -235,23 +288,34 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 		Provider:    models.Provider_Ludopedia,
 	})
 	if err != nil {
-		self.Logger.Error().Err(err).Msg("fail to get connections")
+		logger.Error().Err(err).Msg("fail to get connections")
 		return err
 	}
 	connectionsExternalId := make(map[string]*models.Connection, filteredLength)
 	for _, v := range connections.Data {
+		logger.Trace().
+			Str("ExternalId", v.ExternalId).
+			Any("Connection", *v).
+			Msg("connection")
 		connectionsExternalId[v.ExternalId] = v
 	}
+	logger.Trace().
+		Int("len(connections.Data)", len(connections.Data)).
+		Any("connectionsExternalId", connectionsExternalId).
+		Msg("got connections")
 
 	step2Events := make([]*filteredEvent, 0, len(step1Events))
 	step2EventsErrors := make([]*filteredEvent, 0, len(step1Events))
 	for _, event := range step1Events {
-		if connectionsExternalId[event.ExternalId] != nil {
+		if connectionsExternalId[event.ExternalId] != nil &&
+			connectionsExternalId[event.ExternalId].AccessToken != nil {
+			connection := connectionsExternalId[event.ExternalId]
+
 			step2Events = append(step2Events, &filteredEvent{
 				AccountId:             event.AccountId,
 				ExternalId:            event.ExternalId,
 				ImportCollectionLogId: event.ImportCollectionLogId,
-				AccessToken:           event.AccessToken,
+				AccessToken:           *connection.AccessToken,
 			})
 		} else {
 			step2EventsErrors = append(step2EventsErrors, event)
@@ -261,7 +325,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 		self.updateOngoingImports(ctx, step2EventsErrors, models.CollectionImportStatus_Failed)
 	}
 	if len(step2Events) == 0 {
-		self.Logger.Warn().Err(err).Msg("no events with connection")
+		logger.Warn().Err(err).Msg("no events with connection")
 		return fmt.Errorf("no events with connection")
 	}
 
@@ -271,6 +335,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	//
 	// =====================================
 
+	logger.Trace().Msg("try to get ludopedia collection")
 	collectionManager := collection_utils.NewCollectionManager()
 	for _, v := range step2Events {
 		err := self.getFullLudopediaCollection(ctx, v, collectionManager)
@@ -279,6 +344,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 			return err
 		}
 	}
+	logger.Trace().Msg("successfully got ludopedia collection")
 
 	// =====================================
 	//
@@ -286,27 +352,39 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	//
 	// =====================================
 
+	logger.Trace().Msg("try to get games")
 	ludopediaGamesIds := collectionManager.GetLudopediaGamesIds()
 	gamesRelations, err := self.GameRepository.GetGamesListByLudopediaId(ctx, &game_repository.GetGamesListByLudopediaIdInput{
 		LudopediaIds: ludopediaGamesIds,
 	})
 	if err != nil {
-		self.Logger.Error().Err(err).Msg("fail to get games relation on ludopedia collection import")
+		logger.Error().Err(err).Msg("fail to get games relation on ludopedia collection import")
 		return err
 	}
+	logger.Trace().Msg("successfully got games")
 	gamesIdsMap := make(map[int]int, len(gamesRelations.Data))
 	for _, v := range gamesRelations.Data {
 		externalId, err := strconv.Atoi(v.ExternalId)
 		if err != nil {
 			gamesIdsMap[externalId] = v.GameId
 		} else {
-			self.Logger.Error().Err(err).Str("ExternalId", v.ExternalId).Msg("fail to convert ludopedia game ID to int")
+			logger.Error().Err(err).Str("ExternalId", v.ExternalId).Msg("fail to convert ludopedia game ID to int")
 		}
 	}
+	logger.Trace().
+		Any("ludopediaGamesIds", ludopediaGamesIds).
+		Any("gamesIdsMap", gamesIdsMap).
+		Msg("successfully created gamesIdsMap")
 
-	gamesIdsWithError := make(map[int]bool, len(ludopediaGamesIds))
+	logger.Trace().Msg("try to import missing games")
+	gamesImportCounterForLogs := 1
+	totalGamesToImport := len(ludopediaGamesIds) - len(gamesIdsMap)
+	gamesIdsWithError := make(map[int]bool, totalGamesToImport)
 	for _, ludopediaGameId := range ludopediaGamesIds {
+		// If game already exists, theres no need to import it
 		if gamesIdsMap[ludopediaGameId] != 0 {
+			logger.Trace().Int("foo", gamesIdsMap[ludopediaGameId]).Msg("gamesIdsMap[ludopediaGameId]")
+			gamesImportCounterForLogs++
 			continue
 		}
 
@@ -317,18 +395,29 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 		)
 		if err == nil {
 			gamesIdsMap[ludopediaGameId] = newGame.Id
+			logger.Trace().Msgf("successfully imported game %d / %d", gamesImportCounterForLogs, totalGamesToImport)
+			gamesImportCounterForLogs++
 		} else {
 			gamesIdsWithError[ludopediaGameId] = true
+			logger.Trace().Msgf("fail to import game %d / %d", gamesImportCounterForLogs, totalGamesToImport)
+			gamesImportCounterForLogs++
 		}
 
 		// Sleeps to be sure that Ludopedia doesn't rate limit us
-		time.Sleep((1 * time.Second) / 2)
+		time.Sleep(1 * time.Second)
 	}
 
 	if len(gamesIdsWithError) == len(ludopediaGamesIds) {
+		logger.Trace().
+			Any("gamesIdsWithError", gamesIdsWithError).
+			Msg("fail to import all games")
 		self.updateOngoingImports(ctx, step2Events, models.CollectionImportStatus_Failed)
 		return fmt.Errorf("fail to import all games")
 	}
+	logger.Trace().
+		Any("gamesIdsMap", gamesIdsMap).
+		Any("gamesIdsWithError", gamesIdsWithError).
+		Msg("successfully imported games")
 
 	// =====================================
 	//
@@ -336,13 +425,22 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	//
 	// =====================================
 
-	errorEvents := make([]*filteredEvent, len(step2Events))
-	successEvents := make([]*filteredEvent, len(step2Events))
+	errorEvents := make([]*filteredEvent, 0, len(step2Events))
+	successEvents := make([]*filteredEvent, 0, len(step2Events))
 	for _, event := range step2Events {
 		accountGames := collectionManager.AccountLudopediaGamesMap[event.AccountId]
 
+		logger.Trace().
+			Int("AccountId", event.AccountId).
+			Str("ExternalId", event.ExternalId).
+			Msg("try to add games to personal collection")
+
 		// If the account has no games, so we don't need to import anything and it succeed
 		if len(accountGames) == 0 {
+			logger.Trace().
+				Int("AccountId", event.AccountId).
+				Str("ExternalId", event.ExternalId).
+				Msg("account has no games to add")
 			continue
 		}
 
@@ -356,6 +454,10 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 
 		// If we failed to import all the games from ludopedia
 		if len(filteredGames) == 0 {
+			logger.Trace().
+				Int("AccountId", event.AccountId).
+				Str("ExternalId", event.ExternalId).
+				Msg("all account games failed to be imported")
 			errorEvents = append(errorEvents, event)
 			continue
 		}
@@ -368,7 +470,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 				Paid:      v.Paid,
 			})
 			if err != nil {
-				self.Logger.Error().Err(err).
+				logger.Error().Err(err).
 					Int("AccountId", event.AccountId).
 					Int("LudopediaGameId", v.LudopediaGameId).
 					Int("GameId", gamesIdsMap[v.LudopediaGameId]).
@@ -378,20 +480,44 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 			}
 		}
 
-		// If all games failed import, so the processing failed
+		// If all games failed be added to personal collection, so the processing failed
 		if errorCounter == len(filteredGames) {
+			logger.Trace().
+				Int("AccountId", event.AccountId).
+				Str("ExternalId", event.ExternalId).
+				Msg("all account games failed to be added to personal collection")
 			errorEvents = append(errorEvents, event)
 			continue
 		}
+
+		logger.Trace().
+			Int("AccountId", event.AccountId).
+			Str("ExternalId", event.ExternalId).
+			Msg("successfully add account games to personal collection")
+		successEvents = append(successEvents, event)
 	}
 
-	self.updateOngoingImports(ctx, errorEvents, models.CollectionImportStatus_Failed)
+	if len(errorEvents) > 0 {
+		logger.Trace().Msg("register failed imports")
+		self.updateOngoingImports(ctx, errorEvents, models.CollectionImportStatus_Failed)
+
+		// If all events failed, we don't need to do anything else
+		if len(errorEvents) == len(step2Events) {
+			logger.Trace().Msg("fail to add all games to personal collection")
+			return fmt.Errorf("fail to process all events")
+		}
+	}
+
+	if len(successEvents) == 0 {
+		logger.Error().
+			Any("errorEvents", errorEvents).
+			Any("successEvents", successEvents).
+			Msg("for some reason, the successEvents are empty")
+		return fmt.Errorf("for some reason, the successEvents are empty")
+	}
+
 	self.updateOngoingImports(ctx, successEvents, models.CollectionImportStatus_Completed)
-
-	// If all events failed, we don't need to do anything else
-	if len(errorEvents) == len(step2Events) {
-		return fmt.Errorf("fail to process all events")
-	}
+	logger.Trace().Msg("successfully added games to personal collection")
 
 	return nil
 }

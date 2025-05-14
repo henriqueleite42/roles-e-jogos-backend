@@ -48,7 +48,7 @@ func (self *CollectionUsecaseImplementation) RequestImportPersonalCollectionFrom
 		return fmt.Errorf("import already in progress")
 	}
 
-	err = self.MessagingAdapter.SendPublicEvent(&adapters.SendEventInput{
+	err = self.MessagingAdapter.SendPrivateEvent(&adapters.SendEventInput{
 		ListenerId: self.SecretsAdapter.CollectionImportPersonalCollectionFromLudopediaQueueId,
 		EventName:  "import-collection-from-ludopedia",
 		Event: models.ImportCollectionEvent{

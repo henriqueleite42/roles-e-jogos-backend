@@ -68,7 +68,9 @@ func (self *collectionController) CollectionPersonal(w http.ResponseWriter, r *h
 			return
 		}
 
+		logger.Trace().Msg("send response")
 		w.WriteHeader(http.StatusOK)
+		logger.Trace().Msg("finish")
 		return
 	}
 

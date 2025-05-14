@@ -38,6 +38,7 @@ func (self *CollectionManager) AddAccountLudopediaGame(i *AddAccountLudopediaGam
 			Paid:            i.Paid,
 		},
 	)
+	self.ludopediaGamesIds[i.LudopediaGameId] = true
 }
 
 func (self *CollectionManager) GetLudopediaGamesIds() []int {
@@ -50,7 +51,8 @@ func (self *CollectionManager) GetLudopediaGamesIds() []int {
 
 func NewCollectionManager() *CollectionManager {
 	return &CollectionManager{
-		ludopediaGamesIds:        map[int]bool{},
-		AccountLudopediaGamesMap: map[int][]*GameToImport{},
+		ludopediaGamesIds:            map[int]bool{},
+		AccountLudopediaGamesMap:     map[int][]*GameToImport{},
+		AccessTokenByLudopediaGameId: map[int]string{},
 	}
 }

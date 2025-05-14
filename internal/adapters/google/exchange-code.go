@@ -100,13 +100,18 @@ func (self *googleAdapter) ExchangeCode(i *adapters.ExchangeCodeInput) (*adapter
 			),
 		)
 
+	var refreshToken *string
+	if exchangeCode.RefreshToken != "" {
+		refreshToken = &exchangeCode.RefreshToken
+	}
+
 	self.logger.Debug().
 		Time("time", expDate).
 		Msg("expDate")
 
 	output := &adapters.ExchangeCodeOutput{
 		AccessToken:  exchangeCode.AccessToken,
-		RefreshToken: &exchangeCode.RefreshToken,
+		RefreshToken: refreshToken,
 		Scopes:       strings.Split(exchangeCode.Scope, " "),
 		ExpiresAt:    expDate,
 	}

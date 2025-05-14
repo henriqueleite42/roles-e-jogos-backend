@@ -378,6 +378,9 @@ Repository:
             Optional: true
           ExternalId:
             Type: String
+          AccessToken:
+            Type: String
+            Optional: true
           RefreshToken:
             Type: String
             Optional: true
