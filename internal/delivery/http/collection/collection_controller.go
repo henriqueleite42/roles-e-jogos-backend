@@ -41,4 +41,5 @@ func AddCollectionController(i *AddCollectionControllerInput) {
 
 	i.Mux.HandleFunc("/collection/personal", collectionController.CollectionPersonal)
 	i.Mux.HandleFunc("/collection/collective", collectionController.CollectionCollective)
+	i.Mux.HandleFunc("/collection/import/status", collectionController.CollectionImportStatus)
 }

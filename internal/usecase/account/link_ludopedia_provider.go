@@ -75,7 +75,7 @@ func (self *AccountUsecaseImplementation) LinkLudopediaProvider(ctx context.Cont
 		Event: models.ImportCollectionEvent{
 			AccountId:  i.AccountId,
 			ExternalId: externalUserData.Id,
-			Trigger:    models.CollectionImportTrigger_AccountCreation,
+			Trigger:    models.CollectionImportTrigger_AccountLink,
 		},
 	})
 	if err != nil {

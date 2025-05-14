@@ -12,9 +12,13 @@ Enums:
       AccountCreation:
         Index: 0
         Value: ACCOUNT_CREATION
+        Deprecated: true
       ManualByUser:
         Index: 1
         Value: MANUAL_BY_USER
+      AccountLink:
+        Index: 2
+        Value: ACCOUNT_LINK
 
   CollectionImportStatus:
     Type: String
@@ -28,6 +32,12 @@ Enums:
       Failed:
         Index: 2
         Value: FAILED
+      NotYetStarted:
+        Description: |
+          No record on the database should have this value.
+          It's used to display to the user that there's no record of a import being done.
+        Index: 3
+        Value: NOT_YET_STARTED
 
 Types:
   GroupCollectionItem:
@@ -262,6 +272,20 @@ Repository:
             Type: Enum
             EnumRef: Enums.CollectionImportStatus
 
+    GetLatestImportCollectionLogStatus:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+          ExternalId:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Account.Enums.Provider
+      Output:
+        $ref: Entities.ImportCollectionLog
+
 Usecase:
   Methods:
     AddToPersonalCollection:
@@ -332,6 +356,26 @@ Usecase:
         Items:
           $ref: Events.ImportCollectionEvent
 
+    GetLatestImportCollectionLogStatus:
+      Input:
+        Type: Map
+        Properties:
+          AccountId:
+            Type: Int
+            Validate:
+              - id
+          ExternalId:
+            Type: String
+          Provider:
+            Type: Enum
+            EnumRef: Account.Enums.Provider
+      Output:
+        Type: Map
+        Properties:
+          Status:
+            Type: Enum
+            EnumRef: Enums.CollectionImportStatus
+
 Delivery:
   Servers:
     Prod:
@@ -351,6 +395,10 @@ Delivery:
       - UsecaseMethod: RequestImportPersonalCollectionFromLudopedia
         Method: GET
         Path: /collection/import/ludopedia
+
+      - UsecaseMethod: GetLatestImportCollectionLogStatus
+        Method: GET
+        Path: /collection/import/status
   Queue:
     Queues:
       - Id: import-personal-collection-from-ludopedia

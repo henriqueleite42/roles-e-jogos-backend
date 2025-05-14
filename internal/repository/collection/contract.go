@@ -34,6 +34,11 @@ type GetCollectiveCollectionOutput struct {
 	Data       []*models.GroupCollectionItem  `validate:"required"`
 	Pagination *models.PaginationOutputString `validate:"required"`
 }
+type GetLatestImportCollectionLogStatusInput struct {
+	AccountId  int
+	ExternalId string
+	Provider   models.Provider `validate:"required" db:"provider"`
+}
 type GetOngoingImportCollectionLogInput struct {
 	ExternalIds []string        `validate:"required"`
 	Provider    models.Provider `validate:"required" db:"provider"`
@@ -50,6 +55,7 @@ type CollectionRepository interface {
 	AddToPersonalCollection(ctx context.Context, i *AddToPersonalCollectionInput) error
 	CreateImportCollectionLog(ctx context.Context, i *CreateImportCollectionLogInput) (*CreateImportCollectionLogOutput, error)
 	GetCollectiveCollection(ctx context.Context, i *GetCollectiveCollectionInput) (*GetCollectiveCollectionOutput, error)
+	GetLatestImportCollectionLogStatus(ctx context.Context, i *GetLatestImportCollectionLogStatusInput) (*models.ImportCollectionLog, error)
 	GetOngoingImportCollectionLog(ctx context.Context, i *GetOngoingImportCollectionLogInput) (*GetOngoingImportCollectionLogOutput, error)
 	UpdateManyImportCollectionsLogs(ctx context.Context, i *UpdateManyImportCollectionsLogsInput) error
 }

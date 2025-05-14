@@ -77,10 +77,16 @@ Entities:
           Type: String
           DbType: VARCHAR(250)
           Optional: true
-        Date:
+        StartDate:
           Type: Timestamp
           DbType: TIMESTAMPTZ
-        MaxAmountOfPlayers:
+        EndDate:
+          Type: Timestamp
+          DbType: TIMESTAMPTZ
+          Optional: true
+        Capacity:
+          Description: |
+            Amount of participants that this event allows
           Type: Int
           DbType: INTEGER
           Optional: true
@@ -96,6 +102,11 @@ Entities:
           DbType: TIMESTAMPTZ
       PrimaryKey:
         - Id
+      Indexes:
+        - Columns:
+            - Name
+        - Columns:
+            - StartDate
       ForeignKeys:
         - Columns:
             - OwnerId

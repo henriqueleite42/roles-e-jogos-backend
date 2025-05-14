@@ -85,3 +85,23 @@ SET
 WHERE
 	"id" = ANY($1::int[])
 	AND "ended_at" IS NULL;
+
+-- name: GetLatestImportCollectionLog :one
+SELECT
+	icl."id",
+	icl."account_id",
+	icl."external_id",
+	icl."provider",
+	icl."trigger",
+	icl."status",
+	icl."created_at",
+	icl."ended_at"
+FROM "import_collection_logs" icl
+INNER JOIN "connections" c ON c."external_id" = icl."external_id"
+WHERE
+	c."account_id" = $1
+	AND icl."external_id" = $2
+	AND icl."provider" = $3
+ORDER BY
+	icl."created_at" DESC
+LIMIT 1;

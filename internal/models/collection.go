@@ -7,16 +7,17 @@ import (
 type CollectionImportStatus string
 
 const (
-	CollectionImportStatus_Started   CollectionImportStatus = "STARTED"
-	CollectionImportStatus_Completed CollectionImportStatus = "COMPLETED"
-	CollectionImportStatus_Failed    CollectionImportStatus = "FAILED"
+	CollectionImportStatus_Started       CollectionImportStatus = "STARTED"
+	CollectionImportStatus_Completed     CollectionImportStatus = "COMPLETED"
+	CollectionImportStatus_Failed        CollectionImportStatus = "FAILED"
+	CollectionImportStatus_NotYetStarted CollectionImportStatus = "NOT_YET_STARTED"
 )
 
 type CollectionImportTrigger string
 
 const (
-	CollectionImportTrigger_AccountCreation CollectionImportTrigger = "ACCOUNT_CREATION"
-	CollectionImportTrigger_ManualByUser    CollectionImportTrigger = "MANUAL_BY_USER"
+	CollectionImportTrigger_ManualByUser CollectionImportTrigger = "MANUAL_BY_USER"
+	CollectionImportTrigger_AccountLink  CollectionImportTrigger = "ACCOUNT_LINK"
 )
 
 type GroupCollectionItem struct {

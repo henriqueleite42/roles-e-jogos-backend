@@ -176,6 +176,60 @@ func (q *Queries) GetCollectiveCollection(ctx context.Context, arg GetCollective
 	return items, nil
 }
 
+const getLatestImportCollectionLog = `-- name: GetLatestImportCollectionLog :one
+SELECT
+	icl."id",
+	icl."account_id",
+	icl."external_id",
+	icl."provider",
+	icl."trigger",
+	icl."status",
+	icl."created_at",
+	icl."ended_at"
+FROM "import_collection_logs" icl
+INNER JOIN "connections" c ON c."external_id" = icl."external_id"
+WHERE
+	c."account_id" = $1
+	AND icl."external_id" = $2
+	AND icl."provider" = $3
+ORDER BY
+	icl."created_at" DESC
+LIMIT 1
+`
+
+type GetLatestImportCollectionLogParams struct {
+	AccountID  int32
+	ExternalID string
+	Provider   ProviderEnum
+}
+
+type GetLatestImportCollectionLogRow struct {
+	ID         int32
+	AccountID  int32
+	ExternalID string
+	Provider   ProviderEnum
+	Trigger    CollectionImportTriggerEnum
+	Status     CollectionImportStatusEnum
+	CreatedAt  pgtype.Timestamptz
+	EndedAt    pgtype.Timestamptz
+}
+
+func (q *Queries) GetLatestImportCollectionLog(ctx context.Context, arg GetLatestImportCollectionLogParams) (GetLatestImportCollectionLogRow, error) {
+	row := q.db.QueryRow(ctx, getLatestImportCollectionLog, arg.AccountID, arg.ExternalID, arg.Provider)
+	var i GetLatestImportCollectionLogRow
+	err := row.Scan(
+		&i.ID,
+		&i.AccountID,
+		&i.ExternalID,
+		&i.Provider,
+		&i.Trigger,
+		&i.Status,
+		&i.CreatedAt,
+		&i.EndedAt,
+	)
+	return i, err
+}
+
 const getOngoingImportCollectionLog = `-- name: GetOngoingImportCollectionLog :many
 SELECT
 	icl."id",

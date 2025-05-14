@@ -257,7 +257,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 			ExternalId: v.ExternalId,
 			Provider:   models.Provider_Ludopedia,
 			Status:     models.CollectionImportStatus_Started,
-			Trigger:    models.CollectionImportTrigger_AccountCreation,
+			Trigger:    v.Trigger,
 		})
 		if err != nil {
 			logger.Error().Err(err).Msg("fail to create import collection log")

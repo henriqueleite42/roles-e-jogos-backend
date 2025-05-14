@@ -6,6 +6,7 @@ enum "collection_import_status_enum" {
 		"STARTED",
 		"COMPLETED",
 		"FAILED",
+		"NOT_YET_STARTED",
 	]
 }
 enum "collection_import_trigger_enum" {
@@ -13,6 +14,7 @@ enum "collection_import_trigger_enum" {
 	values = [
 		"ACCOUNT_CREATION",
 		"MANUAL_BY_USER",
+		"ACCOUNT_LINK",
 	]
 }
 enum "event_attendance_status_enum" {

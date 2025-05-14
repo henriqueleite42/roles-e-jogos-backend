@@ -59,6 +59,7 @@ type CollectionImportTriggerEnum string
 const (
 	CollectionImportTriggerEnumACCOUNTCREATION CollectionImportTriggerEnum = "ACCOUNT_CREATION"
 	CollectionImportTriggerEnumMANUALBYUSER    CollectionImportTriggerEnum = "MANUAL_BY_USER"
+	CollectionImportTriggerEnumACCOUNTLINK     CollectionImportTriggerEnum = "ACCOUNT_LINK"
 )
 
 func (e *CollectionImportTriggerEnum) Scan(src interface{}) error {
@@ -317,13 +318,13 @@ type Account struct {
 }
 
 type Connection struct {
+	AccessToken    pgtype.Text
 	AccountID      int32
 	CreatedAt      pgtype.Timestamptz
 	ExternalHandle pgtype.Text
 	ExternalID     string
 	Provider       ProviderEnum
 	RefreshToken   pgtype.Text
-	AccessToken    pgtype.Text
 }
 
 type EmailAddress struct {
@@ -361,6 +362,7 @@ type EventGame struct {
 }
 
 type Game struct {
+	AverageDuration    int32
 	CreatedAt          pgtype.Timestamptz
 	Description        string
 	IconPath           pgtype.Text
@@ -369,10 +371,9 @@ type Game struct {
 	LudopediaID        pgtype.Int4
 	LudopediaUrl       pgtype.Text
 	MaxAmountOfPlayers int32
+	MinAge             int32
 	MinAmountOfPlayers int32
 	Name               string
-	AverageDuration    int32
-	MinAge             int32
 }
 
 type ImportCollectionLog struct {
