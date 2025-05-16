@@ -14,9 +14,10 @@ import (
 type CollectionImportStatusEnum string
 
 const (
-	CollectionImportStatusEnumSTARTED   CollectionImportStatusEnum = "STARTED"
-	CollectionImportStatusEnumCOMPLETED CollectionImportStatusEnum = "COMPLETED"
-	CollectionImportStatusEnumFAILED    CollectionImportStatusEnum = "FAILED"
+	CollectionImportStatusEnumSTARTED       CollectionImportStatusEnum = "STARTED"
+	CollectionImportStatusEnumCOMPLETED     CollectionImportStatusEnum = "COMPLETED"
+	CollectionImportStatusEnumFAILED        CollectionImportStatusEnum = "FAILED"
+	CollectionImportStatusEnumNOTYETSTARTED CollectionImportStatusEnum = "NOT_YET_STARTED"
 )
 
 func (e *CollectionImportStatusEnum) Scan(src interface{}) error {
@@ -225,6 +226,48 @@ func (ns NullKindEnum) Value() (driver.Value, error) {
 	return string(ns.KindEnum), nil
 }
 
+type LocationKindEnum string
+
+const (
+	LocationKindEnumBUSINESS LocationKindEnum = "BUSINESS"
+	LocationKindEnumPERSONAL LocationKindEnum = "PERSONAL"
+)
+
+func (e *LocationKindEnum) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = LocationKindEnum(s)
+	case string:
+		*e = LocationKindEnum(s)
+	default:
+		return fmt.Errorf("unsupported scan type for LocationKindEnum: %T", src)
+	}
+	return nil
+}
+
+type NullLocationKindEnum struct {
+	LocationKindEnum LocationKindEnum
+	Valid            bool // Valid is true if LocationKindEnum is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullLocationKindEnum) Scan(value interface{}) error {
+	if value == nil {
+		ns.LocationKindEnum, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.LocationKindEnum.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullLocationKindEnum) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.LocationKindEnum), nil
+}
+
 type OtpPurposeEnum string
 
 const (
@@ -335,16 +378,16 @@ type EmailAddress struct {
 }
 
 type Event struct {
-	CreatedAt          pgtype.Timestamptz
-	Date               pgtype.Timestamptz
-	Description        string
-	IconPath           pgtype.Text
-	ID                 int32
-	LocationAddress    string
-	LocationName       string
-	MaxAmountOfPlayers pgtype.Int4
-	Name               string
-	OwnerID            int32
+	CreatedAt   pgtype.Timestamptz
+	StartDate   pgtype.Timestamptz
+	Description string
+	IconPath    pgtype.Text
+	ID          int32
+	Capacity    pgtype.Int4
+	Name        string
+	OwnerID     int32
+	EndDate     pgtype.Timestamptz
+	LocationID  int32
 }
 
 type EventAttendance struct {
@@ -359,6 +402,7 @@ type EventGame struct {
 	EventID int32
 	GameID  int32
 	ID      int32
+	OwnerID int32
 }
 
 type Game struct {
@@ -385,6 +429,16 @@ type ImportCollectionLog struct {
 	Provider   ProviderEnum
 	Status     CollectionImportStatusEnum
 	Trigger    CollectionImportTriggerEnum
+}
+
+type Location struct {
+	Address   string
+	CreatedAt pgtype.Timestamptz
+	CreatedBy int32
+	IconPath  pgtype.Text
+	ID        int32
+	Kind      LocationKindEnum
+	Name      string
 }
 
 type Media struct {

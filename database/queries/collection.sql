@@ -15,7 +15,7 @@ SELECT
       'handle', a."handle",
       'avatar_path', a."avatar_path"
     ) ORDER BY a."handle"
-  ) AS owners
+  ) AS "owners"
 FROM
   "games" g
 INNER JOIN

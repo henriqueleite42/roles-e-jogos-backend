@@ -18,6 +18,9 @@ type CreateGameInput struct {
 	MinAmountOfPlayers int
 	Name               string
 }
+type GetGameByIdInput struct {
+	Id int
+}
 type GetGameByLudopediaIdInput struct {
 	LudopediaId int
 }
@@ -28,12 +31,13 @@ type GetGamesListByLudopediaIdOutput struct {
 	Data []*GetGamesListByLudopediaIdOutputDataItem `validate:"required"`
 }
 type GetGamesListByLudopediaIdOutputDataItem struct {
-	ExternalId string
-	GameId     int
+	GameId      int
+	LudopediaId int
 }
 
 type GameRepository interface {
 	CreateGame(ctx context.Context, i *CreateGameInput) (*models.Game, error)
+	GetGameById(ctx context.Context, i *GetGameByIdInput) (*models.Game, error)
 	GetGameByLudopediaId(ctx context.Context, i *GetGameByLudopediaIdInput) (*models.Game, error)
 	GetGamesListByLudopediaId(ctx context.Context, i *GetGamesListByLudopediaIdInput) (*GetGamesListByLudopediaIdOutput, error)
 }

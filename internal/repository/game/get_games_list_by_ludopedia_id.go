@@ -23,8 +23,8 @@ func (self *gameRepositoryImplementation) GetGamesListByLudopediaId(ctx context.
 	games := make([]*GetGamesListByLudopediaIdOutputDataItem, len(result))
 	for k, v := range result {
 		games[k] = &GetGamesListByLudopediaIdOutputDataItem{
-			ExternalId: v.LudopediaUrl.String,
-			GameId:     int(v.ID),
+			LudopediaId: int(v.LudopediaID.Int32),
+			GameId:      int(v.ID),
 		}
 	}
 

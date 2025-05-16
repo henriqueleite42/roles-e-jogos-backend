@@ -30,6 +30,7 @@ func (self *CollectionUsecaseImplementation) GetLatestImportCollectionLogStatus(
 	}
 
 	return &GetLatestImportCollectionLogStatusOutput{
-		Status: collection.Status,
+		Status:         collection.Status,
+		LastImportDate: &collection.CreatedAt,
 	}, nil
 }

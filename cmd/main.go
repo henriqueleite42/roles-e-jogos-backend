@@ -19,6 +19,7 @@ import (
 	queue_delivery "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/queue"
 	account_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/account"
 	collection_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/collection"
+	event_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/event"
 	game_repository "github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/game"
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/repository/queries"
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
@@ -192,6 +193,16 @@ func main() {
 			Err(err).
 			Msg("fail to initialize GameRepository")
 	}
+	eventRepository, err := event_repository.NewEventRepository(&event_repository.NewEventRepositoryInput{
+		Logger:         &logger,
+		Queries:        sqlcQueries,
+		SecretsAdapter: secretsAdapter,
+	})
+	if err != nil {
+		logger.Fatal().
+			Err(err).
+			Msg("fail to initialize EventRepository")
+	}
 
 	logger.Info().Msg("repositories initialized")
 
@@ -229,9 +240,11 @@ func main() {
 		GameRepository:       gameRepository,
 	}
 	eventUsecase := &event_usecase.EventUsecaseImplementation{
-		Logger:         &logger,
-		Db:             db,
-		SecretsAdapter: secretsAdapter,
+		Logger:          &logger,
+		Db:              db,
+		SecretsAdapter:  secretsAdapter,
+		EventRepository: eventRepository,
+		GameRepository:  gameRepository,
 	}
 
 	logger.Info().Msg("services initialized")

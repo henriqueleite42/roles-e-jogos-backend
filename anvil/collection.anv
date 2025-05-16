@@ -347,8 +347,8 @@ Usecase:
             Type: Int
             Validate:
               - id
-          LudopediaId:
-            Type: Int
+          ExternalId:
+            Type: String
 
     ImportPersonalCollectionFromLudopedia:
       Input:
@@ -375,6 +375,9 @@ Usecase:
           Status:
             Type: Enum
             EnumRef: Enums.CollectionImportStatus
+          LastImportDate:
+            Type: Timestamp
+            Optional: true
 
 Delivery:
   Servers:
@@ -393,7 +396,7 @@ Delivery:
         Path: /collection/collective?after=:After&limit=:Limit
 
       - UsecaseMethod: RequestImportPersonalCollectionFromLudopedia
-        Method: GET
+        Method: PUT
         Path: /collection/import/ludopedia
 
       - UsecaseMethod: GetLatestImportCollectionLogStatus

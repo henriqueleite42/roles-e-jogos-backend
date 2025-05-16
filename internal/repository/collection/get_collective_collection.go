@@ -45,7 +45,7 @@ func (self *collectionRepositoryImplementation) GetCollectiveCollection(ctx cont
 		Column3: accountId,
 		Column4: maxAmountOfPlayers,
 		Column5: after,
-		Limit:   int32(*i.Pagination.Limit),
+		Limit:   int32(i.Pagination.Limit),
 	})
 	if err != nil {
 		return nil, err
@@ -101,7 +101,7 @@ func (self *collectionRepositoryImplementation) GetCollectiveCollection(ctx cont
 	return &GetCollectiveCollectionOutput{
 		Data: games,
 		Pagination: &models.PaginationOutputString{
-			Limit:   *i.Pagination.Limit,
+			Limit:   i.Pagination.Limit,
 			Next:    next,
 			Current: i.Pagination.After,
 		},

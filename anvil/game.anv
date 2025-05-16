@@ -126,6 +126,15 @@ Repository:
       Output:
         $ref: Entities.Game
 
+    GetGameById:
+      Input:
+        Type: Map
+        Properties:
+          Id:
+            Type: Int
+      Output:
+        $ref: Entities.Game
+
     GetGamesListByLudopediaId:
       Input:
         Type: Map
@@ -144,5 +153,5 @@ Repository:
               Properties:
                 GameId:
                   Type: Int
-                ExternalId:
-                  Type: String
+                LudopediaId:
+                  Type: Int

@@ -18,7 +18,7 @@ type GetCollectiveCollectionInput struct {
 	GameName           *string                       `validate:"omitempty,min=1,max=128"`
 	Kind               models.Kind                   `validate:"required" db:"kind"`
 	MaxAmountOfPlayers *int                          `validate:"omitempty,min=1,max=99"`
-	Pagination         *models.PaginationInputString `validate:"omitempty"`
+	Pagination         *models.PaginationInputString `validate:"required"`
 }
 type GetCollectiveCollectionOutput struct {
 	Data       []*models.GroupCollectionItem  `validate:"required"`
@@ -30,11 +30,12 @@ type GetLatestImportCollectionLogStatusInput struct {
 	Provider   models.Provider `validate:"required" db:"provider"`
 }
 type GetLatestImportCollectionLogStatusOutput struct {
-	Status models.CollectionImportStatus `validate:"required" db:"status"`
+	LastImportDate *time.Time                    `validate:"omitempty"`
+	Status         models.CollectionImportStatus `validate:"required" db:"status"`
 }
 type RequestImportPersonalCollectionFromLudopediaInput struct {
-	AccountId   int `validate:"id"`
-	LudopediaId int
+	AccountId  int    `validate:"id"`
+	ExternalId string
 }
 
 type CollectionUsecase interface {

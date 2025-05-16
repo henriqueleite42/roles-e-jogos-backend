@@ -28,7 +28,7 @@ type GetCollectiveCollectionInput struct {
 	GameName           *string                       `validate:"omitempty"`
 	Kind               models.Kind                   `validate:"required" db:"kind"`
 	MaxAmountOfPlayers *int                          `validate:"omitempty"`
-	Pagination         *models.PaginationInputString `validate:"omitempty"`
+	Pagination         *models.PaginationInputString `validate:"required"`
 }
 type GetCollectiveCollectionOutput struct {
 	Data       []*models.GroupCollectionItem  `validate:"required"`

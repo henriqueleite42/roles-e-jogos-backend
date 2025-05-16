@@ -1,4 +1,4 @@
-package collection_delivery_http
+package event_delivery_http
 
 import (
 	"context"
@@ -7,19 +7,19 @@ import (
 	"net/http"
 
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/adapters"
-	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
+	event_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/event"
 )
 
-func (self *collectionController) CollectionImportLudopedia(w http.ResponseWriter, r *http.Request) {
+func (self *eventController) EventAttendance(w http.ResponseWriter, r *http.Request) {
 	reqId := self.idAdapter.GenReqId()
 
 	logger := self.logger.With().
-		Str("dmn", "Collection").
-		Str("mtd", "CollectionImportLudopedia").
+		Str("dmn", "Event").
+		Str("mtd", "EventAttendance").
 		Str("reqId", reqId).
 		Logger()
 
-	if r.Method == http.MethodPut {
+	if r.Method == http.MethodPost {
 		session, err := self.authAdapter.HasValidSession(&adapters.HasValidSessionInput{
 			Req: r,
 		})
@@ -37,20 +37,20 @@ func (self *collectionController) CollectionImportLudopedia(w http.ResponseWrite
 			return
 		}
 
-		requestImportPersonalCollectionFromLudopediaInput := &collection_usecase.RequestImportPersonalCollectionFromLudopediaInput{}
-		err = json.Unmarshal(body, requestImportPersonalCollectionFromLudopediaInput)
+		confirmAttendanceInput := &event_usecase.ConfirmAttendanceInput{}
+		err = json.Unmarshal(body, confirmAttendanceInput)
 		if err != nil {
 			logger.Info().Err(err).Msg("error unmarshalling body")
 			http.Error(w, "error unmarshalling body", http.StatusBadRequest)
 			return
 		}
 
-		requestImportPersonalCollectionFromLudopediaInput.AccountId = session.AccountId
+		confirmAttendanceInput.AccountId = session.AccountId
 
-		logger.Trace().Msg("validate requestImportPersonalCollectionFromLudopediaInput")
-		err = self.validator.Validate(requestImportPersonalCollectionFromLudopediaInput)
+		logger.Trace().Msg("validate confirmAttendanceInput")
+		err = self.validator.Validate(confirmAttendanceInput)
 		if err != nil {
-			logger.Info().Err(err).Msg("invalid requestImportPersonalCollectionFromLudopediaInput")
+			logger.Info().Err(err).Msg("invalid confirmAttendanceInput")
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -59,9 +59,15 @@ func (self *collectionController) CollectionImportLudopedia(w http.ResponseWrite
 		reqCtx := context.WithValue(context.Background(), "logger", logger)
 
 		logger.Trace().Msg("call usecase")
-		err = self.collectionUsecase.RequestImportPersonalCollectionFromLudopedia(reqCtx, requestImportPersonalCollectionFromLudopediaInput)
+		err = self.eventUsecase.ConfirmAttendance(reqCtx, confirmAttendanceInput)
 		if err != nil {
 			// If there are any errors that should be handled, add them here
+
+			if err.Error() == "conflict" {
+				http.Error(w, "conflict", http.StatusConflict)
+				return
+			}
+
 			logger.Warn().Err(err).Msg("usecase err")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

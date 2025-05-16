@@ -16,9 +16,15 @@ Enums:
         Index: 0
       OnlyInvited:
         Description: |
-          Only invited people can see and confirm presence on the event
+          DEPRECATED because of semantics
         Value: ONLY_INVITED
         Index: 1
+        Deprecated: true
+      InvitedOnly:
+        Description: |
+          Only invited people can see and confirm presence on the event
+        Value: INVITED_ONLY
+        Index: 2
 
   EventAttendanceStatus:
     Type: String
@@ -37,12 +43,69 @@ Types:
   EventData:
     Type: Map
     Properties:
-      Event:
-        $ref: Entities.Event
+      Id:
+        Type: Int
+      OwnerId:
+        Type: Int
+      Name:
+        Type: String
+      Description:
+        Type: String
+      IconUrl:
+        Type: String
+        Optional: true
+      StartDate:
+        Type: Timestamp
+      EndDate:
+        Type: Timestamp
+        Optional: true
+      Capacity:
+        Description: |
+          Amount of participants that this event allows
+        Type: Int
+        Optional: true
+      Location:
+        Type: Map
+        Properties:
+          Id:
+            Type: Int
+          Name:
+            Type: String
+          Address:
+            Type: String
+          IconUrl:
+            Type: String
+            Optional: true
       Games:
         Type: List
         Items:
-          $ref: Game.Entities.Game
+          Type: Map
+          Properties:
+            Id:
+              Type: Int
+            Name:
+              Type: String
+            IconUrl:
+              Type: String
+              Optional: true
+            Kind:
+              Type: Enum
+              EnumRef: Game.Enums.Kind
+            LudopediaUrl:
+              Type: String
+              Optional: true
+            MinAmountOfPlayers:
+              Type: Int
+            MaxAmountOfPlayers:
+              Type: Int
+            AverageDuration:
+              Description: |
+                Average duration in minutes
+              Type: Int
+            MinAge:
+              Description: |
+                Minimum recommended age to paly the game
+              Type: Int
       Attendances:
         Type: List
         Items:
@@ -54,6 +117,10 @@ Types:
               Type: String
             AvatarUrl:
               Type: String
+              Optional: true
+            Status:
+              Type: Enum
+              EnumRef: Enums.EventAttendanceStatus
 
 Entities:
   NamingCase: snake
@@ -90,12 +157,9 @@ Entities:
           Type: Int
           DbType: INTEGER
           Optional: true
-        LocationName:
-          Type: String
-          DbType: VARCHAR(100)
-        LocationAddress:
-          Type: String
-          DbType: VARCHAR(500)
+        LocationId:
+          Type: Int
+          DbType: INTEGER
         CreatedAt:
           Type: Timestamp
           Default: NOW()
@@ -113,6 +177,11 @@ Entities:
           RefColumns:
             - Account.Entities.Account.Id
           OnDelete: CASCADE
+        - Columns:
+            - LocationId
+          RefColumns:
+            - Location.Entities.Location.Id
+          OnDelete: CASCADE
 
     EventGame:
       Columns:
@@ -126,10 +195,17 @@ Entities:
         GameId:
           Type: Int
           DbType: INTEGER
+        OwnerId:
+          Type: Int
+          DbType: INTEGER
       PrimaryKey:
         - Id
-        - EventId
-        - GameId
+      Indexes:
+        - Columns:
+            - EventId
+            - GameId
+            - OwnerId
+          Unique: true
       ForeignKeys:
         - Columns:
             - EventId
@@ -140,6 +216,11 @@ Entities:
             - GameId
           RefColumns:
             - Game.Entities.Game.Id
+          OnDelete: CASCADE
+        - Columns:
+            - OwnerId
+          RefColumns:
+            - Account.Entities.Account.Id
           OnDelete: CASCADE
 
     EventAttendance:
@@ -163,8 +244,11 @@ Entities:
           DbType: TIMESTAMPTZ
       PrimaryKey:
         - Id
-        - EventId
-        - AccountId
+      Indexes:
+        - Columns:
+            - EventId
+            - AccountId
+          Unique: true
       ForeignKeys:
         - Columns:
             - EventId
@@ -177,6 +261,77 @@ Entities:
             - Account.Entities.Account.Id
           OnDelete: CASCADE
 
+Repository:
+  Methods:
+    CreateEvent:
+      Input:
+        Type: Map
+        Properties:
+          OwnerId:
+            Type: Int
+          Name:
+            Type: String
+          Description:
+            Type: String
+          IconPath:
+            Type: String
+            Optional: true
+          StartDate:
+            Type: Timestamp
+          EndDate:
+            Type: Timestamp
+            Optional: true
+          Capacity:
+            Description: |
+              Amount of participants that this event allows
+            Type: Int
+            Optional: true
+          LocationId:
+            Type: Int
+      Output:
+        $ref: Entities.Event
+
+    CreateEventGame:
+      Input:
+        Type: Map
+        Properties:
+          EventId:
+            Type: Int
+          GameId:
+            Type: Int
+          OwnerId:
+            Type: Int
+
+    CreateEventAttendance:
+      Input:
+        Type: Map
+        Properties:
+          EventId:
+            Type: Int
+            DbType: INTEGER
+          AccountId:
+            Type: Int
+            DbType: INTEGER
+          Status:
+            Type: Enum
+            EnumRef: Enums.EventAttendanceStatus
+
+    GetNextEvents:
+      Input:
+        Type: Map
+        Properties:
+          Pagination:
+            $ref: Common.Types.PaginationInputTimestamp
+      Output:
+        Type: Map
+        Properties:
+          Data:
+            Type: List
+            Items:
+              $ref: Types.EventData
+          Pagination:
+            $ref: Common.Types.PaginationOutputTimestamp
+
 Usecase:
   Methods:
     CreateEvent:
@@ -184,7 +339,9 @@ Usecase:
         Type: Map
         Properties:
           AccountId:
-            $ref: Account.Entities.Account.Id
+            Type: Int
+            Validate:
+              - id
           Name:
             Type: String
             Validate:
@@ -201,48 +358,45 @@ Usecase:
               Only one of the properties should have a value.
               Tells which icon to use.
             Properties:
-              CustomIcon:
+              CustomIconPath:
                 Description: |
                   Use a custom icon uploaded by the user.
                 Type: String
                 Optional: true
                 Validate:
                   - path
-              GameIcon:
+              UseGameIconGameId:
                 Description: |
                   Use the icon from a game. If the user wants to use the icon
                   from a specific game, this property will have the GameId.
                 Type: Int
                 Optional: true
-          Date:
+          StartDate:
             Type: Timestamp
-          MaxAmountOfPlayers:
+          EndDate:
+            Type: Timestamp
+            Optional: true
+          Capacity:
             Type: Int
             Validate:
               - min=1
               - max=9999
             Optional: true
-          LocationName:
-            Type: String
+          LocationId:
+            Type: Int
             Validate:
-              - min=1
-              - max=100
-          LocationAddress:
-            Type: String
-            Validate:
-              - min=1
-              - max=500
+              - id
           GamesList:
             Type: List
             Items:
               Type: Int
 
-    GetEvents:
+    GetNextEvents:
       Input:
         Type: Map
         Properties:
           Pagination:
-            $ref: Common.Types.PaginationInputString
+            $ref: Common.Types.PaginationInputTimestamp
       Output:
         Type: Map
         Properties:
@@ -251,14 +405,16 @@ Usecase:
             Items:
               $ref: Types.EventData
           Pagination:
-            $ref: Common.Types.PaginationOutputString
+            $ref: Common.Types.PaginationOutputTimestamp
 
     ConfirmAttendance:
       Input:
         Type: Map
         Properties:
           AccountId:
-            $ref: Account.Entities.Account.Id
+            Type: Int
+          EventId:
+            Type: Int
           Confirmation:
             Type: Enum
             EnumRef: Enums.EventAttendanceStatus
@@ -266,15 +422,16 @@ Usecase:
 Delivery:
   Servers:
     Prod:
-      Url: https://roles-e-jogos.com.br
+      Url: https://rolesejogos.com.br
     Dev:
       Url: http://localhost:3000
   Http:
     Routes:
-      - UsecaseMethod: GetEvents
+      - UsecaseMethod: GetNextEvents
         Method: GET
-        Path: /events?after=:After&limit=:Limit
+        Path: /event/next?after=:After&limit=:Limit
+        ZipRes: true
 
       - UsecaseMethod: ConfirmAttendance
         Method: POST
-        Path: /events/attendance
+        Path: /event/attendance

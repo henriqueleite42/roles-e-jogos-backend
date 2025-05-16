@@ -11,6 +11,7 @@ Schemas:
   - ./anvil/event.anv
   - ./anvil/gallery.anv
   - ./anvil/game.anv
+  - ./anvil/location.anv
 
 Generators:
   # https://github.com/henriqueleite42/anvil/tree/master/generators/atlas

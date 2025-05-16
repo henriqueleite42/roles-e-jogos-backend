@@ -23,6 +23,25 @@ INSERT INTO "games" (
 	$10
 ) RETURNING "id";
 
+-- name: GetGameById :one
+SELECT
+	g."id",
+	g."name",
+	g."description",
+	g."icon_path",
+	g."kind",
+	g."ludopedia_id",
+	g."ludopedia_url",
+	g."min_amount_of_players",
+	g."max_amount_of_players",
+	g."average_duration",
+	g."min_age",
+	g."created_at"
+FROM "games" g
+WHERE
+	g."id" = $1
+LIMIT 1;
+
 -- name: GetGameByLudopediaId :one
 SELECT
 	g."id",

@@ -6,22 +6,22 @@ import (
 
 type PaginationInputId struct {
 	After *int `validate:"omitempty"`
-	Limit *int `validate:"omitempty,min=1,max=100"`
+	Limit int  `validate:"min=1,max=100"`
 }
 
 type PaginationInputInt struct {
 	After *int `validate:"omitempty"`
-	Limit *int `validate:"omitempty,min=1,max=100"`
+	Limit int  `validate:"min=1,max=100"`
 }
 
 type PaginationInputString struct {
 	After *string `validate:"omitempty"`
-	Limit *int    `validate:"omitempty,min=1,max=100"`
+	Limit int     `validate:"min=1,max=100"`
 }
 
 type PaginationInputTimestamp struct {
 	After *time.Time `validate:"omitempty"`
-	Limit *int       `validate:"omitempty,min=1,max=100"`
+	Limit int        `validate:"min=1,max=100"`
 }
 
 type PaginationOutputId struct {

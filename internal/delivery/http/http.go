@@ -14,6 +14,7 @@ import (
 	"github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery"
 	account_delivery_http "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/http/account"
 	collection_delivery_http "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/http/collection"
+	event_delivery_http "github.com/henriqueleite42/roles-e-jogos-backend/internal/delivery/http/event"
 	account_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/account"
 	collection_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/collection"
 	event_usecase "github.com/henriqueleite42/roles-e-jogos-backend/internal/usecase/event"
@@ -71,6 +72,14 @@ func (self *httpDelivery) Listen() {
 			SecretsAdapter:    self.secretsAdapter,
 			IdAdapter:         self.idAdapter,
 			CollectionUsecase: self.collectionUsecase,
+		})
+		event_delivery_http.AddEventController(&event_delivery_http.AddEventControllerInput{
+			Mux:          self.mux,
+			Logger:       self.logger,
+			Validator:    self.validator,
+			AuthAdapter:  self.authAdapter,
+			IdAdapter:    self.idAdapter,
+			EventUsecase: self.eventUsecase,
 		})
 
 		self.logger.Info().

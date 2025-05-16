@@ -30,6 +30,7 @@ enum "event_confidentiality_enum" {
 	values = [
 		"PUBLIC",
 		"ONLY_INVITED",
+		"INVITED_ONLY",
 	]
 }
 enum "kind_enum" {
@@ -38,6 +39,13 @@ enum "kind_enum" {
 		"RPG",
 		"GAME",
 		"EXPANSION",
+	]
+}
+enum "location_kind_enum" {
+	schema = schema.public
+	values = [
+		"BUSINESS",
+		"PERSONAL",
 	]
 }
 enum "otp_purpose_enum" {
@@ -200,10 +208,15 @@ table "event_attendances" {
 	}
 	primary_key {
 		columns = [
-			column.account_id,
-			column.event_id,
 			column.id,
 		]
+	}
+	index "event_attendances_event_id_account_id_idx" {
+		columns = [
+			column.event_id,
+			column.account_id,
+		]
+		unique = true
 	}
 	foreign_key "event_attendances_event_id_fk" {
 		columns = [
@@ -240,12 +253,21 @@ table "event_games" {
 			increment = 1
     }
 	}
+	column "owner_id" {
+		type = sql("INTEGER")
+	}
 	primary_key {
+		columns = [
+			column.id,
+		]
+	}
+	index "event_games_event_id_game_id_owner_id_idx" {
 		columns = [
 			column.event_id,
 			column.game_id,
-			column.id,
+			column.owner_id,
 		]
+		unique = true
 	}
 	foreign_key "event_games_event_id_fk" {
 		columns = [
@@ -265,18 +287,32 @@ table "event_games" {
 		]
 		on_delete = CASCADE
 	}
+	foreign_key "event_games_owner_id_fk" {
+		columns = [
+			column.owner_id
+		]
+		ref_columns = [
+			table.accounts.column.id
+		]
+		on_delete = CASCADE
+	}
 }
 table "events" {
 	schema = schema.public
+	column "capacity" {
+		type = sql("INTEGER")
+		null = true
+	}
 	column "created_at" {
 		type = sql("TIMESTAMPTZ")
 		default = sql("NOW()")
 	}
-	column "date" {
-		type = sql("TIMESTAMPTZ")
-	}
 	column "description" {
 		type = sql("VARCHAR(1000)")
+	}
+	column "end_date" {
+		type = sql("TIMESTAMPTZ")
+		null = true
 	}
 	column "icon_path" {
 		type = sql("VARCHAR(250)")
@@ -290,15 +326,8 @@ table "events" {
 			increment = 1
     }
 	}
-	column "location_address" {
-		type = sql("VARCHAR(500)")
-	}
-	column "location_name" {
-		type = sql("VARCHAR(100)")
-	}
-	column "max_amount_of_players" {
+	column "location_id" {
 		type = sql("INTEGER")
-		null = true
 	}
 	column "name" {
 		type = sql("VARCHAR(50)")
@@ -306,9 +335,22 @@ table "events" {
 	column "owner_id" {
 		type = sql("INTEGER")
 	}
+	column "start_date" {
+		type = sql("TIMESTAMPTZ")
+	}
 	primary_key {
 		columns = [
 			column.id,
+		]
+	}
+	index "events_name_idx" {
+		columns = [
+			column.name,
+		]
+	}
+	index "events_start_date_idx" {
+		columns = [
+			column.start_date,
 		]
 	}
 	foreign_key "events_owner_id_fk" {
@@ -317,6 +359,15 @@ table "events" {
 		]
 		ref_columns = [
 			table.accounts.column.id
+		]
+		on_delete = CASCADE
+	}
+	foreign_key "events_location_id_fk" {
+		columns = [
+			column.location_id
+		]
+		ref_columns = [
+			table.locations.column.id
 		]
 		on_delete = CASCADE
 	}
@@ -425,6 +476,60 @@ table "import_collection_logs" {
 			table.accounts.column.id
 		]
 		on_delete = CASCADE
+	}
+}
+table "locations" {
+	schema = schema.public
+	column "address" {
+		type = sql("VARCHAR(500)")
+	}
+	column "created_at" {
+		type = sql("TIMESTAMPTZ")
+		default = sql("NOW()")
+	}
+	column "created_by" {
+		type = sql("INTEGER")
+	}
+	column "icon_path" {
+		type = sql("VARCHAR(256)")
+		null = true
+	}
+	column "id" {
+		type = sql("INTEGER")
+    identity {
+			generated = ALWAYS
+			start = 0
+			increment = 1
+    }
+	}
+	column "kind" {
+		type = enum.location_kind_enum
+	}
+	column "name" {
+		type = sql("VARCHAR(128)")
+	}
+	primary_key {
+		columns = [
+			column.id,
+		]
+	}
+	index "locations_name_idx" {
+		columns = [
+			column.name,
+		]
+	}
+	index "locations_address_idx" {
+		columns = [
+			column.address,
+		]
+	}
+	foreign_key "locations_created_by_fk" {
+		columns = [
+			column.created_by
+		]
+		ref_columns = [
+			table.accounts.column.id
+		]
 	}
 }
 table "medias" {

@@ -35,7 +35,7 @@ func (self *collectionController) CollectionCollective(w http.ResponseWriter, r 
 		if limitQuery != "" {
 			limitInt, err := strconv.Atoi(limitQuery)
 			if err == nil {
-				getCollectiveCollectionInput.Pagination.Limit = &limitInt
+				getCollectiveCollectionInput.Pagination.Limit = limitInt
 			} else {
 				logger.Info().Err(err).Msg("fail to convert limit")
 			}

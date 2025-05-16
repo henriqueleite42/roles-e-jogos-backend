@@ -29,8 +29,13 @@ Schemas:
         Description: |
             Controls games and their relationships
         Uri: ./anvil/game.anv
+    Location:
+        Domain: Location
+        Description: |
+            Controls locations
+        Uri: ./anvil/location.anv
 Enums:
-    StateHash: 065cf93ae4392d60b15eaa17d05dc2be5285389c
+    StateHash: dd0a723b047cd5d6e1d01aabed96e02bd587b4c0
     Enums:
         1d5729102f3561d854eb625555849c32a6e1a11d:
             Ref: Account.Enums.Provider
@@ -65,6 +70,25 @@ Enums:
                 - Name: SignIn
                   Value: SIGN_IN
                   Index: 0
+                  Deprecated: false
+        28a04885e91e0b6c4b5cc443788aabcc104e5473:
+            Ref: Location.Enums.LocationKind
+            OriginalPath: Location.Enums.LocationKind
+            RootNode: Enums
+            Domain: Location
+            StateHash: b58b825c2798d97eef703d4955893b4d571579bb
+            Name: LocationKind
+            DbName: location_kind_enum
+            DbType: location_kind_enum
+            Type: String
+            Values:
+                - Name: Business
+                  Value: BUSINESS
+                  Index: 0
+                  Deprecated: false
+                - Name: Personal
+                  Value: PERSONAL
+                  Index: 1
                   Deprecated: false
         1878e44554d0053e94107d3ee2ac97b372f664c5:
             Ref: Game.Enums.Kind
@@ -117,7 +141,7 @@ Enums:
             OriginalPath: Event.Enums.EventConfidentiality
             RootNode: Enums
             Domain: Event
-            StateHash: 157f6a0a975394eb69eff11d11336760a92b217b
+            StateHash: 0313b6474e9bc70bded21d670148cf50ab49390d
             Name: EventConfidentiality
             DbName: event_confidentiality_enum
             DbType: event_confidentiality_enum
@@ -130,6 +154,10 @@ Enums:
                 - Name: OnlyInvited
                   Value: ONLY_INVITED
                   Index: 1
+                  Deprecated: true
+                - Name: InvitedOnly
+                  Value: INVITED_ONLY
+                  Index: 2
                   Deprecated: false
         cd6136da35eea5b6e281442a5979ae530b7ecc37:
             Ref: Collection.Enums.CollectionImportTrigger
@@ -182,8 +210,32 @@ Enums:
                   Index: 3
                   Deprecated: false
 Types:
-    StateHash: a3e72a7f2d6c3eb2b079c5eca41bf8b5fd889b73
+    StateHash: 266b27043a08a53ebbc8f4a2cc28834b0c895719
     Types:
+        0a9e2721e5e5d7efe4987569f9798adc0888bb7d:
+            Ref: Event.Repository.CreateEvent.Input.Capacity
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.Capacity
+            RootNode: Repository
+            Domain: Event
+            StateHash: 84f9025274c9b1da4edd419401fc5dde9c346f4e
+            Name: Capacity
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Int
+        0add0ec97e677e6c4a2af2b094fde51bccba86fc:
+            Ref: Location.Entities.Location.Id
+            OriginalPath: Location.Entities.Entities.Location.Columns.Id
+            RootNode: Entities
+            Domain: Location
+            StateHash: 978f4e01d37fb194208c2bac5c33a720f072f93c
+            Name: Id
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: true
+            Type: Int
+            DbName: id
+            DbType: INTEGER
         0aec3de061e64d58222079d289dda3622c1d7d68:
             Ref: Collection.Repository.GetCollectiveCollection.Input.GameName
             OriginalPath: Collection.Repository.Methods.GetCollectiveCollection.Input.Properties.GameName
@@ -195,6 +247,17 @@ Types:
             Optional: true
             AutoIncrement: false
             Type: String
+        0b1a9ea1c454b98db572b729eb6bac47d789955d:
+            Ref: Event.Types.EventData.Games.GamesItem.AverageDuration
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.AverageDuration
+            RootNode: Types
+            Domain: Event
+            StateHash: fbda756f0cf8b76a4a331003e2f4a18f03d31d09
+            Name: AverageDuration
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         0b8bbebadd02a25f4415184a8bfa6ba0eb7ea32f:
             Ref: Collection.Repository.GetLatestImportCollectionLogStatus.Input.Provider
             OriginalPath: Collection.Repository.Methods.GetLatestImportCollectionLogStatus.Input.Properties.Provider
@@ -214,7 +277,7 @@ Types:
             OriginalPath: Event.Types.Types.EventData.Properties.Attendances.Items.AttendancesItem
             RootNode: Types
             Domain: Event
-            StateHash: 971b691d1c7c7f94051ecb5c3f9be13b8a9f249f
+            StateHash: c2aa7bdca27cb5644d97bec7be6fe7be12337b75
             Name: EventDataAttendancesItem
             Confidentiality: LOW
             Optional: false
@@ -227,6 +290,8 @@ Types:
                   TypeHash: 4d9ceb6efe9345a572fd2f69977471389f2e1ef6
                 - PropName: Handle
                   TypeHash: 7f8744193c5b9807522f41473ec346964fdf2497
+                - PropName: Status
+                  TypeHash: f9549b1927c2818c3c8944f0b57b2cdeb84ea284
         0ecd90c5bd2691a4fb52c1143150f3f34d48e0ca:
             Ref: Collection.Usecase.GetLatestImportCollectionLogStatus.Output.Status
             OriginalPath: Collection.Usecase.Methods.GetLatestImportCollectionLogStatus.Output.Properties.Status
@@ -259,10 +324,10 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputId.Properties.Limit
             RootNode: Types
             Domain: Common
-            StateHash: f7d9769a277fdaa6150edbd97b2d6a26824e684c
+            StateHash: 7423e0113f6bcd3dfe7cae995e4ae574b3329ca4
             Name: Limit
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             Validate:
                 - min=1
                 - max=100
@@ -290,6 +355,19 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
+        1b2cc2475ef4223ca4b2929c8a9f08e10a3d28f5:
+            Ref: Event.Repository.CreateEventAttendance.Input.AccountId
+            OriginalPath: Event.Repository.Methods.CreateEventAttendance.Input.Properties.AccountId
+            RootNode: Repository
+            Domain: Event
+            StateHash: 54c69998caa570f2994114d0cc930bbca2a31ca3
+            Name: AccountId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+            DbName: account_id
+            DbType: INTEGER
         1b3bf5774190ace256980655bcfaa70b506e6528:
             Ref: Account.Repository.GetEmailListByIds.Output.Data
             OriginalPath: Account.Repository.Methods.GetEmailListByIds.Output.Properties.Data
@@ -343,20 +421,6 @@ Types:
                   TypeHash: 958eb7dceaee274a001254ffe384ee1a7c1b5bf2
                 - PropName: RefreshToken
                   TypeHash: 66fc2af17b9b93c028c3386e68f542003239bf91
-        1c66c539670bc15ecde6522fe1fafd1b1b4644b7:
-            Ref: Event.Usecase.CreateEvent.Input.MaxAmountOfPlayers
-            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.MaxAmountOfPlayers
-            RootNode: Usecase
-            Domain: Event
-            StateHash: 3f11d039a1aa61fa8a7efd8ecf04e7fd2d7230f6
-            Name: MaxAmountOfPlayers
-            Confidentiality: LOW
-            Optional: true
-            Validate:
-                - min=1
-                - max=9999
-            AutoIncrement: false
-            Type: Int
         1dcf017a157672d0e5126b194a21587a6556e417:
             Ref: Account.Repository.CreateAccountWithConnection.Input.AvatarPath
             OriginalPath: Account.Repository.Methods.CreateAccountWithConnection.Input.Properties.AvatarPath
@@ -411,10 +475,10 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputString
             RootNode: Types
             Domain: Common
-            StateHash: eaf0c0e826968626385aef1312edaee5a894e9cc
+            StateHash: c33673946cebdf7b3638ada0c86b35104ffee98c
             Name: PaginationInputString
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
@@ -486,6 +550,17 @@ Types:
                   TypeHash: e9fb7ba4e7f436a1d7ab72bbfab3e02d96a9daa3
                 - PropName: Provider
                   TypeHash: 1351bac6c251bad8da45770df2ce3d0acb18e3d3
+        2f8f7ae88ca77511e16d6ce45d5d8223a2935cb6:
+            Ref: Event.Types.EventData.Capacity
+            OriginalPath: Event.Types.Types.EventData.Properties.Capacity
+            RootNode: Types
+            Domain: Event
+            StateHash: f6c6f5ca611c4c91a45265f0b450fa91a0dea683
+            Name: Capacity
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Int
         2fc0e51ca06a52213ac15ac82c8b0832e057397f:
             Ref: Account.Repository.GetProfilesListByHandle.Output.Data
             OriginalPath: Account.Repository.Methods.GetProfilesListByHandle.Output.Properties.Data
@@ -603,6 +678,19 @@ Types:
             Type: Int
             DbName: owner_id
             DbType: INTEGER
+        3e020a1c89d7dfc2448c0a30fba0a5e2e001d204:
+            Ref: Event.Usecase.CreateEvent.Input.LocationId
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.LocationId
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 2ca3b27eeb9c82a4aa7f6208d72907eaa02194e0
+            Name: LocationId
+            Confidentiality: LOW
+            Optional: false
+            Validate:
+                - id
+            AutoIncrement: false
+            Type: Int
         3e0681d71835fcfda401c765347536508685af89:
             Ref: Game.Repository.CreateGame.Input.Name
             OriginalPath: Game.Repository.Methods.CreateGame.Input.Properties.Name
@@ -691,10 +779,10 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputTimestamp.Properties.Limit
             RootNode: Types
             Domain: Common
-            StateHash: a60da22a2c2cbaea5a3fba022e8ba02fd2d691d8
+            StateHash: 89fe31c72522a3eddd30c2f98c0307344ef918d1
             Name: Limit
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             Validate:
                 - min=1
                 - max=100
@@ -705,10 +793,10 @@ Types:
             OriginalPath: Event.Types.Types.EventData.Properties.Attendances.Items.AttendancesItem.Properties.AvatarUrl
             RootNode: Types
             Domain: Event
-            StateHash: 9a86d37e914cc2758ac5ecbbe56afe7a0a5b2838
+            StateHash: 5d5fdff9a524a44f66b96f989918b5038a2ae457
             Name: AvatarUrl
             Confidentiality: LOW
-            Optional: false
+            Optional: true
             AutoIncrement: false
             Type: String
         4d114af6309bee6aeb3217c5063c7d37a91c87c3:
@@ -720,6 +808,17 @@ Types:
             Name: MaxAmountOfPlayers
             Confidentiality: LOW
             Optional: true
+            AutoIncrement: false
+            Type: Int
+        4dd7db4a81f036d6d6b5058af5e481029aa5bf6f:
+            Ref: Event.Usecase.ConfirmAttendance.Input.EventId
+            OriginalPath: Event.Usecase.Methods.ConfirmAttendance.Input.Properties.EventId
+            RootNode: Usecase
+            Domain: Event
+            StateHash: fda79cc2460398806ef797fc93cc85d3854bc2e4
+            Name: EventId
+            Confidentiality: LOW
+            Optional: false
             AutoIncrement: false
             Type: Int
         4e522fb03b82dc640969dc7ba8636d393dd860d7:
@@ -881,6 +980,19 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        5c11418b59d15c1a35c72e973ff5586586b0bb71:
+            Ref: Event.Entities.Event.LocationId
+            OriginalPath: Event.Entities.Entities.Event.Columns.LocationId
+            RootNode: Entities
+            Domain: Event
+            StateHash: eb7dc0dc74b0bfa946e6e6d873bd255bc6f52d84
+            Name: LocationId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+            DbName: location_id
+            DbType: INTEGER
         5dbe0602be166016de3d15bde05293b4b99b671a:
             Ref: Account.Repository.GetAccountDataById.Input
             OriginalPath: Account.Repository.Methods.GetAccountDataById.Input
@@ -1001,33 +1113,33 @@ Types:
             OriginalPath: Event.Entities.Entities.Event
             RootNode: Entities
             Domain: Event
-            StateHash: 61c7d293d177f009557726d4ba2d211124ee095c
+            StateHash: f24a8c33e398e22b39c836289d1cab3d427f6cc9
             Name: Event
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
+                - PropName: Capacity
+                  TypeHash: d277802110319f15207898e6302cbfb47479ee06
                 - PropName: CreatedAt
                   TypeHash: e8860f2bfff15d849aee841782577b35d3c22238
-                - PropName: Date
-                  TypeHash: df7d5e860f12ae75b178c8c7e33ef9f66e271868
                 - PropName: Description
                   TypeHash: c6af0c86def64035eef71a0e99349e94e9c4c44d
+                - PropName: EndDate
+                  TypeHash: ce51d2077ce3df84bfa38950e282e377d85b90d6
                 - PropName: IconPath
                   TypeHash: e116a0221f113e2de0ef1fc9f07b8a5a06f2988f
                 - PropName: Id
                   TypeHash: 7a99ca5782d1f94de86c39629ea5cfceeb20823a
-                - PropName: LocationAddress
-                  TypeHash: 138960f838281d2f1cd188f064793d328c8edb4c
-                - PropName: LocationName
-                  TypeHash: b21c801d867935bc9aade796b1f23be34574ad45
-                - PropName: MaxAmountOfPlayers
-                  TypeHash: d3abf862302808656b96db571687f3df2976ec9c
+                - PropName: LocationId
+                  TypeHash: 5c11418b59d15c1a35c72e973ff5586586b0bb71
                 - PropName: Name
                   TypeHash: 3aa4587dbd7ec31e2979685f30dc3722fcf3cf3a
                 - PropName: OwnerId
                   TypeHash: c1c194efc7636e6b97408996901820b45a655c1e
+                - PropName: StartDate
+                  TypeHash: aaceb220262fe79f396f4b26046a66a1137f42e7
         6d8258886214fc3922eacf51fc368b4e39707b6f:
             Ref: Account.Repository.GetConnectionsByAccountId.Input.AccountId
             OriginalPath: Account.Repository.Methods.GetConnectionsByAccountId.Input.Properties.AccountId
@@ -1101,6 +1213,24 @@ Types:
             Type: Int
             DbName: id
             DbType: INTEGER
+        7b3bb9811ecced00398d33b214dfc6d48dec7aa2:
+            Ref: Event.Repository.CreateEventGame.Input
+            OriginalPath: Event.Repository.Methods.CreateEventGame.Input
+            RootNode: Repository
+            Domain: Event
+            StateHash: 48ba091af868a2574d9879628e271292643067ac
+            Name: CreateEventGameInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: EventId
+                  TypeHash: 9458c41b4e37b168051cfc0f508a98bfcb9dbaf5
+                - PropName: GameId
+                  TypeHash: 5073c1a6ade49db4877cedc1a3d34993d0d95bae
+                - PropName: OwnerId
+                  TypeHash: 7552a05b5440e7958f7092c46143b249585e9cc6
         7b3bba49ee9341e0b06cb3087e53c02fd2e84218:
             Ref: Account.Usecase.GetProfilesListByHandle.Input
             OriginalPath: Account.Usecase.Methods.GetProfilesListByHandle.Input
@@ -1156,7 +1286,7 @@ Types:
             OriginalPath: Event.Types.Types.EventData
             RootNode: Types
             Domain: Event
-            StateHash: 6bdfc37de67de034121f802864833aa7783a6708
+            StateHash: f2ea281f2931c8d77518f6055d64946170e35c74
             Name: EventData
             Confidentiality: LOW
             Optional: false
@@ -1165,10 +1295,26 @@ Types:
             ChildTypes:
                 - PropName: Attendances
                   TypeHash: 4147109cdf004c3a85c395f776f6d95aa8dc9958
-                - PropName: Event
-                  TypeHash: 6d987db707682a8d7b15914ef1d601db6b52bf57
+                - PropName: Capacity
+                  TypeHash: 2f8f7ae88ca77511e16d6ce45d5d8223a2935cb6
+                - PropName: Description
+                  TypeHash: 9422d9ae868e746f90870936ab2c1f00b55b1111
+                - PropName: EndDate
+                  TypeHash: 79ed524e8843231eb80beffa91a49198a7c8ec1b
                 - PropName: Games
                   TypeHash: f02bbcabb69c0b1bc3994072b767a85a8baed091
+                - PropName: IconUrl
+                  TypeHash: abaa5239e423f8998420bac44d248840fb72a6c0
+                - PropName: Id
+                  TypeHash: a408393ff8e1bc3d02fab5d7851a52a3f262272e
+                - PropName: Location
+                  TypeHash: c7c4fa5e2a1fa5177061da2b59acd19a7a9fc885
+                - PropName: Name
+                  TypeHash: 50e8629555f5810503880682d66189fc6ac4adda
+                - PropName: OwnerId
+                  TypeHash: 47ef83d09a6065641e20b3ea9c2b0bada4de4565
+                - PropName: StartDate
+                  TypeHash: 9e7ee79cdcb45f42c40ae1104aa0bf9e99e55d96
         7df4bff8fa17a8af361e184ee2b34496f5ca37ec:
             Ref: Account.Repository.GetListByIds.Input
             OriginalPath: Account.Repository.Methods.GetListByIds.Input
@@ -1188,7 +1334,7 @@ Types:
             OriginalPath: Event.Usecase.Methods.ConfirmAttendance.Input
             RootNode: Usecase
             Domain: Event
-            StateHash: aea52597d766968eed0c334e1d6ce46b0d91e557
+            StateHash: d730eee2712e63261719db7a54ec6961671027e6
             Name: ConfirmAttendanceInput
             Confidentiality: LOW
             Optional: false
@@ -1196,9 +1342,11 @@ Types:
             Type: Map
             ChildTypes:
                 - PropName: AccountId
-                  TypeHash: c4c6f5e114598f78419bc2a530f72ce5c6345cd0
+                  TypeHash: 321237b9cd54025fc950769643048c4ac10ca689
                 - PropName: Confirmation
                   TypeHash: 371ff8a554737b27298a91041149516db365d59e
+                - PropName: EventId
+                  TypeHash: 4dd7db4a81f036d6d6b5058af5e481029aa5bf6f
         7f72e38e45898898a85c02c49204dabb1d3081a1:
             Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input.Ids.IdsItem
             OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input.Properties.Ids.Items.IdsItem
@@ -1308,6 +1456,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
+        8d779498f04adb1766179503a190596068cf47a2:
+            Ref: Event.Repository.CreateEvent.Input.OwnerId
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.OwnerId
+            RootNode: Repository
+            Domain: Event
+            StateHash: 50a4cf0e34844cce5788d888e5489cba8b9a717a
+            Name: OwnerId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         8e976114c372cbc0b1b8e073139f46d041bfdca9:
             Ref: Account.Types.AccountDataDb.AccountId
             OriginalPath: Account.Types.Types.AccountDataDb.Properties.AccountId
@@ -1332,6 +1491,22 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: 834286ff108aae5822c609502a2378c461a6c179
+        8f0f14ef8753676f71970fe5eea3cf6172f97036:
+            Ref: Event.Repository.GetNextEvents.Output
+            OriginalPath: Event.Repository.Methods.GetNextEvents.Output
+            RootNode: Repository
+            Domain: Event
+            StateHash: d38472c393e3458cb0e1460825e18eee8600d284
+            Name: GetNextEventsOutput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Data
+                  TypeHash: 061f51b49dba8b5096171ba3086b66c5433ff523
+                - PropName: Pagination
+                  TypeHash: a5027ded764f9fba0f8e6e47b6aec23d10c88c05
         8f72a222e2f76bd9fca8be2d0b04941dbc47a57d:
             Ref: Account.Types.MinimumProfileData.Handle
             OriginalPath: Account.Types.Types.MinimumProfileData.Properties.Handle
@@ -1339,17 +1514,6 @@ Types:
             Domain: Account
             StateHash: b1806ffb65a2046887c72bbccfe036f229000513
             Name: Handle
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: String
-        8f78473cdba9676383e2f501d04efbf4e8e7669b:
-            Ref: Game.Repository.GetGamesListByLudopediaId.Output.Data.DataItem.ExternalId
-            OriginalPath: Game.Repository.Methods.GetGamesListByLudopediaId.Output.Properties.Data.Items.DataItem.Properties.ExternalId
-            RootNode: Repository
-            Domain: Game
-            StateHash: a612824d3a2356c7a8fc9f9c20b0bc523eda6abf
-            Name: ExternalId
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
@@ -1396,6 +1560,17 @@ Types:
             Type: Int
             DbName: account_id
             DbType: INTEGER
+        9e7ee79cdcb45f42c40ae1104aa0bf9e99e55d96:
+            Ref: Event.Types.EventData.StartDate
+            OriginalPath: Event.Types.Types.EventData.Properties.StartDate
+            RootNode: Types
+            Domain: Event
+            StateHash: 833d416e71b258a588537ff848ab6e182c5d635b
+            Name: StartDate
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Timestamp
         9e87ad54d14a322946ee043f6e35fa12741a7918:
             Ref: Account.Usecase.GetListById.Input.AccountsIds.AccountsIdsItem
             OriginalPath: Account.Usecase.Methods.GetListById.Input.Properties.AccountsIds.Items.AccountsIdsItem
@@ -1476,6 +1651,17 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: d4901c80815147b8e547787c6fe2492ae1b85b47
+        11d9efaebe057e58ba464c6057e664887d04e483:
+            Ref: Event.Usecase.CreateEvent.Input.StartDate
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.StartDate
+            RootNode: Usecase
+            Domain: Event
+            StateHash: b5455bb77822eb065625bda8db83e830699192a7
+            Name: StartDate
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Timestamp
         11dca731b0e808be259c7e6b35cfbf36753b15ce:
             Ref: Collection.Repository.AddToPersonalCollection.Input.Paid
             OriginalPath: Collection.Repository.Methods.AddToPersonalCollection.Input.Properties.Paid
@@ -1487,6 +1673,19 @@ Types:
             Optional: true
             AutoIncrement: false
             Type: Int
+        13fe41dfc6ad795001ac51b1251aeb727bf95386:
+            Ref: Location.Entities.Location.Address
+            OriginalPath: Location.Entities.Entities.Location.Columns.Address
+            RootNode: Entities
+            Domain: Location
+            StateHash: 6fc9162a46aa8be1dbdf8a2fb981614c68773dc7
+            Name: Address
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
+            DbName: address
+            DbType: VARCHAR(500)
         15e3f14433c617bb07204c980004fbba0517966f:
             Ref: Account.Types.AccountDataDb.Handle
             OriginalPath: Account.Types.Types.AccountDataDb.Properties.Handle
@@ -1503,17 +1702,17 @@ Types:
             OriginalPath: Game.Repository.Methods.GetGamesListByLudopediaId.Output.Properties.Data.Items.DataItem
             RootNode: Repository
             Domain: Game
-            StateHash: 4500fe0459d078a0ab425eaba6cf6391e968a827
+            StateHash: 2ed7fb73515f34aaced60e865846376f75884f9b
             Name: GetGamesListByLudopediaIdOutputDataItem
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
-                - PropName: ExternalId
-                  TypeHash: 8f78473cdba9676383e2f501d04efbf4e8e7669b
                 - PropName: GameId
                   TypeHash: a10aeabe5ad716620407f631024644f190120245
+                - PropName: LudopediaId
+                  TypeHash: 4164a5299ced9bc487abe975ba2c9c9697ae1caf
         16db9dba06965d5c8436d46d569bed3fea387ee6:
             Ref: Collection.Usecase.AddToPersonalCollection.Input.Paid
             OriginalPath: Collection.Usecase.Methods.AddToPersonalCollection.Input.Properties.Paid
@@ -1536,6 +1735,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        18c627d1c7b6143239d9d7eecb1e68d0735dff41:
+            Ref: Event.Types.EventData.Games.GamesItem.MinAge
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.MinAge
+            RootNode: Types
+            Domain: Event
+            StateHash: 8ad0b54eae703155cce59ec9d8524a37924365ef
+            Name: MinAge
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         19c04726dd383352e4b7780cdea4db68a3620e76:
             Ref: Collection.Entities.ImportCollectionLog.ExternalId
             OriginalPath: Collection.Entities.Entities.ImportCollectionLog.Columns.ExternalId
@@ -1549,6 +1759,31 @@ Types:
             Type: String
             DbName: external_id
             DbType: VARCHAR(255)
+        20aed2c9cd5d88679cd65cf47492a2a247a51550:
+            Ref: Event.Repository.GetNextEvents.Input
+            OriginalPath: Event.Repository.Methods.GetNextEvents.Input
+            RootNode: Repository
+            Domain: Event
+            StateHash: affaf045ff57d6febfe71cd249d4b601923ce35f
+            Name: GetNextEventsInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Pagination
+                  TypeHash: 403e61cfca3c37e2dff0fc9b9bf555c4805d5bca
+        20b0dbe6c59fb41303737420eee5315aa38ab3ae:
+            Ref: Event.Usecase.CreateEvent.Input.Icon.UseGameIconGameId
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Icon.Properties.UseGameIconGameId
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 077888f4d7f696484b0cea25bda14447a73bb531
+            Name: UseGameIconGameId
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Int
         20b77880d7c31267879cbc8137531e78f05e2b0c:
             Ref: Account.Usecase.CheckHandle.Output.Available
             OriginalPath: Account.Usecase.Methods.CheckHandle.Output.Properties.Available
@@ -1639,36 +1874,32 @@ Types:
                   TypeHash: a597895d35ddeab705919e4cf9dc7a51d3524065
                 - PropName: NewHandle
                   TypeHash: 35721d71c6aa8a5a772891c2a92b31b7b09be976
-        27d95d1a3f7ecbd503ea7484308b62f594b2f1d6:
-            Ref: Event.Usecase.GetEvents.Output
-            OriginalPath: Event.Usecase.Methods.GetEvents.Output
-            RootNode: Usecase
-            Domain: Event
-            StateHash: 2473785d210873b5aa45b59c3aaa5ae1843afb1b
-            Name: GetEventsOutput
+        30b1a536538fb9e9e4ae78bbeaaa082fda4c6d0c:
+            Ref: Location.Entities.Location
+            OriginalPath: Location.Entities.Entities.Location
+            RootNode: Entities
+            Domain: Location
+            StateHash: 5c9c26c8923459eebf46d4cbcd86cc73eff55b96
+            Name: Location
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
-                - PropName: Data
-                  TypeHash: 6664a26895e094a38d407c4e6152e76e49f8dba7
-                - PropName: Pagination
-                  TypeHash: cec5cc8b9de32323781ad382cc9cf7b31e78ce2b
-        30c9f456e2f206dfc28132602fd65a1a9b50a352:
-            Ref: Event.Usecase.CreateEvent.Input.LocationName
-            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.LocationName
-            RootNode: Usecase
-            Domain: Event
-            StateHash: cd828c0e67cf533e211c2a36458cfae9230f24b1
-            Name: LocationName
-            Confidentiality: LOW
-            Optional: false
-            Validate:
-                - min=1
-                - max=100
-            AutoIncrement: false
-            Type: String
+                - PropName: Address
+                  TypeHash: 13fe41dfc6ad795001ac51b1251aeb727bf95386
+                - PropName: CreatedAt
+                  TypeHash: 75b6024b210f0891e573e79963c416d805e7dab5
+                - PropName: CreatedBy
+                  TypeHash: a06bfdadff418f668d5f51be1a0f92e717d26c57
+                - PropName: IconPath
+                  TypeHash: cd23872dcded01722536e3521e3e117e22874e6d
+                - PropName: Id
+                  TypeHash: 0add0ec97e677e6c4a2af2b094fde51bccba86fc
+                - PropName: Kind
+                  TypeHash: 730656d02aec556111459de3673e54d0d367343a
+                - PropName: Name
+                  TypeHash: fd5cbd99f4bc6b76509f8302ce38f20864b2c47c
         31a8b62c93a3c443035a1e39d9a07cd2b40d5fb9:
             Ref: Account.Types.ProfileData.AvatarUrl
             OriginalPath: Account.Types.Types.ProfileData.Properties.AvatarUrl
@@ -1678,6 +1909,17 @@ Types:
             Name: AvatarUrl
             Confidentiality: LOW
             Optional: true
+            AutoIncrement: false
+            Type: String
+        38dd339e1417aafbc0ae2754fd56b82ad3b40888:
+            Ref: Event.Types.EventData.Location.Address
+            OriginalPath: Event.Types.Types.EventData.Properties.Location.Properties.Address
+            RootNode: Types
+            Domain: Event
+            StateHash: fcb9cee784b168f56dc2f3443a6053b079296361
+            Name: Address
+            Confidentiality: LOW
+            Optional: false
             AutoIncrement: false
             Type: String
         39d1f8aea78910a7457d85c6264771ff6fbb83ba:
@@ -1698,6 +1940,17 @@ Types:
                   TypeHash: 578d770f06435f9a812f2cb79287742ad686114d
                 - PropName: Provider
                   TypeHash: 8b98caaeee84005a8b525ca72031f53acfcaa52a
+        42cd4e14753a695f76e02517df7b7296faadb9da:
+            Ref: Event.Types.EventData.Games.GamesItem.MinAmountOfPlayers
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.MinAmountOfPlayers
+            RootNode: Types
+            Domain: Event
+            StateHash: 88f46d58939bfaf54da0bb16ce6ee62687ec3b03
+            Name: MinAmountOfPlayers
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         43e6517ebb54c22b06b957f99dc9c0766c659f24:
             Ref: Collection.Events.ImportCollectionEvent.Trigger
             OriginalPath: Collection.Events.ImportCollectionEvent.Properties.Trigger
@@ -1712,6 +1965,17 @@ Types:
             DbName: trigger
             DbType: collection_import_trigger_enum
             EnumHash: cd6136da35eea5b6e281442a5979ae530b7ecc37
+        44f6f8bcfaf8a5f7188f455124d221383c3f800a:
+            Ref: Event.Types.EventData.Games.GamesItem.MaxAmountOfPlayers
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.MaxAmountOfPlayers
+            RootNode: Types
+            Domain: Event
+            StateHash: 632f70abb3fbdc9e27da759b273aa874d091ad31
+            Name: MaxAmountOfPlayers
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         44f7c41572b3a9d09cea3b2e3649336a229b2383:
             Ref: Account.Usecase.GetProfilesListByHandle.Output
             OriginalPath: Account.Usecase.Methods.GetProfilesListByHandle.Output
@@ -1726,6 +1990,28 @@ Types:
             ChildTypes:
                 - PropName: Data
                   TypeHash: 9f96dfd1504f2f943ca78d6bc7433d671e979aed
+        47ef83d09a6065641e20b3ea9c2b0bada4de4565:
+            Ref: Event.Types.EventData.OwnerId
+            OriginalPath: Event.Types.Types.EventData.Properties.OwnerId
+            RootNode: Types
+            Domain: Event
+            StateHash: 5f9adfe7bca0a7fc6db964dc85718defe46ff733
+            Name: OwnerId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+        50e8629555f5810503880682d66189fc6ac4adda:
+            Ref: Event.Types.EventData.Name
+            OriginalPath: Event.Types.Types.EventData.Properties.Name
+            RootNode: Types
+            Domain: Event
+            StateHash: 601f1139e377515c9ba4eee9b13e1137d1b72ebd
+            Name: Name
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
         51ae3e0472c77cc9360398b0eaa3c6b10128ccfe:
             Ref: Account.Repository.EditProfile.Input.Name
             OriginalPath: Account.Repository.Methods.EditProfile.Input.Properties.Name
@@ -1786,6 +2072,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
+        060d1fc85e30812758841923454a6761ef8617bc:
+            Ref: Event.Types.EventData.Games.GamesItem.Id
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.Id
+            RootNode: Types
+            Domain: Event
+            StateHash: 51fa34ecdd3882350e2cc88a7303f7b38d60f8b1
+            Name: Id
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         61b208d7032cb436ddd270834ffdff271ca5593c:
             Ref: Account.Entities.Connection.ExternalId
             OriginalPath: Account.Entities.Entities.Connection.Columns.ExternalId
@@ -1799,6 +2096,19 @@ Types:
             Type: String
             DbName: external_id
             DbType: VARCHAR(255)
+        061f51b49dba8b5096171ba3086b66c5433ff523:
+            Ref: Event.Repository.GetNextEvents.Output.Data
+            OriginalPath: Event.Repository.Methods.GetNextEvents.Output.Properties.Data
+            RootNode: Repository
+            Domain: Event
+            StateHash: c73e94683cfa2dde0238bffb2a41b02cb7a3abb8
+            Name: Data
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: List
+            ChildTypes:
+                - TypeHash: 7d412c6d4cf97ad23c4e868680fe35d78a7823e7
         63b316d74674a20d9bbebad4d1df3fce697faa67:
             Ref: Collection.Types.GroupCollectionItem.Game.MaxAmountOfPlayers
             OriginalPath: Collection.Types.Types.GroupCollectionItem.Properties.Game.Properties.MaxAmountOfPlayers
@@ -1815,7 +2125,7 @@ Types:
             OriginalPath: Collection.Usecase.Methods.RequestImportPersonalCollectionFromLudopedia.Input
             RootNode: Usecase
             Domain: Collection
-            StateHash: e675c471afd6e5af0019224ca2277f194f866d87
+            StateHash: 57fa25433d161a99d8f8a4f421682b9e9e1df811
             Name: RequestImportPersonalCollectionFromLudopediaInput
             Confidentiality: LOW
             Optional: false
@@ -1824,8 +2134,8 @@ Types:
             ChildTypes:
                 - PropName: AccountId
                   TypeHash: 577724772308228b7f00c08fec20aa6c86cf85eb
-                - PropName: LudopediaId
-                  TypeHash: 38000361ab4bec6f911ff6694297a464b8819e86
+                - PropName: ExternalId
+                  TypeHash: 74ea7cd6545c576936152ea97494171981647764
         66ed16cc08a135a7ced1e93053ef51d3170313ec:
             Ref: Collection.Types.GroupCollectionItem.Game.IconUrl
             OriginalPath: Collection.Types.Types.GroupCollectionItem.Properties.Game.Properties.IconUrl
@@ -1875,6 +2185,17 @@ Types:
             DbName: kind
             DbType: kind_enum
             EnumHash: 1878e44554d0053e94107d3ee2ac97b372f664c5
+        69dda250460e5ae242cbd8dfe7312b8f8b8928c9:
+            Ref: Event.Repository.CreateEvent.Input.EndDate
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.EndDate
+            RootNode: Repository
+            Domain: Event
+            StateHash: 159144d194c4066c6892634e7c13da1967b2b6c1
+            Name: EndDate
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Timestamp
         70bc2898b96af6e9856e145cfee64d43f33795b4:
             Ref: Account.Repository.GetConnectionsListByExternalIdAndProvider.Output.Data
             OriginalPath: Account.Repository.Methods.GetConnectionsListByExternalIdAndProvider.Output.Properties.Data
@@ -1888,6 +2209,31 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: 1c3a15db7a8e1f3f0c0e29c97364307305c51f14
+        74ea7cd6545c576936152ea97494171981647764:
+            Ref: Collection.Usecase.RequestImportPersonalCollectionFromLudopedia.Input.ExternalId
+            OriginalPath: Collection.Usecase.Methods.RequestImportPersonalCollectionFromLudopedia.Input.Properties.ExternalId
+            RootNode: Usecase
+            Domain: Collection
+            StateHash: 42d996596451b67019800f45e7453c3a1cf9fe87
+            Name: ExternalId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
+        75b6024b210f0891e573e79963c416d805e7dab5:
+            Ref: Location.Entities.Location.CreatedAt
+            OriginalPath: Location.Entities.Entities.Location.Columns.CreatedAt
+            RootNode: Entities
+            Domain: Location
+            StateHash: d9f5a72b7e0b15937d0f6b2869055e282ebf4793
+            Name: CreatedAt
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Default: NOW()
+            Type: Timestamp
+            DbName: created_at
+            DbType: TIMESTAMPTZ
         75e3684bbe189ff0d2913a24404a96a8110253f7:
             Ref: Collection.Usecase.AddToPersonalCollection.Input
             OriginalPath: Collection.Usecase.Methods.AddToPersonalCollection.Input
@@ -1970,6 +2316,30 @@ Types:
                   TypeHash: ac878d8d378006ce6a5b329462f06fa70dc3f877
                 - PropName: Name
                   TypeHash: db1812c5265357a33dfc24ba94255d9568391c5e
+        79a196a6a360a54de4ced696b4aef8eebfde087a:
+            Ref: Event.Entities.EventGame.OwnerId
+            OriginalPath: Event.Entities.Entities.EventGame.Columns.OwnerId
+            RootNode: Entities
+            Domain: Event
+            StateHash: b5dab9827b155e7da67b2ff1d2097237272a3641
+            Name: OwnerId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+            DbName: owner_id
+            DbType: INTEGER
+        79ed524e8843231eb80beffa91a49198a7c8ec1b:
+            Ref: Event.Types.EventData.EndDate
+            OriginalPath: Event.Types.Types.EventData.Properties.EndDate
+            RootNode: Types
+            Domain: Event
+            StateHash: 53865ea0b03bf3c08488c39922a0cdb0cb040ebc
+            Name: EndDate
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Timestamp
         81cec4b4058544bb2690d523c4ac2d389018322e:
             Ref: Event.Usecase.CreateEvent.Input.Name
             OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Name
@@ -2000,17 +2370,6 @@ Types:
                   TypeHash: 9faae963b74e301488aee2d1a49e1b1218e34a9e
                 - PropName: Pagination
                   TypeHash: cec5cc8b9de32323781ad382cc9cf7b31e78ce2b
-        85e365cb26a31aad6739cde19b850c95fc839749:
-            Ref: Event.Usecase.CreateEvent.Input.Date
-            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Date
-            RootNode: Usecase
-            Domain: Event
-            StateHash: bff4e896d79fb32e4b30e01d8d1d285506e44709
-            Name: Date
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Timestamp
         85e8481c7af7f6f93fe6abc1144bd05822361cdd:
             Ref: Collection.Repository.AddToPersonalCollection.Input.GameId
             OriginalPath: Collection.Repository.Methods.AddToPersonalCollection.Input.Properties.GameId
@@ -2083,6 +2442,17 @@ Types:
                   TypeHash: 97c15c49b5b1d7fbc7fbd4bee938149cdc389d45
                 - PropName: RefreshToken
                   TypeHash: 2078292f941842fbc65882b323c58a0b6d7c8700
+        96be535657b919bc7b240c8f67d671fb708866ab:
+            Ref: Event.Usecase.CreateEvent.Input.EndDate
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.EndDate
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 565d44878030b92f0294a9d6c2b07a67cb5fa972
+            Name: EndDate
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Timestamp
         96d6358109c28c1512bf6c4c8e21aefe490e09e3:
             Ref: Account.Usecase.LinkLudopediaProvider.Input.Code
             OriginalPath: Account.Usecase.Methods.LinkLudopediaProvider.Input.Properties.Code
@@ -2121,6 +2491,17 @@ Types:
             Optional: false
             Validate:
                 - min=1
+            AutoIncrement: false
+            Type: String
+        107dbf51df590e52ccb83661b583e9cc3a8ede87:
+            Ref: Event.Types.EventData.Location.Name
+            OriginalPath: Event.Types.Types.EventData.Properties.Location.Properties.Name
+            RootNode: Types
+            Domain: Event
+            StateHash: b6e39a243c973e2cba262d57551c5574a0b6a21d
+            Name: Name
+            Confidentiality: LOW
+            Optional: false
             AutoIncrement: false
             Type: String
         133c8108ae59428d52801566e25cced5026b82f7:
@@ -2191,29 +2572,15 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputInt.Properties.Limit
             RootNode: Types
             Domain: Common
-            StateHash: 986c429d2e6d4ba39a9e27d763aaf350c3d39bc3
+            StateHash: b00e6c323c6ba8da1918f1a4b6bda0b1b92fd0d1
             Name: Limit
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             Validate:
                 - min=1
                 - max=100
             AutoIncrement: false
             Type: Int
-        379bd483b674379e363daa4fddbfc04b4e0ba4a8:
-            Ref: Event.Usecase.CreateEvent.Input.LocationAddress
-            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.LocationAddress
-            RootNode: Usecase
-            Domain: Event
-            StateHash: 0712bf2da47261c4e13bf882b6f7a169f97670a7
-            Name: LocationAddress
-            Confidentiality: LOW
-            Optional: false
-            Validate:
-                - min=1
-                - max=500
-            AutoIncrement: false
-            Type: String
         403b79d0c3d765dba96f0776b344fe0736372987:
             Ref: Account.Usecase.SendSignInOtp.Input.Email
             OriginalPath: Account.Usecase.Methods.SendSignInOtp.Input.Properties.Email
@@ -2232,10 +2599,10 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputTimestamp
             RootNode: Types
             Domain: Common
-            StateHash: 5921eaff76a6e9abe5da3e67e224d86280a4e47a
+            StateHash: c93b2adf58d1265526cc823b12378750fc3e82f9
             Name: PaginationInputTimestamp
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
@@ -2294,6 +2661,17 @@ Types:
             ChildTypes:
                 - PropName: AccountsIds
                   TypeHash: a70c27dfeaf194792acf2ed036585f20453dddc2
+        489bf04f2bc85c62c8bd19688f3bd296789cce7f:
+            Ref: Collection.Usecase.GetLatestImportCollectionLogStatus.Output.LastImportDate
+            OriginalPath: Collection.Usecase.Methods.GetLatestImportCollectionLogStatus.Output.Properties.LastImportDate
+            RootNode: Usecase
+            Domain: Collection
+            StateHash: 7ecc92b3653d8dd6137ad6ce767bbc409f3f22d0
+            Name: LastImportDate
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Timestamp
         492f8699f61baf433abe83e5baa734e80fb0da3c:
             Ref: Account.Repository.GetAccountDataById.Input.AccountId
             OriginalPath: Account.Repository.Methods.GetAccountDataById.Input.Properties.AccountId
@@ -2460,6 +2838,19 @@ Types:
                   TypeHash: 4d114af6309bee6aeb3217c5063c7d37a91c87c3
                 - PropName: Pagination
                   TypeHash: 2ae6afb0bca8080aaaf6847babf4107e0957c11e
+        742cd47b93fdbf6476b58c6fcf813b7416de143a:
+            Ref: Event.Usecase.GetNextEvents.Output.Data
+            OriginalPath: Event.Usecase.Methods.GetNextEvents.Output.Properties.Data
+            RootNode: Usecase
+            Domain: Event
+            StateHash: c2117b9609b60cf82553b6df2fa762299021d217
+            Name: Data
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: List
+            ChildTypes:
+                - TypeHash: 7d412c6d4cf97ad23c4e868680fe35d78a7823e7
         760eb7a41da6cedecfbef62ee2a5f8537db189e5:
             Ref: Account.Repository.EditProfile.Input
             OriginalPath: Account.Repository.Methods.EditProfile.Input
@@ -2534,10 +2925,10 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputInt
             RootNode: Types
             Domain: Common
-            StateHash: 288df0a3218205a0c1f1866c8f63c7ac35562ab9
+            StateHash: 4b77ac88f3020ffe7511d5af460c199cb1036b9c
             Name: PaginationInputInt
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
@@ -2545,6 +2936,19 @@ Types:
                   TypeHash: b38cd3f9f77f34ae5fc70b7c6c0b6ac6cb1b787a
                 - PropName: Limit
                   TypeHash: 377af94ebfdd709b61d61a7d7fac0bfe945966cb
+        873cd624997e5a97420e1265d14878a7ffd0449c:
+            Ref: Event.Usecase.CreateEvent.Input.Icon.CustomIconPath
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Icon.Properties.CustomIconPath
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 05115d50677dfb17c1761effb8ccb63b6e0a37b6
+            Name: CustomIconPath
+            Confidentiality: LOW
+            Optional: true
+            Validate:
+                - path
+            AutoIncrement: false
+            Type: String
         948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5:
             Ref: Account.Entities.Account
             OriginalPath: Account.Entities.Entities.Account
@@ -2657,6 +3061,17 @@ Types:
             DbName: provider
             DbType: provider_enum
             EnumHash: 1d5729102f3561d854eb625555849c32a6e1a11d
+        2539a3fe951c0ab5cc00b782b603cd01a738b41c:
+            Ref: Event.Repository.CreateEvent.Input.IconPath
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.IconPath
+            RootNode: Repository
+            Domain: Event
+            StateHash: 4686dd940d87e99d2f7b76591153dd4679464675
+            Name: IconPath
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: String
         3255bb8e00f95dd9ba09ca04970a6078633cd369:
             Ref: Account.Usecase.EditProfile.Input.AccountId
             OriginalPath: Account.Usecase.Methods.EditProfile.Input.Properties.AccountId
@@ -2698,6 +3113,17 @@ Types:
             ChildTypes:
                 - PropName: AccountId
                   TypeHash: 8a033f7ca66de0c06ee6f666af9a9024874c8e3f
+        4164a5299ced9bc487abe975ba2c9c9697ae1caf:
+            Ref: Game.Repository.GetGamesListByLudopediaId.Output.Data.DataItem.LudopediaId
+            OriginalPath: Game.Repository.Methods.GetGamesListByLudopediaId.Output.Properties.Data.Items.DataItem.Properties.LudopediaId
+            RootNode: Repository
+            Domain: Game
+            StateHash: ea1b08857ec8ef209559e20852638a42c9988859
+            Name: LudopediaId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         4668f8d15a66dcca66e123565fd177a32ad0e9c8:
             Ref: Account.Repository.GetConnectionsByAccountIdAndProvider.Input
             OriginalPath: Account.Repository.Methods.GetConnectionsByAccountIdAndProvider.Input
@@ -2714,6 +3140,17 @@ Types:
                   TypeHash: 68815ccf8fc86fbaf2c7eae1651181cf28a3feaf
                 - PropName: Provider
                   TypeHash: d84660a697d32edb47500cec66a7c4101023a612
+        5073c1a6ade49db4877cedc1a3d34993d0d95bae:
+            Ref: Event.Repository.CreateEventGame.Input.GameId
+            OriginalPath: Event.Repository.Methods.CreateEventGame.Input.Properties.GameId
+            RootNode: Repository
+            Domain: Event
+            StateHash: ba23e9087f0929db3f43816cdcf5b3a40f0d3e9e
+            Name: GameId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         5142e1343c35d7827eb0748335d9c0b932d23d88:
             Ref: Account.Repository.EditProfile.Input.AccountId
             OriginalPath: Account.Repository.Methods.EditProfile.Input.Properties.AccountId
@@ -2824,19 +3261,6 @@ Types:
                   TypeHash: 67efbe3d18d2664f07ca6cabf6c6c2b04a7cd384
                 - PropName: Purpose
                   TypeHash: da0a65b8631cc6423079695a365f767d7750719d
-        6664a26895e094a38d407c4e6152e76e49f8dba7:
-            Ref: Event.Usecase.GetEvents.Output.Data
-            OriginalPath: Event.Usecase.Methods.GetEvents.Output.Properties.Data
-            RootNode: Usecase
-            Domain: Event
-            StateHash: e490f85aea7addafe796d8ab810c9ef3c504a7a2
-            Name: Data
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: List
-            ChildTypes:
-                - TypeHash: 7d412c6d4cf97ad23c4e868680fe35d78a7823e7
         6901a3f113728aac7f63a2c5098e7f6dd97f49fb:
             Ref: Account.Entities.Account.CreatedAt
             OriginalPath: Account.Entities.Entities.Account.Columns.CreatedAt
@@ -2876,6 +3300,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        7552a05b5440e7958f7092c46143b249585e9cc6:
+            Ref: Event.Repository.CreateEventGame.Input.OwnerId
+            OriginalPath: Event.Repository.Methods.CreateEventGame.Input.Properties.OwnerId
+            RootNode: Repository
+            Domain: Event
+            StateHash: 74da15ca560917711e31468b6d00c59151d4beac
+            Name: OwnerId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         8365bc4967ebde80e0f7fb84733f46b8691fe595:
             Ref: Collection.Entities.ImportCollectionLog.EndedAt
             OriginalPath: Collection.Entities.Entities.ImportCollectionLog.Columns.EndedAt
@@ -2924,6 +3359,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        9422d9ae868e746f90870936ab2c1f00b55b1111:
+            Ref: Event.Types.EventData.Description
+            OriginalPath: Event.Types.Types.EventData.Properties.Description
+            RootNode: Types
+            Domain: Event
+            StateHash: 25b0f59f27ae433139632147048025a3062b10ed
+            Name: Description
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
         9449e031ef3a040392c457ac5870866bda81c89a:
             Ref: Account.Repository.GetAccountDataByConnection.Input.ExternalId
             OriginalPath: Account.Repository.Methods.GetAccountDataByConnection.Input.Properties.ExternalId
@@ -2935,6 +3381,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        9458c41b4e37b168051cfc0f508a98bfcb9dbaf5:
+            Ref: Event.Repository.CreateEventGame.Input.EventId
+            OriginalPath: Event.Repository.Methods.CreateEventGame.Input.Properties.EventId
+            RootNode: Repository
+            Domain: Event
+            StateHash: a1d85329d0eeafaf88b6574c4ce64b81866b7d3f
+            Name: EventId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         9738ab31160b67ffaf628be368c7d199c718582b:
             Ref: Account.Usecase.ExchangeSignInOtp.Input
             OriginalPath: Account.Usecase.Methods.ExchangeSignInOtp.Input
@@ -2994,6 +3451,20 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: 92b4cf5897c739c94ccb5d1c19f80fea30b9e04c
+        28743f9f3b7aef6685dee9575cef7f3d55d70815:
+            Ref: Event.Repository.CreateEventAttendance.Input.Status
+            OriginalPath: Event.Repository.Methods.CreateEventAttendance.Input.Properties.Status
+            RootNode: Repository
+            Domain: Event
+            StateHash: 5272b26c9afa28688b065a1578836a5994d4adea
+            Name: Status
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Enum
+            DbName: status
+            DbType: event_attendance_status_enum
+            EnumHash: 8193ab2b7c2fff3d0f48c4ff340716ea3539df1a
         35721d71c6aa8a5a772891c2a92b31b7b09be976:
             Ref: Account.Usecase.EditHandle.Input.NewHandle
             OriginalPath: Account.Usecase.Methods.EditHandle.Input.Properties.NewHandle
@@ -3105,19 +3576,6 @@ Types:
             Optional: true
             AutoIncrement: false
             Type: String
-        138960f838281d2f1cd188f064793d328c8edb4c:
-            Ref: Event.Entities.Event.LocationAddress
-            OriginalPath: Event.Entities.Entities.Event.Columns.LocationAddress
-            RootNode: Entities
-            Domain: Event
-            StateHash: 580b08f27cedbcd7ee8cf7d9a82caa834a4addc4
-            Name: LocationAddress
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: String
-            DbName: location_address
-            DbType: VARCHAR(500)
         258038c94ed2e8c64673c90931543b0a2150b726:
             Ref: Collection.Usecase.GetCollectiveCollection.Input.MaxAmountOfPlayers
             OriginalPath: Collection.Usecase.Methods.GetCollectiveCollection.Input.Properties.MaxAmountOfPlayers
@@ -3130,6 +3588,17 @@ Types:
             Validate:
                 - min=1
                 - max=99
+            AutoIncrement: false
+            Type: Int
+        321237b9cd54025fc950769643048c4ac10ca689:
+            Ref: Event.Usecase.ConfirmAttendance.Input.AccountId
+            OriginalPath: Event.Usecase.Methods.ConfirmAttendance.Input.Properties.AccountId
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 40e2a9bfb8bd4d31ae97b2766fb24747bd604a88
+            Name: AccountId
+            Confidentiality: LOW
+            Optional: false
             AutoIncrement: false
             Type: Int
         346900c7c033d164d7fc9da3caa40d49950ea6d8:
@@ -3170,6 +3639,24 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
+        498018b3804fc4f9347215cccf78ab490e134eea:
+            Ref: Event.Repository.CreateEventAttendance.Input
+            OriginalPath: Event.Repository.Methods.CreateEventAttendance.Input
+            RootNode: Repository
+            Domain: Event
+            StateHash: 4e435ee6bbf10526884b11ec697828dc48e121fb
+            Name: CreateEventAttendanceInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: AccountId
+                  TypeHash: 1b2cc2475ef4223ca4b2929c8a9f08e10a3d28f5
+                - PropName: EventId
+                  TypeHash: 837778f2df6c3557163ecfde92d6bc4f8cfd0e6e
+                - PropName: Status
+                  TypeHash: 28743f9f3b7aef6685dee9575cef7f3d55d70815
         708696bbcdd9d71aec8baf27f5d23a108abaca20:
             Ref: Collection.Repository.GetLatestImportCollectionLogStatus.Input
             OriginalPath: Collection.Repository.Methods.GetLatestImportCollectionLogStatus.Input
@@ -3188,6 +3675,20 @@ Types:
                   TypeHash: 7497ad3fd8a87b8b08faf15debc30d1eac65a065
                 - PropName: Provider
                   TypeHash: 0b8bbebadd02a25f4415184a8bfa6ba0eb7ea32f
+        730656d02aec556111459de3673e54d0d367343a:
+            Ref: Location.Entities.Location.Kind
+            OriginalPath: Location.Entities.Entities.Location.Columns.Kind
+            RootNode: Entities
+            Domain: Location
+            StateHash: 44722be2b7018f94e52d3f39fb73b18081af27d5
+            Name: Kind
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Enum
+            DbName: kind
+            DbType: location_kind_enum
+            EnumHash: 28a04885e91e0b6c4b5cc443788aabcc104e5473
         834286ff108aae5822c609502a2378c461a6c179:
             Ref: Account.Types.MinimumProfileData
             OriginalPath: Account.Types.Types.MinimumProfileData
@@ -3206,6 +3707,19 @@ Types:
                   TypeHash: cc307ac50205227e66acf87cb11ebc31c4fffe8f
                 - PropName: Handle
                   TypeHash: 8f72a222e2f76bd9fca8be2d0b04941dbc47a57d
+        837778f2df6c3557163ecfde92d6bc4f8cfd0e6e:
+            Ref: Event.Repository.CreateEventAttendance.Input.EventId
+            OriginalPath: Event.Repository.Methods.CreateEventAttendance.Input.Properties.EventId
+            RootNode: Repository
+            Domain: Event
+            StateHash: 872d5bd216978f699487006dc5ae54df4c118b79
+            Name: EventId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+            DbName: event_id
+            DbType: INTEGER
         876563f81285bde7749cb7f5281b4fe52ca5c2f1:
             Ref: Account.Usecase.EditProfile.Input.Name
             OriginalPath: Account.Usecase.Methods.EditProfile.Input.Properties.Name
@@ -3232,17 +3746,6 @@ Types:
             Type: Int
             DbName: id
             DbType: INTEGER
-        956655f7566f558e70976762b28aa2446f028fbf:
-            Ref: Event.Usecase.CreateEvent.Input.Icon.GameIcon
-            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Icon.Properties.GameIcon
-            RootNode: Usecase
-            Domain: Event
-            StateHash: da2fa65ba086f9835832f2b72bb2ff995545d790
-            Name: GameIcon
-            Confidentiality: LOW
-            Optional: true
-            AutoIncrement: false
-            Type: Int
         2078292f941842fbc65882b323c58a0b6d7c8700:
             Ref: Account.Repository.LinkConnectionWithAccount.Input.RefreshToken
             OriginalPath: Account.Repository.Methods.LinkConnectionWithAccount.Input.Properties.RefreshToken
@@ -3313,10 +3816,10 @@ Types:
             OriginalPath: Common.Types.Types.PaginationInputString.Properties.Limit
             RootNode: Types
             Domain: Common
-            StateHash: acce3bca3fafa0edeeab9f0f0256fb60708d5b5d
+            StateHash: fd902ad8daa4541085e9bf41c6a8475b0682a364
             Name: Limit
             Confidentiality: LOW
-            Optional: true
+            Optional: false
             Validate:
                 - min=1
                 - max=100
@@ -3385,17 +3888,6 @@ Types:
             ChildTypes:
                 - PropName: AccountId
                   TypeHash: 186225638fc2a6065578e2c7120350b005b8534c
-        38000361ab4bec6f911ff6694297a464b8819e86:
-            Ref: Collection.Usecase.RequestImportPersonalCollectionFromLudopedia.Input.LudopediaId
-            OriginalPath: Collection.Usecase.Methods.RequestImportPersonalCollectionFromLudopedia.Input.Properties.LudopediaId
-            RootNode: Usecase
-            Domain: Collection
-            StateHash: 6cd64ca809f5bbf654bc3cd73e4310597115a237
-            Name: LudopediaId
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Int
         186225638fc2a6065578e2c7120350b005b8534c:
             Ref: Account.Repository.CreateSession.Input.AccountId
             OriginalPath: Account.Repository.Methods.CreateSession.Input.Properties.AccountId
@@ -3405,6 +3897,20 @@ Types:
             Name: AccountId
             Confidentiality: LOW
             Optional: false
+            AutoIncrement: false
+            Type: Int
+        744289059b5783ce02e37be29c0a9786393ebde3:
+            Ref: Event.Usecase.CreateEvent.Input.Capacity
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Capacity
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 8e2e467bfb581bfe634b2d55cf35c89b7d2b7e72
+            Name: Capacity
+            Confidentiality: LOW
+            Optional: true
+            Validate:
+                - min=1
+                - max=9999
             AutoIncrement: false
             Type: Int
         817447698d09636323024b4e34933bc3bb8103c3:
@@ -3517,6 +4023,19 @@ Types:
                   TypeHash: 1fda4b200b677ec83946624fc903dd0cbb440c98
                 - PropName: IsAdmin
                   TypeHash: 84979e0d79e6d9c2fb93c7c1ce7bba24fa3fbe4c
+        a06bfdadff418f668d5f51be1a0f92e717d26c57:
+            Ref: Location.Entities.Location.CreatedBy
+            OriginalPath: Location.Entities.Entities.Location.Columns.CreatedBy
+            RootNode: Entities
+            Domain: Location
+            StateHash: c002ec50f94086d2f2b2eae632b6fa99ba0871c9
+            Name: CreatedBy
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+            DbName: created_by
+            DbType: INTEGER
         a06e2071dd70da4e4d719cb562fc22c0d9cbe4e7:
             Ref: Event.Types.EventData.Attendances.AttendancesItem.AccountId
             OriginalPath: Event.Types.Types.EventData.Properties.Attendances.Items.AttendancesItem.Properties.AccountId
@@ -3681,6 +4200,17 @@ Types:
                   TypeHash: 5c147afc6e4aa4f5e663e50db43ccc63cd475852
                 - PropName: Provider
                   TypeHash: fe673159002fc73069e32e1096d2f362f6b66ce1
+        a408393ff8e1bc3d02fab5d7851a52a3f262272e:
+            Ref: Event.Types.EventData.Id
+            OriginalPath: Event.Types.Types.EventData.Properties.Id
+            RootNode: Types
+            Domain: Event
+            StateHash: 3cce11f67a1951090e16b08d7d0352d6fe7b342c
+            Name: Id
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         a597895d35ddeab705919e4cf9dc7a51d3524065:
             Ref: Account.Usecase.EditHandle.Input.AccountId
             OriginalPath: Account.Usecase.Methods.EditHandle.Input.Properties.AccountId
@@ -3694,6 +4224,19 @@ Types:
                 - id
             AutoIncrement: false
             Type: Int
+        aaceb220262fe79f396f4b26046a66a1137f42e7:
+            Ref: Event.Entities.Event.StartDate
+            OriginalPath: Event.Entities.Entities.Event.Columns.StartDate
+            RootNode: Entities
+            Domain: Event
+            StateHash: 47a8d32f7b3233bb2e5c65bfc91ee184f3c1cdf1
+            Name: StartDate
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Timestamp
+            DbName: start_date
+            DbType: TIMESTAMPTZ
         aaeddcca7d9ce57f174a39e93c19596c32e5ebc2:
             Ref: Account.Repository.CreateAccountWithConnection.Input.Email
             OriginalPath: Account.Repository.Methods.CreateAccountWithConnection.Input.Properties.Email
@@ -3733,6 +4276,28 @@ Types:
             DbName: status
             DbType: collection_import_status_enum
             EnumHash: e15f9f7dd003dfb17c09fe91bbe08d677c2f6ee2
+        ab587ad183e028eda5c8d78666d298eef633f090:
+            Ref: Game.Repository.GetGameById.Input.Id
+            OriginalPath: Game.Repository.Methods.GetGameById.Input.Properties.Id
+            RootNode: Repository
+            Domain: Game
+            StateHash: 6d038d13c65b7c6f7f1bbe3372aa87af8afdec5b
+            Name: Id
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+        abaa5239e423f8998420bac44d248840fb72a6c0:
+            Ref: Event.Types.EventData.IconUrl
+            OriginalPath: Event.Types.Types.EventData.Properties.IconUrl
+            RootNode: Types
+            Domain: Event
+            StateHash: 1ef7944b5a70ad563f5904c41db043e9eae8b3a8
+            Name: IconUrl
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: String
         abf73bd020da70c60f1279f0ca072eb632d0a611:
             Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input.Ids
             OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input.Properties.Ids
@@ -3746,6 +4311,36 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: 7f72e38e45898898a85c02c49204dabb1d3081a1
+        ac95abe3578aa20bdd2b32d1c08ea6ace89e4384:
+            Ref: Event.Usecase.GetNextEvents.Input
+            OriginalPath: Event.Usecase.Methods.GetNextEvents.Input
+            RootNode: Usecase
+            Domain: Event
+            StateHash: d012337d319c6ab5f7d09460946c73c0e2759c6c
+            Name: GetNextEventsInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Pagination
+                  TypeHash: 403e61cfca3c37e2dff0fc9b9bf555c4805d5bca
+        ac208c8046828e10985c07e2df9af83168dcea64:
+            Ref: Event.Usecase.GetNextEvents.Output
+            OriginalPath: Event.Usecase.Methods.GetNextEvents.Output
+            RootNode: Usecase
+            Domain: Event
+            StateHash: 93aaa47af93a44c22c8e2fba1de08ca910117317
+            Name: GetNextEventsOutput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Data
+                  TypeHash: 742cd47b93fdbf6476b58c6fcf813b7416de143a
+                - PropName: Pagination
+                  TypeHash: a5027ded764f9fba0f8e6e47b6aec23d10c88c05
         ac878d8d378006ce6a5b329462f06fa70dc3f877:
             Ref: Game.Entities.Game.MinAmountOfPlayers
             OriginalPath: Game.Entities.Entities.Game.Columns.MinAmountOfPlayers
@@ -3818,6 +4413,36 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
+        af2499c9a77b39a9aa61ef96e1cbf8b09dbdae9f:
+            Ref: Event.Types.EventData.Games.GamesItem
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem
+            RootNode: Types
+            Domain: Event
+            StateHash: 558208b5d58e0f903d2c51886ca19e87d1e65d61
+            Name: EventDataGamesItem
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: AverageDuration
+                  TypeHash: 0b1a9ea1c454b98db572b729eb6bac47d789955d
+                - PropName: IconUrl
+                  TypeHash: cf197f424836e6fd6cc16f0d8dde4f4e5278927b
+                - PropName: Id
+                  TypeHash: 060d1fc85e30812758841923454a6761ef8617bc
+                - PropName: Kind
+                  TypeHash: fc9ab2459fde7ef9c4d68ece52f878065e7aa6d1
+                - PropName: LudopediaUrl
+                  TypeHash: dc2cc406d50a95d764731756b4a21827c188555e
+                - PropName: MaxAmountOfPlayers
+                  TypeHash: 44f6f8bcfaf8a5f7188f455124d221383c3f800a
+                - PropName: MinAge
+                  TypeHash: 18c627d1c7b6143239d9d7eecb1e68d0735dff41
+                - PropName: MinAmountOfPlayers
+                  TypeHash: 42cd4e14753a695f76e02517df7b7296faadb9da
+                - PropName: Name
+                  TypeHash: bf2afcc19fca28cdf8722ba66c6d14ff9dd337e9
         b0f2875f9a37c3e1b3c3a0db001c4cfc6b287cdc:
             Ref: Account.Repository.CreateAccountWithEmail.Input
             OriginalPath: Account.Repository.Methods.CreateAccountWithEmail.Input
@@ -3918,19 +4543,6 @@ Types:
             Type: Int
             DbName: event_id
             DbType: INTEGER
-        b21c801d867935bc9aade796b1f23be34574ad45:
-            Ref: Event.Entities.Event.LocationName
-            OriginalPath: Event.Entities.Entities.Event.Columns.LocationName
-            RootNode: Entities
-            Domain: Event
-            StateHash: 6ce6b70481223126f98c6fc8266b0432cc7ffd06
-            Name: LocationName
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: String
-            DbName: location_name
-            DbType: VARCHAR(100)
         b38cd3f9f77f34ae5fc70b7c6c0b6ac6cb1b787a:
             Ref: Common.Types.PaginationInputInt.After
             OriginalPath: Common.Types.Types.PaginationInputInt.Properties.After
@@ -3996,6 +4608,17 @@ Types:
             ChildTypes:
                 - PropName: Email
                   TypeHash: 403b79d0c3d765dba96f0776b344fe0736372987
+        b202330491f54044fdc5dea352c839470e14fc69:
+            Ref: Event.Repository.CreateEvent.Input.StartDate
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.StartDate
+            RootNode: Repository
+            Domain: Event
+            StateHash: 98c412a306686d151568720ebdbaf4195353ff63
+            Name: StartDate
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Timestamp
         ba427435768ee5c6811035c1e8bef2f960ed9173:
             Ref: Event.Entities.EventAttendance
             OriginalPath: Event.Entities.Entities.EventAttendance
@@ -4018,6 +4641,34 @@ Types:
                   TypeHash: ada29f70a5b3bf0e4afcfb2728cc8bcfac254887
                 - PropName: Status
                   TypeHash: 7d57ae92fd75abe50c89fa61c91af7d8dc376c47
+        bb2d6c3e3da799a08a77b980226191acd0078739:
+            Ref: Event.Repository.CreateEvent.Input
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input
+            RootNode: Repository
+            Domain: Event
+            StateHash: dc571e6e28488de4b520a0bef68c456163a3de16
+            Name: CreateEventInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Capacity
+                  TypeHash: 0a9e2721e5e5d7efe4987569f9798adc0888bb7d
+                - PropName: Description
+                  TypeHash: c1ffd799602beb7c2ff3228e6be874a55d81fdb4
+                - PropName: EndDate
+                  TypeHash: 69dda250460e5ae242cbd8dfe7312b8f8b8928c9
+                - PropName: IconPath
+                  TypeHash: 2539a3fe951c0ab5cc00b782b603cd01a738b41c
+                - PropName: LocationId
+                  TypeHash: db2736095936635ee5cc8c6c2525b06df8e650aa
+                - PropName: Name
+                  TypeHash: bdd9453f51450e7e8809b3fa249c1dd2f0c9fbf0
+                - PropName: OwnerId
+                  TypeHash: 8d779498f04adb1766179503a190596068cf47a2
+                - PropName: StartDate
+                  TypeHash: b202330491f54044fdc5dea352c839470e14fc69
         bb44d327af4c3e3a930201354f0cc550c92862e8:
             Ref: Account.Repository.GetConnection.Input.ExternalId
             OriginalPath: Account.Repository.Methods.GetConnection.Input.Properties.ExternalId
@@ -4043,6 +4694,17 @@ Types:
             Type: Timestamp
             DbName: created_at
             DbType: TIMESTAMPTZ
+        bdd9453f51450e7e8809b3fa249c1dd2f0c9fbf0:
+            Ref: Event.Repository.CreateEvent.Input.Name
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.Name
+            RootNode: Repository
+            Domain: Event
+            StateHash: 6536405cabc857f7a28132535ed294ff84e097e6
+            Name: Name
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
         be734482d2103e6bcc3b3a8c35d13356e26d89e6:
             Ref: Collection.Entities.ImportCollectionLog.Trigger
             OriginalPath: Collection.Entities.Entities.ImportCollectionLog.Columns.Trigger
@@ -4057,6 +4719,17 @@ Types:
             DbName: trigger
             DbType: collection_import_trigger_enum
             EnumHash: cd6136da35eea5b6e281442a5979ae530b7ecc37
+        bf2afcc19fca28cdf8722ba66c6d14ff9dd337e9:
+            Ref: Event.Types.EventData.Games.GamesItem.Name
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.Name
+            RootNode: Types
+            Domain: Event
+            StateHash: 45fa073c59f9bf4e6be09cf2db22af0afd8b80f7
+            Name: Name
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
         bf7cb19f4d2a724a7adc0dc35dbdf6927a5accdc:
             Ref: Account.Usecase.LinkLudopediaProvider.Input
             OriginalPath: Account.Usecase.Methods.LinkLudopediaProvider.Input
@@ -4125,6 +4798,17 @@ Types:
             Type: Int
             DbName: owner_id
             DbType: INTEGER
+        c1ffd799602beb7c2ff3228e6be874a55d81fdb4:
+            Ref: Event.Repository.CreateEvent.Input.Description
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.Description
+            RootNode: Repository
+            Domain: Event
+            StateHash: 70846f883582a0dcddfce1128079dcbc12f5a284
+            Name: Description
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
         c4c6f5e114598f78419bc2a530f72ce5c6345cd0:
             Ref: Account.Entities.Account.Id
             OriginalPath: Account.Entities.Entities.Account.Columns.Id
@@ -4145,17 +4829,17 @@ Types:
             OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Icon
             RootNode: Usecase
             Domain: Event
-            StateHash: ce067d43779a667db84714f9f046d62ce0755678
+            StateHash: f6bf32970298944c57e6b38bb97df98c62c2c12a
             Name: CreateEventInputIcon
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
-                - PropName: CustomIcon
-                  TypeHash: f742ce4a59920ee29d92d46ae661f7ee3606c267
-                - PropName: GameIcon
-                  TypeHash: 956655f7566f558e70976762b28aa2446f028fbf
+                - PropName: CustomIconPath
+                  TypeHash: 873cd624997e5a97420e1265d14878a7ffd0449c
+                - PropName: UseGameIconGameId
+                  TypeHash: 20b0dbe6c59fb41303737420eee5315aa38ab3ae
         c6af0c86def64035eef71a0e99349e94e9c4c44d:
             Ref: Event.Entities.Event.Description
             OriginalPath: Event.Entities.Entities.Event.Columns.Description
@@ -4197,6 +4881,26 @@ Types:
             ChildTypes:
                 - PropName: AccountId
                   TypeHash: 6d8258886214fc3922eacf51fc368b4e39707b6f
+        c7c4fa5e2a1fa5177061da2b59acd19a7a9fc885:
+            Ref: Event.Types.EventData.Location
+            OriginalPath: Event.Types.Types.EventData.Properties.Location
+            RootNode: Types
+            Domain: Event
+            StateHash: ec52e6a05f08c0ccc67b3703f08d9b1af49b0ec8
+            Name: EventDataLocation
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Address
+                  TypeHash: 38dd339e1417aafbc0ae2754fd56b82ad3b40888
+                - PropName: IconUrl
+                  TypeHash: e7c521b350cbee7f63dbe23b4d86f3c28eae99a7
+                - PropName: Id
+                  TypeHash: ec8e46dcc9ab2c67ffc6c0406381cf0fdd46e568
+                - PropName: Name
+                  TypeHash: 107dbf51df590e52ccb83661b583e9cc3a8ede87
         c8efc4776a7665e857fc353c83aed4af2aad81ca:
             Ref: Account.Repository.CreateAccountWithConnection.Input.AccessToken
             OriginalPath: Account.Repository.Methods.CreateAccountWithConnection.Input.Properties.AccessToken
@@ -4354,12 +5058,25 @@ Types:
             Optional: true
             AutoIncrement: false
             Type: String
+        cd23872dcded01722536e3521e3e117e22874e6d:
+            Ref: Location.Entities.Location.IconPath
+            OriginalPath: Location.Entities.Entities.Location.Columns.IconPath
+            RootNode: Entities
+            Domain: Location
+            StateHash: b2f5325fd9974529d82b06f6a8b39c499e3625ed
+            Name: IconPath
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: String
+            DbName: icon_path
+            DbType: VARCHAR(256)
         cd7138056ba65b462f4c696752f7ce1c46c35b97:
             Ref: Event.Entities.EventGame
             OriginalPath: Event.Entities.Entities.EventGame
             RootNode: Entities
             Domain: Event
-            StateHash: 405a73949af719d59234337367aaca1f75607020
+            StateHash: 635685eef961459e5077d571efc7a401e829e2c8
             Name: EventGame
             Confidentiality: LOW
             Optional: false
@@ -4372,6 +5089,8 @@ Types:
                   TypeHash: 6e3d35e336891995769c63d3b86b67f8c593db98
                 - PropName: Id
                   TypeHash: 851d84fabad3f8e63eb0f047d0ebd1a088c790b1
+                - PropName: OwnerId
+                  TypeHash: 79a196a6a360a54de4ced696b4aef8eebfde087a
         ce7b02e388f720d76b35442056aaaee6153da83f:
             Ref: Account.Repository.CreateOtp.Input.Purpose
             OriginalPath: Account.Repository.Methods.CreateOtp.Input.Properties.Purpose
@@ -4386,6 +5105,19 @@ Types:
             DbName: purpose
             DbType: otp_purpose_enum
             EnumHash: 4bad9244d34bf69fb1b7d70a93bf9513352c74e7
+        ce51d2077ce3df84bfa38950e282e377d85b90d6:
+            Ref: Event.Entities.Event.EndDate
+            OriginalPath: Event.Entities.Entities.Event.Columns.EndDate
+            RootNode: Entities
+            Domain: Event
+            StateHash: 9008920c14efd17803681f7f306643f0980bffc9
+            Name: EndDate
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Timestamp
+            DbName: end_date
+            DbType: TIMESTAMPTZ
         ce86052d641eedf3e7b0e624cb24abae8b246ec6:
             Ref: Account.Entities.OneTimePassword
             OriginalPath: Account.Entities.Entities.OneTimePassword
@@ -4438,6 +5170,17 @@ Types:
             ChildTypes:
                 - PropName: LudopediaId
                   TypeHash: f96b972856362b19f351129243626b714c8d9410
+        cf197f424836e6fd6cc16f0d8dde4f4e5278927b:
+            Ref: Event.Types.EventData.Games.GamesItem.IconUrl
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.IconUrl
+            RootNode: Types
+            Domain: Event
+            StateHash: c9afdd0f2cf5ab4dd9291902bd87cf08ed4da832
+            Name: IconUrl
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: String
         cfae06dd242e01439b603f0c94b00e34ecb4ed21:
             Ref: Account.Repository.CreateOtp.Input.Code
             OriginalPath: Account.Repository.Methods.CreateOtp.Input.Properties.Code
@@ -4539,19 +5282,6 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
-        d3abf862302808656b96db571687f3df2976ec9c:
-            Ref: Event.Entities.Event.MaxAmountOfPlayers
-            OriginalPath: Event.Entities.Entities.Event.Columns.MaxAmountOfPlayers
-            RootNode: Entities
-            Domain: Event
-            StateHash: bf64d4765e8de9268cbe4531b24d25ae6139eeab
-            Name: MaxAmountOfPlayers
-            Confidentiality: LOW
-            Optional: true
-            AutoIncrement: false
-            Type: Int
-            DbName: max_amount_of_players
-            DbType: INTEGER
         d4a719990056e08446b07132ff0a0e1565f8dbfc:
             Ref: Gallery.Entities.Media
             OriginalPath: Gallery.Entities.Entities.Media
@@ -4610,7 +5340,7 @@ Types:
             OriginalPath: Event.Usecase.Methods.CreateEvent.Input
             RootNode: Usecase
             Domain: Event
-            StateHash: f58d30fe551694955eb0101e228f0f114bd0fc23
+            StateHash: 25d22ae476b6a172f49c5340e7888adb5db87041
             Name: CreateEventInput
             Confidentiality: LOW
             Optional: false
@@ -4618,23 +5348,23 @@ Types:
             Type: Map
             ChildTypes:
                 - PropName: AccountId
-                  TypeHash: c4c6f5e114598f78419bc2a530f72ce5c6345cd0
-                - PropName: Date
-                  TypeHash: 85e365cb26a31aad6739cde19b850c95fc839749
+                  TypeHash: ff458947aaafa239bda1370cba6e8654222f7ce7
+                - PropName: Capacity
+                  TypeHash: 744289059b5783ce02e37be29c0a9786393ebde3
                 - PropName: Description
                   TypeHash: 3298e0f095afa46511f35389d3f63d0d3edd52a9
+                - PropName: EndDate
+                  TypeHash: 96be535657b919bc7b240c8f67d671fb708866ab
                 - PropName: GamesList
                   TypeHash: 91bc5bebb3f806ddfaf26c5abc8fa5151d9b1c29
                 - PropName: Icon
                   TypeHash: c4d34f0f331374626ff330f046959e0bcd11a063
-                - PropName: LocationAddress
-                  TypeHash: 379bd483b674379e363daa4fddbfc04b4e0ba4a8
-                - PropName: LocationName
-                  TypeHash: 30c9f456e2f206dfc28132602fd65a1a9b50a352
-                - PropName: MaxAmountOfPlayers
-                  TypeHash: 1c66c539670bc15ecde6522fe1fafd1b1b4644b7
+                - PropName: LocationId
+                  TypeHash: 3e020a1c89d7dfc2448c0a30fba0a5e2e001d204
                 - PropName: Name
                   TypeHash: 81cec4b4058544bb2690d523c4ac2d389018322e
+                - PropName: StartDate
+                  TypeHash: 11d9efaebe057e58ba464c6057e664887d04e483
         d44d71e6640c1cd4bd98f3b2db02017590a8f4f1:
             Ref: Game.Entities.Game.IconPath
             OriginalPath: Game.Entities.Entities.Game.Columns.IconPath
@@ -4766,6 +5496,19 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        d277802110319f15207898e6302cbfb47479ee06:
+            Ref: Event.Entities.Event.Capacity
+            OriginalPath: Event.Entities.Entities.Event.Columns.Capacity
+            RootNode: Entities
+            Domain: Event
+            StateHash: 9b663b8cd2e842ceb4244549ebc0b9e73a450bbe
+            Name: Capacity
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: Int
+            DbName: capacity
+            DbType: INTEGER
         da0a65b8631cc6423079695a365f767d7750719d:
             Ref: Account.Repository.GetOtp.Input.Purpose
             OriginalPath: Account.Repository.Methods.GetOtp.Input.Properties.Purpose
@@ -4785,13 +5528,15 @@ Types:
             OriginalPath: Collection.Usecase.Methods.GetLatestImportCollectionLogStatus.Output
             RootNode: Usecase
             Domain: Collection
-            StateHash: 615eb6759af1397a36fc23a5a5f7a93882b96dda
+            StateHash: 77451f4a0dab7efdbd970dd46c37604dc6104cf6
             Name: GetLatestImportCollectionLogStatusOutput
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Type: Map
             ChildTypes:
+                - PropName: LastImportDate
+                  TypeHash: 489bf04f2bc85c62c8bd19688f3bd296789cce7f
                 - PropName: Status
                   TypeHash: 0ecd90c5bd2691a4fb52c1143150f3f34d48e0ca
         db1812c5265357a33dfc24ba94255d9568391c5e:
@@ -4807,6 +5552,28 @@ Types:
             Type: String
             DbName: name
             DbType: VARCHAR(128)
+        db2736095936635ee5cc8c6c2525b06df8e650aa:
+            Ref: Event.Repository.CreateEvent.Input.LocationId
+            OriginalPath: Event.Repository.Methods.CreateEvent.Input.Properties.LocationId
+            RootNode: Repository
+            Domain: Event
+            StateHash: 2e60caba5160542f614d954d910c4893a3725b2d
+            Name: LocationId
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
+        dc2cc406d50a95d764731756b4a21827c188555e:
+            Ref: Event.Types.EventData.Games.GamesItem.LudopediaUrl
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.LudopediaUrl
+            RootNode: Types
+            Domain: Event
+            StateHash: 675e07a21ddb250fb7d85b12c95a7ee2addbcd75
+            Name: LudopediaUrl
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: String
         dc69452c338e2d3fa957e4b07bcea5f58cae1db4:
             Ref: Common.Types.PaginationOutputString.Next
             OriginalPath: Common.Types.Types.PaginationOutputString.Properties.Next
@@ -4869,19 +5636,6 @@ Types:
                   TypeHash: 995f10f0d32fc274cc66ee5abfdd94712cc2078b
                 - PropName: Limit
                   TypeHash: 0fcff3cd31ad0df374b847807edb6e73a20a9694
-        df7d5e860f12ae75b178c8c7e33ef9f66e271868:
-            Ref: Event.Entities.Event.Date
-            OriginalPath: Event.Entities.Entities.Event.Columns.Date
-            RootNode: Entities
-            Domain: Event
-            StateHash: e430947604a9834a46da12040799ed913618e65d
-            Name: Date
-            Confidentiality: LOW
-            Optional: false
-            AutoIncrement: false
-            Type: Timestamp
-            DbName: date
-            DbType: TIMESTAMPTZ
         dfe2be12c086e4a9b9f6c29c0faefd36a5c3759b:
             Ref: Collection.Repository.AddToPersonalCollection.Input.AccountId
             OriginalPath: Collection.Repository.Methods.AddToPersonalCollection.Input.Properties.AccountId
@@ -4915,6 +5669,20 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: Int
+        e3c0527f698be2f6e323311f8a9270e387ed4595:
+            Ref: Game.Repository.GetGameById.Input
+            OriginalPath: Game.Repository.Methods.GetGameById.Input
+            RootNode: Repository
+            Domain: Game
+            StateHash: 4f7419afd438d6ae226e56e0dc6e9b91c369e190
+            Name: GetGameByIdInput
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Map
+            ChildTypes:
+                - PropName: Id
+                  TypeHash: ab587ad183e028eda5c8d78666d298eef633f090
         e6b9cf1e0a7237be3bba89298f889db6a5421a64:
             Ref: Collection.Repository.GetOngoingImportCollectionLog.Output.Data
             OriginalPath: Collection.Repository.Methods.GetOngoingImportCollectionLog.Output.Properties.Data
@@ -4928,6 +5696,17 @@ Types:
             Type: List
             ChildTypes:
                 - TypeHash: c0b9b4fff44a645683823c07f6475e2a1a808484
+        e7c521b350cbee7f63dbe23b4d86f3c28eae99a7:
+            Ref: Event.Types.EventData.Location.IconUrl
+            OriginalPath: Event.Types.Types.EventData.Properties.Location.Properties.IconUrl
+            RootNode: Types
+            Domain: Event
+            StateHash: c92900a7e9f29407c09a8297e847e3a7e0ced2f7
+            Name: IconUrl
+            Confidentiality: LOW
+            Optional: true
+            AutoIncrement: false
+            Type: String
         e9fb7ba4e7f436a1d7ab72bbfab3e02d96a9daa3:
             Ref: Account.Types.ProfileData.Connections.ConnectionsItem.ExternalId
             OriginalPath: Account.Types.Types.ProfileData.Properties.Connections.Items.ConnectionsItem.Properties.ExternalId
@@ -5028,6 +5807,17 @@ Types:
             Optional: false
             AutoIncrement: false
             Type: String
+        ec8e46dcc9ab2c67ffc6c0406381cf0fdd46e568:
+            Ref: Event.Types.EventData.Location.Id
+            OriginalPath: Event.Types.Types.EventData.Properties.Location.Properties.Id
+            RootNode: Types
+            Domain: Event
+            StateHash: e22bebe911c6b5d5d85372a3f57811b9dfe74f83
+            Name: Id
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Int
         ed9be0acf8d4d799654f37ed24f7ffef370592fd:
             Ref: Account.Repository.GetAccountDataByConnection.Input.Provider
             OriginalPath: Account.Repository.Methods.GetAccountDataByConnection.Input.Properties.Provider
@@ -5074,14 +5864,14 @@ Types:
             OriginalPath: Event.Types.Types.EventData.Properties.Games
             RootNode: Types
             Domain: Event
-            StateHash: 627d8053717319cf6e70dd7c8dc47bad4b31dee6
+            StateHash: d9fea30ce7c4b826878ac72cf76673a780c28f1a
             Name: Games
             Confidentiality: LOW
             Optional: false
             AutoIncrement: false
             Type: List
             ChildTypes:
-                - TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
+                - TypeHash: af2499c9a77b39a9aa61ef96e1cbf8b09dbdae9f
         f4bd86ac7bf7dc138cfa6f43947c8034aa1cd88c:
             Ref: Collection.Repository.UpdateManyImportCollectionsLogs.Input.Status
             OriginalPath: Collection.Repository.Methods.UpdateManyImportCollectionsLogs.Input.Properties.Status
@@ -5166,19 +5956,6 @@ Types:
             Optional: true
             AutoIncrement: false
             Type: String
-        f742ce4a59920ee29d92d46ae661f7ee3606c267:
-            Ref: Event.Usecase.CreateEvent.Input.Icon.CustomIcon
-            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.Icon.Properties.CustomIcon
-            RootNode: Usecase
-            Domain: Event
-            StateHash: d90f4b619336abd1c545f5574a32259310bcbb73
-            Name: CustomIcon
-            Confidentiality: LOW
-            Optional: true
-            Validate:
-                - path
-            AutoIncrement: false
-            Type: String
         f765c4153756dd47bb6bae7ceda1535eeec246e0:
             Ref: Account.Entities.EmailAddress.CreatedAt
             OriginalPath: Account.Entities.Entities.EmailAddress.Columns.CreatedAt
@@ -5206,6 +5983,20 @@ Types:
             Type: String
             DbName: description
             DbType: VARCHAR(1000)
+        f9549b1927c2818c3c8944f0b57b2cdeb84ea284:
+            Ref: Event.Types.EventData.Attendances.AttendancesItem.Status
+            OriginalPath: Event.Types.Types.EventData.Properties.Attendances.Items.AttendancesItem.Properties.Status
+            RootNode: Types
+            Domain: Event
+            StateHash: 201093aa578ec07b31750897508051ee65051c1e
+            Name: Status
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Enum
+            DbName: status
+            DbType: event_attendance_status_enum
+            EnumHash: 8193ab2b7c2fff3d0f48c4ff340716ea3539df1a
         f41464bc5d5237e2893b8667e515692331ff7d72:
             Ref: Gallery.Entities.Media.Date
             OriginalPath: Gallery.Entities.Entities.Media.Columns.Date
@@ -5309,6 +6100,20 @@ Types:
                   TypeHash: d01bb92d2f8b5982d4d1570d9bfeb80c8abe4ef7
                 - PropName: RefreshToken
                   TypeHash: b1eac936578d2dd028668a0d0b7de52b381f563f
+        fc9ab2459fde7ef9c4d68ece52f878065e7aa6d1:
+            Ref: Event.Types.EventData.Games.GamesItem.Kind
+            OriginalPath: Event.Types.Types.EventData.Properties.Games.Items.GamesItem.Properties.Kind
+            RootNode: Types
+            Domain: Event
+            StateHash: 25cead75c4587391718376da3c5c7031a3c2bac8
+            Name: Kind
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: Enum
+            DbName: kind
+            DbType: kind_enum
+            EnumHash: 1878e44554d0053e94107d3ee2ac97b372f664c5
         fca6a5da1f9ffef272a985d99f51da33af55a18f:
             Ref: Gallery.Entities.Media.Path
             OriginalPath: Gallery.Entities.Entities.Media.Columns.Path
@@ -5336,6 +6141,19 @@ Types:
             Type: Timestamp
             DbName: confirmed_at
             DbType: TIMESTAMPTZ
+        fd5cbd99f4bc6b76509f8302ce38f20864b2c47c:
+            Ref: Location.Entities.Location.Name
+            OriginalPath: Location.Entities.Entities.Location.Columns.Name
+            RootNode: Entities
+            Domain: Location
+            StateHash: e853158b11d7d1f0ef75adffef14726f78e9cd00
+            Name: Name
+            Confidentiality: LOW
+            Optional: false
+            AutoIncrement: false
+            Type: String
+            DbName: name
+            DbType: VARCHAR(128)
         fd693cfd56763be849f485890925087840a5db32:
             Ref: Collection.Repository.CreateImportCollectionLog.Input.Trigger
             OriginalPath: Collection.Repository.Methods.CreateImportCollectionLog.Input.Properties.Trigger
@@ -5375,20 +6193,19 @@ Types:
             DbName: provider
             DbType: provider_enum
             EnumHash: 1d5729102f3561d854eb625555849c32a6e1a11d
-        ff50de282b17ae423b0842fd90a7810e4be33b25:
-            Ref: Event.Usecase.GetEvents.Input
-            OriginalPath: Event.Usecase.Methods.GetEvents.Input
+        ff458947aaafa239bda1370cba6e8654222f7ce7:
+            Ref: Event.Usecase.CreateEvent.Input.AccountId
+            OriginalPath: Event.Usecase.Methods.CreateEvent.Input.Properties.AccountId
             RootNode: Usecase
             Domain: Event
-            StateHash: e911db0c9e83a696dd712e34e2daa34ea98848a6
-            Name: GetEventsInput
+            StateHash: 967f444dd0a7c1e16879a3727cb6353f29f06478
+            Name: AccountId
             Confidentiality: LOW
             Optional: false
+            Validate:
+                - id
             AutoIncrement: false
-            Type: Map
-            ChildTypes:
-                - PropName: Pagination
-                  TypeHash: 2ae6afb0bca8080aaaf6847babf4107e0957c11e
+            Type: Int
         ffb3b67605bed1228962deaf2451b0576e258087:
             Ref: Account.Repository.GetOtp.Input.AccountId
             OriginalPath: Account.Repository.Methods.GetOtp.Input.Properties.AccountId
@@ -5401,7 +6218,7 @@ Types:
             AutoIncrement: false
             Type: Int
 Events:
-    StateHash: 91dc982f18a995abd65bbfaa3dbbaf875ba7d73d
+    StateHash: 61b9b2a889181cba609c7346ff8351abebb3881b
     Events:
         5edb1465e367cf955803964fe64698526378e125:
             Ref: Collection.Events.ImportCollectionEvent
@@ -5414,7 +6231,7 @@ Events:
                 - json
             TypeHash: 5edb1465e367cf955803964fe64698526378e125
 Entities:
-    StateHash: adc4e26f71de8d5ab23d3a3a85b7cddad1d7bf98
+    StateHash: f4449d04c6d0dacc1aea0be6f97e1f368b9957c5
     Metadata:
         NamingCase: snake
     Entities:
@@ -5423,8 +6240,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Connection
             Domain: Account
             RootNode: Entities
-            StateHash: d728a99334472ec2b5aa1b628a6dadf417c01451
-            Order: 2
+            StateHash: 0c17db5adc7be5051560dad8eaa462e7859aefea
+            Order: 1
             Name: Connection
             TypeHash: 1c3a15db7a8e1f3f0c0e29c97364307305c51f14
             DbName: connections
@@ -5510,8 +6327,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.EmailAddress
             Domain: Account
             RootNode: Entities
-            StateHash: 5681c670339c71423b6049f97edcbe0e8007ac6f
-            Order: 3
+            StateHash: 16e895b7d9fdd429e56d5ef9bed31c8e84b832a1
+            Order: 2
             Name: EmailAddress
             TypeHash: 4b6ef13483a6c567097eada4c8a459671c690dfe
             DbName: email_addresses
@@ -5566,8 +6383,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.Event
             Domain: Event
             RootNode: Entities
-            StateHash: 4fb4a40a76024f4f10cfa19ce39d39497a99b5b1
-            Order: 8
+            StateHash: c6ba3988725d274670f3e90b5e46870a415fe43b
+            Order: 7
             Name: Event
             TypeHash: 6d987db707682a8d7b15914ef1d601db6b52bf57
             DbName: events
@@ -5575,37 +6392,37 @@ Entities:
                 3aa4587dbd7ec31e2979685f30dc3722fcf3cf3a:
                     Ref: Event.Entities.Event.Name
                     OriginalPath: Event.Entities.Entities.Event.Columns.Name
-                    Order: 8
+                    Order: 7
                     Name: Name
-                    StateHash: 943eaf211c9c53e7dd940c93ad45c8a6822df71a
+                    StateHash: 5c3304af719f444f12da7f4bc2e354084a83942c
                     TypeHash: 3aa4587dbd7ec31e2979685f30dc3722fcf3cf3a
+                5c11418b59d15c1a35c72e973ff5586586b0bb71:
+                    Ref: Event.Entities.Event.LocationId
+                    OriginalPath: Event.Entities.Entities.Event.Columns.LocationId
+                    Order: 6
+                    Name: LocationId
+                    StateHash: 287edd51adf486ed1c5eb75b08e8fd365cbfe8fd
+                    TypeHash: 5c11418b59d15c1a35c72e973ff5586586b0bb71
                 7a99ca5782d1f94de86c39629ea5cfceeb20823a:
                     Ref: Event.Entities.Event.Id
                     OriginalPath: Event.Entities.Entities.Event.Columns.Id
-                    Order: 4
-                    Name: Id
-                    StateHash: 29c08981cbdd91eeae75462ed2ea1261670cbc13
-                    TypeHash: 7a99ca5782d1f94de86c39629ea5cfceeb20823a
-                138960f838281d2f1cd188f064793d328c8edb4c:
-                    Ref: Event.Entities.Event.LocationAddress
-                    OriginalPath: Event.Entities.Entities.Event.Columns.LocationAddress
                     Order: 5
-                    Name: LocationAddress
-                    StateHash: 32073b61c405ae5665b2eb6679a7aa6519249de0
-                    TypeHash: 138960f838281d2f1cd188f064793d328c8edb4c
-                b21c801d867935bc9aade796b1f23be34574ad45:
-                    Ref: Event.Entities.Event.LocationName
-                    OriginalPath: Event.Entities.Entities.Event.Columns.LocationName
-                    Order: 6
-                    Name: LocationName
-                    StateHash: d87659497c297daaad4166949670845af6d697c7
-                    TypeHash: b21c801d867935bc9aade796b1f23be34574ad45
+                    Name: Id
+                    StateHash: 29a55b934085cb2bcaf3c94e4b26255042940788
+                    TypeHash: 7a99ca5782d1f94de86c39629ea5cfceeb20823a
+                aaceb220262fe79f396f4b26046a66a1137f42e7:
+                    Ref: Event.Entities.Event.StartDate
+                    OriginalPath: Event.Entities.Entities.Event.Columns.StartDate
+                    Order: 9
+                    Name: StartDate
+                    StateHash: 65939c9143019fcd50434770887edee85536795d
+                    TypeHash: aaceb220262fe79f396f4b26046a66a1137f42e7
                 c1c194efc7636e6b97408996901820b45a655c1e:
                     Ref: Event.Entities.Event.OwnerId
                     OriginalPath: Event.Entities.Entities.Event.Columns.OwnerId
-                    Order: 9
+                    Order: 8
                     Name: OwnerId
-                    StateHash: eaa4a5990e542578f636587156cc9373716d0c71
+                    StateHash: 58339e35d0818d2adb1fee54460da7d3db8c3f63
                     TypeHash: c1c194efc7636e6b97408996901820b45a655c1e
                 c6af0c86def64035eef71a0e99349e94e9c4c44d:
                     Ref: Event.Entities.Event.Description
@@ -5614,39 +6431,56 @@ Entities:
                     Name: Description
                     StateHash: 753a5fb7d249bd698c5c2f2e9ceaca1d5d449398
                     TypeHash: c6af0c86def64035eef71a0e99349e94e9c4c44d
-                d3abf862302808656b96db571687f3df2976ec9c:
-                    Ref: Event.Entities.Event.MaxAmountOfPlayers
-                    OriginalPath: Event.Entities.Entities.Event.Columns.MaxAmountOfPlayers
-                    Order: 7
-                    Name: MaxAmountOfPlayers
-                    StateHash: 95454e9427ae18b7403d510a49fef3595be650de
-                    TypeHash: d3abf862302808656b96db571687f3df2976ec9c
-                df7d5e860f12ae75b178c8c7e33ef9f66e271868:
-                    Ref: Event.Entities.Event.Date
-                    OriginalPath: Event.Entities.Entities.Event.Columns.Date
-                    Order: 1
-                    Name: Date
-                    StateHash: a2f2d24d1c8809aa28e4b0642e2f655121a04509
-                    TypeHash: df7d5e860f12ae75b178c8c7e33ef9f66e271868
+                ce51d2077ce3df84bfa38950e282e377d85b90d6:
+                    Ref: Event.Entities.Event.EndDate
+                    OriginalPath: Event.Entities.Entities.Event.Columns.EndDate
+                    Order: 3
+                    Name: EndDate
+                    StateHash: 876c24da6ea5eb5fb569760bb7223b4690d767c3
+                    TypeHash: ce51d2077ce3df84bfa38950e282e377d85b90d6
+                d277802110319f15207898e6302cbfb47479ee06:
+                    Ref: Event.Entities.Event.Capacity
+                    OriginalPath: Event.Entities.Entities.Event.Columns.Capacity
+                    Order: 0
+                    Name: Capacity
+                    StateHash: ac088e30dc013162049dca7066d8024ccbade741
+                    TypeHash: d277802110319f15207898e6302cbfb47479ee06
                 e116a0221f113e2de0ef1fc9f07b8a5a06f2988f:
                     Ref: Event.Entities.Event.IconPath
                     OriginalPath: Event.Entities.Entities.Event.Columns.IconPath
-                    Order: 3
+                    Order: 4
                     Name: IconPath
-                    StateHash: d69ac1b764daf2a67542895cc95c37734d2178a8
+                    StateHash: 8e3c793e2ab461455663338c5a73407958b5a3b4
                     TypeHash: e116a0221f113e2de0ef1fc9f07b8a5a06f2988f
                 e8860f2bfff15d849aee841782577b35d3c22238:
                     Ref: Event.Entities.Event.CreatedAt
                     OriginalPath: Event.Entities.Entities.Event.Columns.CreatedAt
-                    Order: 0
+                    Order: 1
                     Name: CreatedAt
-                    StateHash: 39853954eb67257c82c903c9b060eca5a036d398
+                    StateHash: ad68373ba3739882a63df49c366406ac6f47501b
                     TypeHash: e8860f2bfff15d849aee841782577b35d3c22238
             PrimaryKey:
                 StateHash: 04392e4d17aa6aa21cf8d65bb4ab1690fba22c35
                 ConstraintName: events_pk
                 ColumnsHashes:
                     - 7a99ca5782d1f94de86c39629ea5cfceeb20823a
+            Indexes:
+                05f55e6ef1b460d375e447b201797d1e537eaae2:
+                    OriginalPath: Event.Entities.Entities.Event.Indexes.1
+                    StateHash: 06db17d6e1b619635a237ad38ce3830036b9fdd5
+                    Order: 1
+                    ConstraintName: events_start_date_idx
+                    ColumnsHashes:
+                        - aaceb220262fe79f396f4b26046a66a1137f42e7
+                    Unique: false
+                d333ae369ab938c96fc23e6b190ad495ba0ad50d:
+                    OriginalPath: Event.Entities.Entities.Event.Indexes.0
+                    StateHash: c04cc222bce1a2d187218deffa3a91685f8f01ba
+                    Order: 0
+                    ConstraintName: events_name_idx
+                    ColumnsHashes:
+                        - 3aa4587dbd7ec31e2979685f30dc3722fcf3cf3a
+                    Unique: false
             ForeignKeys:
                 94ea7dc0fead31c55ad8b0694bea4c88867e14a3:
                     OriginalPath: Event.Entities.Entities.ForeignKeys.0
@@ -5659,13 +6493,24 @@ Entities:
                     RefColumnsHashes:
                         - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
                     OnDelete: CASCADE
+                98c60ac763bdb1e555f238b67335889252093f0a:
+                    OriginalPath: Event.Entities.Entities.ForeignKeys.1
+                    StateHash: ff9edba85e82826d439cd1e1b1a73a48e8e5532a
+                    Order: 1
+                    ConstraintName: events_location_id_fk
+                    ColumnsHashes:
+                        - 5c11418b59d15c1a35c72e973ff5586586b0bb71
+                    RefTableHash: 30b1a536538fb9e9e4ae78bbeaaa082fda4c6d0c
+                    RefColumnsHashes:
+                        - 0add0ec97e677e6c4a2af2b094fde51bccba86fc
+                    OnDelete: CASCADE
         8fdbf1e936b0b5ced9c2714b61dd924658e4cc95:
             Ref: Account.Entities.Session
             OriginalPath: Account.Entities.Entities.Session
             Domain: Account
             RootNode: Entities
-            StateHash: a76c9c55579eacde81a4789957a5eb401287f875
-            Order: 5
+            StateHash: 42dbeb458f05371976df4d73a2d890261c897c90
+            Order: 4
             Name: Session
             TypeHash: 8fdbf1e936b0b5ced9c2714b61dd924658e4cc95
             DbName: sessions
@@ -5708,13 +6553,106 @@ Entities:
                     RefColumnsHashes:
                         - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
                     OnDelete: CASCADE
+        30b1a536538fb9e9e4ae78bbeaaa082fda4c6d0c:
+            Ref: Location.Entities.Location
+            OriginalPath: Location.Entities.Entities.Location
+            Domain: Location
+            RootNode: Entities
+            StateHash: a67d13469157d7136040500c9ee19cada405c9ee
+            Order: 12
+            Name: Location
+            TypeHash: 30b1a536538fb9e9e4ae78bbeaaa082fda4c6d0c
+            DbName: locations
+            Columns:
+                0add0ec97e677e6c4a2af2b094fde51bccba86fc:
+                    Ref: Location.Entities.Location.Id
+                    OriginalPath: Location.Entities.Entities.Location.Columns.Id
+                    Order: 4
+                    Name: Id
+                    StateHash: 393f93602470ce474d73721bf5c4f2e7c0e48e91
+                    TypeHash: 0add0ec97e677e6c4a2af2b094fde51bccba86fc
+                13fe41dfc6ad795001ac51b1251aeb727bf95386:
+                    Ref: Location.Entities.Location.Address
+                    OriginalPath: Location.Entities.Entities.Location.Columns.Address
+                    Order: 0
+                    Name: Address
+                    StateHash: 14c853236790586b34b9b85e76e9c99873cb87be
+                    TypeHash: 13fe41dfc6ad795001ac51b1251aeb727bf95386
+                75b6024b210f0891e573e79963c416d805e7dab5:
+                    Ref: Location.Entities.Location.CreatedAt
+                    OriginalPath: Location.Entities.Entities.Location.Columns.CreatedAt
+                    Order: 1
+                    Name: CreatedAt
+                    StateHash: 11c384ca5728125ee44032b7e8f50cf5208dc8ca
+                    TypeHash: 75b6024b210f0891e573e79963c416d805e7dab5
+                730656d02aec556111459de3673e54d0d367343a:
+                    Ref: Location.Entities.Location.Kind
+                    OriginalPath: Location.Entities.Entities.Location.Columns.Kind
+                    Order: 5
+                    Name: Kind
+                    StateHash: 7c88e7035be688b99c18d7be1d7527c45bf643cc
+                    TypeHash: 730656d02aec556111459de3673e54d0d367343a
+                a06bfdadff418f668d5f51be1a0f92e717d26c57:
+                    Ref: Location.Entities.Location.CreatedBy
+                    OriginalPath: Location.Entities.Entities.Location.Columns.CreatedBy
+                    Order: 2
+                    Name: CreatedBy
+                    StateHash: d466aea5eb55df329fe23950a4cb3ef8f6af3442
+                    TypeHash: a06bfdadff418f668d5f51be1a0f92e717d26c57
+                cd23872dcded01722536e3521e3e117e22874e6d:
+                    Ref: Location.Entities.Location.IconPath
+                    OriginalPath: Location.Entities.Entities.Location.Columns.IconPath
+                    Order: 3
+                    Name: IconPath
+                    StateHash: 8cac90ef1278e904d7204d70be117711abcf6aa6
+                    TypeHash: cd23872dcded01722536e3521e3e117e22874e6d
+                fd5cbd99f4bc6b76509f8302ce38f20864b2c47c:
+                    Ref: Location.Entities.Location.Name
+                    OriginalPath: Location.Entities.Entities.Location.Columns.Name
+                    Order: 6
+                    Name: Name
+                    StateHash: 85941bf2a86a10a686ace270994a9cdce42ab595
+                    TypeHash: fd5cbd99f4bc6b76509f8302ce38f20864b2c47c
+            PrimaryKey:
+                StateHash: 5b66b880ba3ec9637c0cdfb432e7a723fa0fc46f
+                ConstraintName: locations_pk
+                ColumnsHashes:
+                    - 0add0ec97e677e6c4a2af2b094fde51bccba86fc
+            Indexes:
+                7b34d56e0881a7eccd7e89505057beae9160f3e1:
+                    OriginalPath: Location.Entities.Entities.Location.Indexes.1
+                    StateHash: 76eed7a3b35197d005d8a8d2030a2ae8fd5140fd
+                    Order: 1
+                    ConstraintName: locations_address_idx
+                    ColumnsHashes:
+                        - 13fe41dfc6ad795001ac51b1251aeb727bf95386
+                    Unique: false
+                c9a90f51dc55efc05ee3c8b407483e16a78d3a3d:
+                    OriginalPath: Location.Entities.Entities.Location.Indexes.0
+                    StateHash: df02780033ee3924fc026cd352f169ddc4b9f54d
+                    Order: 0
+                    ConstraintName: locations_name_idx
+                    ColumnsHashes:
+                        - fd5cbd99f4bc6b76509f8302ce38f20864b2c47c
+                    Unique: false
+            ForeignKeys:
+                6b4992b11b9d6e4434806a320d89254a17e9885b:
+                    OriginalPath: Location.Entities.Entities.ForeignKeys.0
+                    StateHash: a35068b1bf9290dfe4bc4cbecd3da80c868c52da
+                    Order: 0
+                    ConstraintName: locations_created_by_fk
+                    ColumnsHashes:
+                        - a06bfdadff418f668d5f51be1a0f92e717d26c57
+                    RefTableHash: 948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5
+                    RefColumnsHashes:
+                        - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
         78f1db61daf9de8a9901c74892595037095deaa5:
             Ref: Game.Entities.Game
             OriginalPath: Game.Entities.Entities.Game
             Domain: Game
             RootNode: Entities
-            StateHash: 70c9faf81dad7b4de55cdf54f586fe992f54a2ed
-            Order: 0
+            StateHash: 00c25a7d0efccbb1d700e9bb2c3548830e9d6630
+            Order: 11
             Name: Game
             TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
             DbName: games
@@ -5822,8 +6760,8 @@ Entities:
             OriginalPath: Account.Entities.Entities.Account
             Domain: Account
             RootNode: Entities
-            StateHash: 6a572fafc7149c8c6ac10eebbdae4bc49443e9ba
-            Order: 1
+            StateHash: 060f89e166f6ad09b9f45874153304968ba46fa9
+            Order: 0
             Name: Account
             TypeHash: 948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5
             DbName: accounts
@@ -5889,8 +6827,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.PersonalCollection
             Domain: Collection
             RootNode: Entities
-            StateHash: 11be6f78b8e05349cd8dfcdf36424ea92bbaf469
-            Order: 7
+            StateHash: 862c81c111e3c77ecd6984055bde3cc54dea5809
+            Order: 6
             Name: PersonalCollection
             TypeHash: 7692916db8c983a1ec09d50ac41bcc40df2ee8fd
             DbName: personal_collections
@@ -5980,8 +6918,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventAttendance
             Domain: Event
             RootNode: Entities
-            StateHash: f4ab59375e5e6184305466130d62ec4119c6c495
-            Order: 9
+            StateHash: 773f11440891480817a67eb8ead6c327d143fb64
+            Order: 8
             Name: EventAttendance
             TypeHash: ba427435768ee5c6811035c1e8bef2f960ed9173
             DbName: event_attendances
@@ -6022,12 +6960,20 @@ Entities:
                     StateHash: 95f26913af46adac3194494e4dc8374f9529e005
                     TypeHash: fd0ed6c8fe29bd2b1891ccbb108f3fc6c99c554b
             PrimaryKey:
-                StateHash: f42347971799d96e067b812b692e75a3f3bc578c
+                StateHash: 2f788f7574707ada09612193c0ddbd361e7bf1fd
                 ConstraintName: event_attendances_pk
                 ColumnsHashes:
                     - ada29f70a5b3bf0e4afcfb2728cc8bcfac254887
-                    - b9ec70a3df75a2d8939533589277816089c79ab3
-                    - adfcffd6f552aba8b20b8b5f65dcd95a0eb94627
+            Indexes:
+                2839a02c224085f158a61190f750182eeb14d4f2:
+                    OriginalPath: Event.Entities.Entities.EventAttendance.Indexes.0
+                    StateHash: c9cb3af0faebe84588680fe86ae449a58cef0142
+                    Order: 0
+                    ConstraintName: event_attendances_event_id_account_id_idx
+                    ColumnsHashes:
+                        - b9ec70a3df75a2d8939533589277816089c79ab3
+                        - adfcffd6f552aba8b20b8b5f65dcd95a0eb94627
+                    Unique: true
             ForeignKeys:
                 94ea7dc0fead31c55ad8b0694bea4c88867e14a3:
                     OriginalPath: Event.Entities.Entities.ForeignKeys.0
@@ -6056,8 +7002,8 @@ Entities:
             OriginalPath: Collection.Entities.Entities.ImportCollectionLog
             Domain: Collection
             RootNode: Entities
-            StateHash: 9bb7c7856b90a61fdeb6bbadeb7a53ce7fe5c323
-            Order: 6
+            StateHash: a954adc17238c3a2eaed2baf8f4a7923cb05f557
+            Order: 5
             Name: ImportCollectionLog
             TypeHash: c0b9b4fff44a645683823c07f6475e2a1a808484
             DbName: import_collection_logs
@@ -6140,8 +7086,8 @@ Entities:
             OriginalPath: Event.Entities.Entities.EventGame
             Domain: Event
             RootNode: Entities
-            StateHash: d4d1054f7d4f354bd0f3b1a26744f83594f4595b
-            Order: 10
+            StateHash: c7227313baec5b9adf15ab5521a931ec9235fac8
+            Order: 9
             Name: EventGame
             TypeHash: cd7138056ba65b462f4c696752f7ce1c46c35b97
             DbName: event_games
@@ -6153,6 +7099,13 @@ Entities:
                     Name: GameId
                     StateHash: ae4327c84d9dd09808068671e5d8f3ea511b483a
                     TypeHash: 6e3d35e336891995769c63d3b86b67f8c593db98
+                79a196a6a360a54de4ced696b4aef8eebfde087a:
+                    Ref: Event.Entities.EventGame.OwnerId
+                    OriginalPath: Event.Entities.Entities.EventGame.Columns.OwnerId
+                    Order: 3
+                    Name: OwnerId
+                    StateHash: c9aae7d0084f9bed949134108a51e016bd52c20f
+                    TypeHash: 79a196a6a360a54de4ced696b4aef8eebfde087a
                 249c7221c0ec8f3fd0a36479d841313c4e83d426:
                     Ref: Event.Entities.EventGame.EventId
                     OriginalPath: Event.Entities.Entities.EventGame.Columns.EventId
@@ -6168,12 +7121,21 @@ Entities:
                     StateHash: fd4c6093e61aebd16c0489c3e9f3bf80dca81bf7
                     TypeHash: 851d84fabad3f8e63eb0f047d0ebd1a088c790b1
             PrimaryKey:
-                StateHash: b9619fc5b241bdbabc0adc95bd405047fe5c1915
+                StateHash: b3a46efdbf3314793fccc7f6100ffc4e7e536285
                 ConstraintName: event_games_pk
                 ColumnsHashes:
                     - 851d84fabad3f8e63eb0f047d0ebd1a088c790b1
-                    - 249c7221c0ec8f3fd0a36479d841313c4e83d426
-                    - 6e3d35e336891995769c63d3b86b67f8c593db98
+            Indexes:
+                e8f5bac69857cf199a3f768afc989e6389d06c05:
+                    OriginalPath: Event.Entities.Entities.EventGame.Indexes.0
+                    StateHash: 09afee8ca08220cccde4fcd92ba0a11154062a90
+                    Order: 0
+                    ConstraintName: event_games_event_id_game_id_owner_id_idx
+                    ColumnsHashes:
+                        - 249c7221c0ec8f3fd0a36479d841313c4e83d426
+                        - 6e3d35e336891995769c63d3b86b67f8c593db98
+                        - 79a196a6a360a54de4ced696b4aef8eebfde087a
+                    Unique: true
             ForeignKeys:
                 94ea7dc0fead31c55ad8b0694bea4c88867e14a3:
                     OriginalPath: Event.Entities.Entities.ForeignKeys.0
@@ -6197,13 +7159,24 @@ Entities:
                     RefColumnsHashes:
                         - 1f4e901e6486b5acef77fc95c8f9039e14b4d8b4
                     OnDelete: CASCADE
+                488b749cb09025f77ea5bfe4a0870fabf7e0cd7e:
+                    OriginalPath: Event.Entities.Entities.ForeignKeys.2
+                    StateHash: 31b1b502d8ab56bb03846839bbe031803f37fe64
+                    Order: 2
+                    ConstraintName: event_games_owner_id_fk
+                    ColumnsHashes:
+                        - 79a196a6a360a54de4ced696b4aef8eebfde087a
+                    RefTableHash: 948aca8a6cc6f5dc8bf86c6e929ee0bb7df73dc5
+                    RefColumnsHashes:
+                        - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
+                    OnDelete: CASCADE
         ce86052d641eedf3e7b0e624cb24abae8b246ec6:
             Ref: Account.Entities.OneTimePassword
             OriginalPath: Account.Entities.Entities.OneTimePassword
             Domain: Account
             RootNode: Entities
-            StateHash: b60945387c8bc2f32f30ecc9fc6131eba88d78d1
-            Order: 4
+            StateHash: 8deaf09223f4b53ac6f2078930ddd71de4ac80a2
+            Order: 3
             Name: OneTimePassword
             TypeHash: ce86052d641eedf3e7b0e624cb24abae8b246ec6
             DbName: one_time_passwords
@@ -6260,8 +7233,8 @@ Entities:
             OriginalPath: Gallery.Entities.Entities.Media
             Domain: Gallery
             RootNode: Entities
-            StateHash: f8dc57cf9fb7ef90d0b7e50e50495f5fd7f60af8
-            Order: 11
+            StateHash: a33df4a460de46382b12bb61fe33633dc7e6dddf
+            Order: 10
             Name: Media
             TypeHash: d4a719990056e08446b07132ff0a0e1565f8dbfc
             DbName: medias
@@ -6333,7 +7306,7 @@ Entities:
                         - c4c6f5e114598f78419bc2a530f72ce5c6345cd0
                     OnDelete: CASCADE
 Repository:
-    StateHash: 5dd16408733759574c0228aeb6d9ac2262bc64cc
+    StateHash: 19d01fe5dde53e4918f30cca727ddc035cae889e
     Repositories:
         Account:
             StateHash: e4a56704ae09c3ac4871c0fd5ad0c5017947f78f
@@ -6654,10 +7627,55 @@ Repository:
                             TypeHash: 5df23805ea508d864f2b8349325673aa712d805c
                         Output:
                             TypeHash: 27bf62d718627b14c45f61d82225f0e4cc2172a1
-        Game:
-            StateHash: d7f5afb7deda6d5829ea5834fdae66974c60dca2
+        Event:
+            StateHash: 99ec7b00fa26d830322358c473b0d69d4769b85c
             Methods:
-                StateHash: 7ddaa8354b963f290c43c4f72e7f22e8ff73ed61
+                StateHash: b3c9222b672f3b58eaaf6e054285be9e1f36e9f0
+                Methods:
+                    27cc13b1ed4ebc1d0d0a2d1415decfd0531b4a6d:
+                        Ref: Event.Repository.CreateEventGame
+                        OriginalPath: Event.Repository.Methods.CreateEventGame
+                        Domain: Event
+                        StateHash: 2bbbd8dd9d0f1b7f53f4e9bb8420063589758653
+                        Order: 2
+                        Name: CreateEventGame
+                        Input:
+                            TypeHash: 7b3bb9811ecced00398d33b214dfc6d48dec7aa2
+                    e928802bc36bdc5e169133dacbb3d3ae115cd658:
+                        Ref: Event.Repository.CreateEventAttendance
+                        OriginalPath: Event.Repository.Methods.CreateEventAttendance
+                        Domain: Event
+                        StateHash: 08296ec3ed3018de11746eaa87ecfd161b2a2499
+                        Order: 1
+                        Name: CreateEventAttendance
+                        Input:
+                            TypeHash: 498018b3804fc4f9347215cccf78ab490e134eea
+                    eefe9c707f4a1aef8fdec951b336100555619c69:
+                        Ref: Event.Repository.CreateEvent
+                        OriginalPath: Event.Repository.Methods.CreateEvent
+                        Domain: Event
+                        StateHash: f5e44e403b6c3a2149b365a1a12bb1bdcd85b307
+                        Order: 0
+                        Name: CreateEvent
+                        Input:
+                            TypeHash: bb2d6c3e3da799a08a77b980226191acd0078739
+                        Output:
+                            TypeHash: 6d987db707682a8d7b15914ef1d601db6b52bf57
+                    fa7780ab66c3e47124ef767bde44d43e476e6ec2:
+                        Ref: Event.Repository.GetNextEvents
+                        OriginalPath: Event.Repository.Methods.GetNextEvents
+                        Domain: Event
+                        StateHash: c8403a0a1f689273748f9b7080192df29a6e13bc
+                        Order: 3
+                        Name: GetNextEvents
+                        Input:
+                            TypeHash: 20aed2c9cd5d88679cd65cf47492a2a247a51550
+                        Output:
+                            TypeHash: 8f0f14ef8753676f71970fe5eea3cf6172f97036
+        Game:
+            StateHash: dcee811c434ea0ec110f9782f6fd11be99c0e721
+            Methods:
+                StateHash: e2bcf0af31cc5528079303f04ec23b11d04d5279
                 Methods:
                     97902a561f03250497b48839748ef3c38e017295:
                         Ref: Game.Repository.CreateGame
@@ -6674,8 +7692,8 @@ Repository:
                         Ref: Game.Repository.GetGamesListByLudopediaId
                         OriginalPath: Game.Repository.Methods.GetGamesListByLudopediaId
                         Domain: Game
-                        StateHash: d0c90d27556c0bb10a77930e570205653d7c8cf0
-                        Order: 2
+                        StateHash: b287d875bc70c684a5e1b7e798bef3ef208245e1
+                        Order: 3
                         Name: GetGamesListByLudopediaId
                         Input:
                             TypeHash: 574e5e45562c5d97026e3566af69d4d1f81814a5
@@ -6685,15 +7703,26 @@ Repository:
                         Ref: Game.Repository.GetGameByLudopediaId
                         OriginalPath: Game.Repository.Methods.GetGameByLudopediaId
                         Domain: Game
-                        StateHash: 7223b87bdd747a670e4fc7e24fbbb13725e7ba52
-                        Order: 1
+                        StateHash: 140811f74ee1919a0c39a443d76e7e8a5b9a8193
+                        Order: 2
                         Name: GetGameByLudopediaId
                         Input:
                             TypeHash: cece0d2bd1cb763e126dcba496f033a9b7eb9361
                         Output:
                             TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
+                    c74563a4b6b5e060a61868ee3d9dbbf1972cb37f:
+                        Ref: Game.Repository.GetGameById
+                        OriginalPath: Game.Repository.Methods.GetGameById
+                        Domain: Game
+                        StateHash: 3d5fa063d01e39160c429583b215f66b3054cad3
+                        Order: 1
+                        Name: GetGameById
+                        Input:
+                            TypeHash: e3c0527f698be2f6e323311f8a9270e387ed4595
+                        Output:
+                            TypeHash: 78f1db61daf9de8a9901c74892595037095deaa5
 Usecase:
-    StateHash: a6b3d67c4eb8296d1507f1e7a2215f1f014e1835
+    StateHash: 0f3ba9ed9fe6ef8550e5c52d6d9cd7f3eb583b07
     Usecases:
         Account:
             StateHash: 793354ec08973a7195f905fb2fa53d1d973b1364
@@ -6879,10 +7908,21 @@ Usecase:
                         Output:
                             TypeHash: 81dcec15b0740087087d6fcaf84036aabf9808a6
         Event:
-            StateHash: 4b24d72f6e9d8d610f942589b3496bf5f65b63c3
+            StateHash: 371dfecfe17b8d951be29adf2c58b886eb4284aa
             Methods:
-                StateHash: 3f9d3086caaae44a7eb9f7db935babe8cc4dca9b
+                StateHash: 8d0720bd1cc318c4400a1618174855f7c1088a4d
                 Methods:
+                    1daadeb97fba9831a79e23569ef04fc91b24fe6a:
+                        Ref: Event.Usecase.GetNextEvents
+                        OriginalPath: Event.Usecase.Methods.GetNextEvents
+                        Domain: Event
+                        StateHash: 57ec1a16c18f297df32f51e11d365c766c232867
+                        Order: 2
+                        Name: GetNextEvents
+                        Input:
+                            TypeHash: ac95abe3578aa20bdd2b32d1c08ea6ace89e4384
+                        Output:
+                            TypeHash: ac208c8046828e10985c07e2df9af83168dcea64
                     578c8cd4951e6d3d804096ee67df1a72378947a9:
                         Ref: Event.Usecase.ConfirmAttendance
                         OriginalPath: Event.Usecase.Methods.ConfirmAttendance
@@ -6892,17 +7932,6 @@ Usecase:
                         Name: ConfirmAttendance
                         Input:
                             TypeHash: 7ed568d8bfdefeeecdbc9508d5dcbcdc1a88c93a
-                    05303f4c9ba1ae373fbc54fb91ac64c0a516dede:
-                        Ref: Event.Usecase.GetEvents
-                        OriginalPath: Event.Usecase.Methods.GetEvents
-                        Domain: Event
-                        StateHash: 63048da94d2f9dc4c407f750d0bed790b80a09bd
-                        Order: 2
-                        Name: GetEvents
-                        Input:
-                            TypeHash: ff50de282b17ae423b0842fd90a7810e4be33b25
-                        Output:
-                            TypeHash: 27d95d1a3f7ecbd503ea7484308b62f594b2f1d6
                     cd81fe7bf7548ac7981f6e25188d20fa3c5a18bc:
                         Ref: Event.Usecase.CreateEvent
                         OriginalPath: Event.Usecase.Methods.CreateEvent
@@ -6913,7 +7942,7 @@ Usecase:
                         Input:
                             TypeHash: d9c76753350ea1bfb9e4b940f225772b688e374f
 Delivery:
-    StateHash: ae6840101f594aa83dad5ca4ab8a65fab5d27862
+    StateHash: 529bfc0a232ef15a9121b1a88a83f87de983a21a
     Deliveries:
         Account:
             StateHash: e826b946de60762c4c830b3b45cc97ed9dec9e49
@@ -6986,14 +8015,14 @@ Delivery:
                         HttpMethod: PUT
                         Path: /profile/me
         Collection:
-            StateHash: b6e87530d346199055a03dca3e7ad99985f17ce6
+            StateHash: 57d8d4877a0f268a419445c27792d7b7bf8762dd
             Servers:
                 Dev:
                     Url: http://localhost:3000
                 Prod:
                     Url: https://roles-e-jogos.com.br
             Http:
-                StateHash: b1c358e6bda2682ea7961897369a23194b9bd6ef
+                StateHash: 0fb545c57cdad7c2e049b21f098366c6bfe5bdcb
                 Routes:
                     Collection.Http.Routes./collection/collective?after=:after&limit=:limit:
                         Ref: Collection.Http.Routes./collection/collective?after=:after&limit=:limit
@@ -7009,11 +8038,11 @@ Delivery:
                         Ref: Collection.Http.Routes./collection/import/ludopedia
                         OriginalPath: Collection.Delivery.QHttp.Routes.2
                         Domain: Collection
-                        StateHash: 3ba085bdc76f7b588ee06e6205148fdb48462748
+                        StateHash: 66e6c48b1805d503fc146acf615e4a9d805ac058
                         Order: 0
                         UsecaseMethodHash: 70c9a87c9b626996db4f6801fcabbd4ce7e328c5
                         StatusCode: 0
-                        HttpMethod: GET
+                        HttpMethod: PUT
                         Path: /collection/import/ludopedia
                     Collection.Http.Routes./collection/import/status:
                         Ref: Collection.Http.Routes./collection/import/status
@@ -7047,32 +8076,32 @@ Delivery:
                         QueueId: import-personal-collection-from-ludopedia
                         Bulk: false
         Event:
-            StateHash: d1aa426bd6770e27c4b83416370db128376d0e8c
+            StateHash: 660c6d6a9e51781bbeddec823a59f3f9b850cc8c
             Servers:
                 Dev:
                     Url: http://localhost:3000
                 Prod:
-                    Url: https://roles-e-jogos.com.br
+                    Url: https://rolesejogos.com.br
             Http:
-                StateHash: 9d9d93793518e5b5adda87c625b2971b46eb8412
+                StateHash: 103a14dba41ac1528992647de8dbaee84eda99b7
                 Routes:
-                    Event.Http.Routes./events/attendance:
-                        Ref: Event.Http.Routes./events/attendance
+                    Event.Http.Routes./event/attendance:
+                        Ref: Event.Http.Routes./event/attendance
                         OriginalPath: Event.Delivery.QHttp.Routes.1
                         Domain: Event
-                        StateHash: bf0a90237b8bb1ec76f0cb07266aaea7c819d38d
+                        StateHash: aee6d0107335309a79aa0cc6cf36c89cb935f421
                         Order: 0
                         UsecaseMethodHash: 578c8cd4951e6d3d804096ee67df1a72378947a9
                         StatusCode: 0
                         HttpMethod: POST
-                        Path: /events/attendance
-                    Event.Http.Routes./events?after=:after&limit=:limit:
-                        Ref: Event.Http.Routes./events?after=:after&limit=:limit
+                        Path: /event/attendance
+                    Event.Http.Routes./event/next?after=:after&limit=:limit:
+                        Ref: Event.Http.Routes./event/next?after=:after&limit=:limit
                         OriginalPath: Event.Delivery.QHttp.Routes.0
                         Domain: Event
-                        StateHash: af5fdae9ef1db169ac66baade621f66422004bfa
+                        StateHash: 8f0fab2c6966e81f0a86f3269708ba54388f40a6
                         Order: 0
-                        UsecaseMethodHash: 05303f4c9ba1ae373fbc54fb91ac64c0a516dede
+                        UsecaseMethodHash: 1daadeb97fba9831a79e23569ef04fc91b24fe6a
                         StatusCode: 0
                         HttpMethod: GET
-                        Path: /events?after=:After&limit=:Limit
+                        Path: /event/next?after=:After&limit=:Limit

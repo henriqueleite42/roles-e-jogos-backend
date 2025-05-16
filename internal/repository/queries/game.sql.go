@@ -68,6 +68,61 @@ func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (int32, 
 	return id, err
 }
 
+const getGameById = `-- name: GetGameById :one
+SELECT
+	g."id",
+	g."name",
+	g."description",
+	g."icon_path",
+	g."kind",
+	g."ludopedia_id",
+	g."ludopedia_url",
+	g."min_amount_of_players",
+	g."max_amount_of_players",
+	g."average_duration",
+	g."min_age",
+	g."created_at"
+FROM "games" g
+WHERE
+	g."id" = $1
+LIMIT 1
+`
+
+type GetGameByIdRow struct {
+	ID                 int32
+	Name               string
+	Description        string
+	IconPath           pgtype.Text
+	Kind               KindEnum
+	LudopediaID        pgtype.Int4
+	LudopediaUrl       pgtype.Text
+	MinAmountOfPlayers int32
+	MaxAmountOfPlayers int32
+	AverageDuration    int32
+	MinAge             int32
+	CreatedAt          pgtype.Timestamptz
+}
+
+func (q *Queries) GetGameById(ctx context.Context, id int32) (GetGameByIdRow, error) {
+	row := q.db.QueryRow(ctx, getGameById, id)
+	var i GetGameByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.IconPath,
+		&i.Kind,
+		&i.LudopediaID,
+		&i.LudopediaUrl,
+		&i.MinAmountOfPlayers,
+		&i.MaxAmountOfPlayers,
+		&i.AverageDuration,
+		&i.MinAge,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const getGameByLudopediaId = `-- name: GetGameByLudopediaId :one
 SELECT
 	g."id",

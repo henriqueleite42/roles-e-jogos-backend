@@ -21,6 +21,9 @@ migration:
 		--to "file://database/database.hcl" \
 		--dev-url "docker://postgres/17/username@password?search_path=public"
 
+migration-rehash:
+	atlas migrate hash --dir "file://database/migrations"
+
 migrate:
 	atlas migrate apply \
 		--dir "file://database/migrations" \

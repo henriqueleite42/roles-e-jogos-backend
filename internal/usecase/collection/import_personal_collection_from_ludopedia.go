@@ -364,12 +364,7 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	logger.Trace().Msg("successfully got games")
 	gamesIdsMap := make(map[int]int, len(gamesRelations.Data))
 	for _, v := range gamesRelations.Data {
-		externalId, err := strconv.Atoi(v.ExternalId)
-		if err != nil {
-			gamesIdsMap[externalId] = v.GameId
-		} else {
-			logger.Error().Err(err).Str("ExternalId", v.ExternalId).Msg("fail to convert ludopedia game ID to int")
-		}
+		gamesIdsMap[v.LudopediaId] = v.GameId
 	}
 	logger.Trace().
 		Any("ludopediaGamesIds", ludopediaGamesIds).
@@ -383,8 +378,6 @@ func (self *CollectionUsecaseImplementation) ImportPersonalCollectionFromLudoped
 	for _, ludopediaGameId := range ludopediaGamesIds {
 		// If game already exists, theres no need to import it
 		if gamesIdsMap[ludopediaGameId] != 0 {
-			logger.Trace().Int("foo", gamesIdsMap[ludopediaGameId]).Msg("gamesIdsMap[ludopediaGameId]")
-			gamesImportCounterForLogs++
 			continue
 		}
 

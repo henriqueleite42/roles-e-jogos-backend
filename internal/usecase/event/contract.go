@@ -8,34 +8,35 @@ import (
 )
 
 type ConfirmAttendanceInput struct {
-	AccountId    int                          `validate:"id" db:"id"`
+	AccountId    int
 	Confirmation models.EventAttendanceStatus `validate:"required" db:"confirmation"`
+	EventId      int
 }
 type CreateEventInput struct {
-	AccountId          int                   `validate:"id" db:"id"`
-	Date               time.Time             `validate:"required"`
-	Description        string                `validate:"min=1,max=1000"`
-	GamesList          []int                 `validate:"required"`
-	Icon               *CreateEventInputIcon `validate:"required"`
-	LocationAddress    string                `validate:"min=1,max=500"`
-	LocationName       string                `validate:"min=1,max=100"`
-	MaxAmountOfPlayers *int                  `validate:"omitempty,min=1,max=9999"`
-	Name               string                `validate:"min=1,max=50"`
+	AccountId   int                   `validate:"id"`
+	Capacity    *int                  `validate:"omitempty,min=1,max=9999"`
+	Description string                `validate:"min=1,max=1000"`
+	EndDate     *time.Time            `validate:"omitempty"`
+	GamesList   []int                 `validate:"required"`
+	Icon        *CreateEventInputIcon `validate:"required"`
+	LocationId  int                   `validate:"id"`
+	Name        string                `validate:"min=1,max=50"`
+	StartDate   time.Time             `validate:"required"`
 }
 type CreateEventInputIcon struct {
-	CustomIcon *string `validate:"omitempty,path"`
-	GameIcon   *int    `validate:"omitempty"`
+	CustomIconPath    *string `validate:"omitempty,path"`
+	UseGameIconGameId *int    `validate:"omitempty"`
 }
-type GetEventsInput struct {
-	Pagination *models.PaginationInputString `validate:"omitempty"`
+type GetNextEventsInput struct {
+	Pagination *models.PaginationInputTimestamp `validate:"required"`
 }
-type GetEventsOutput struct {
-	Data       []*models.EventData            `validate:"required"`
-	Pagination *models.PaginationOutputString `validate:"required"`
+type GetNextEventsOutput struct {
+	Data       []*models.EventData               `validate:"required"`
+	Pagination *models.PaginationOutputTimestamp `validate:"required"`
 }
 
 type EventUsecase interface {
 	ConfirmAttendance(ctx context.Context, i *ConfirmAttendanceInput) error
 	CreateEvent(ctx context.Context, i *CreateEventInput) error
-	GetEvents(ctx context.Context, i *GetEventsInput) (*GetEventsOutput, error)
+	GetNextEvents(ctx context.Context, i *GetNextEventsInput) (*GetNextEventsOutput, error)
 }
