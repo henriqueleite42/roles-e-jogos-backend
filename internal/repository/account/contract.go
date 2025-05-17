@@ -30,6 +30,9 @@ type CreateOtpInput struct {
 type CreateSessionInput struct {
 	AccountId int
 }
+type DeleteSessionInput struct {
+	SessionId string
+}
 type EditAccountHandleInput struct {
 	AccountId int
 	Handle    string
@@ -125,6 +128,7 @@ type AccountRepository interface {
 	CreateAccountWithEmail(ctx context.Context, i *CreateAccountWithEmailInput) (*models.AccountData, error)
 	CreateOtp(ctx context.Context, i *CreateOtpInput) error
 	CreateSession(ctx context.Context, i *CreateSessionInput) (*models.Session, error)
+	DeleteSession(ctx context.Context, i *DeleteSessionInput) error
 	EditAccountHandle(ctx context.Context, i *EditAccountHandleInput) error
 	EditProfile(ctx context.Context, i *EditProfileInput) error
 	GetAccountByHandle(ctx context.Context, i *GetAccountByHandleInput) (*models.Account, error)

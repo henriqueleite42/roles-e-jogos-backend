@@ -140,6 +140,18 @@ func (q *Queries) CreateValidatedEmailAddress(ctx context.Context, arg CreateVal
 	return err
 }
 
+const deleteSession = `-- name: DeleteSession :exec
+DELETE FROM
+	"sessions" s
+WHERE
+	s."session_id" = $1
+`
+
+func (q *Queries) DeleteSession(ctx context.Context, sessionID string) error {
+	_, err := q.db.Exec(ctx, deleteSession, sessionID)
+	return err
+}
+
 const getAccountByHandle = `-- name: GetAccountByHandle :one
 SELECT
 	a.avatar_path, a.created_at, a.handle, a.id, a.is_admin, a.name

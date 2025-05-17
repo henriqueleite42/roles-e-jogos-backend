@@ -146,6 +146,7 @@ type EventConfidentialityEnum string
 const (
 	EventConfidentialityEnumPUBLIC      EventConfidentialityEnum = "PUBLIC"
 	EventConfidentialityEnumONLYINVITED EventConfidentialityEnum = "ONLY_INVITED"
+	EventConfidentialityEnumINVITEDONLY EventConfidentialityEnum = "INVITED_ONLY"
 )
 
 func (e *EventConfidentialityEnum) Scan(src interface{}) error {

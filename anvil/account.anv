@@ -553,6 +553,13 @@ Repository:
             Items:
               $ref: Entities.Connection
 
+    DeleteSession:
+      Input:
+        Type: Map
+        Properties:
+          SessionId:
+            Type: String
+
 Usecase:
   Methods:
     CreateWithGoogleProvider:
@@ -716,6 +723,13 @@ Usecase:
             Items:
               $ref: Types.MinimumProfileData
 
+    DeleteSession:
+      Input:
+        Type: Map
+        Properties:
+          SessionId:
+            Type: String
+
 Delivery:
   Servers:
     Prod:
@@ -739,6 +753,10 @@ Delivery:
       # - UsecaseMethod: ExchangeSignInOtp
       #   Method: POST
       #   Path: /auth/exchange-sign-in-otp
+
+      - UsecaseMethod: DeleteSession
+        Method: POST
+        Path: /logout
 
       - UsecaseMethod: GetProfileById
         Method: GET

@@ -15,6 +15,9 @@ type CheckHandleOutput struct {
 type CreateWithGoogleProviderInput struct {
 	Code string `validate:"min=1"`
 }
+type DeleteSessionInput struct {
+	SessionId string
+}
 type EditHandleInput struct {
 	AccountId int    `validate:"id"`
 	NewHandle string `validate:"handle"`
@@ -62,6 +65,7 @@ type SendSignInOtpInput struct {
 type AccountUsecase interface {
 	CheckHandle(ctx context.Context, i *CheckHandleInput) (*CheckHandleOutput, error)
 	CreateWithGoogleProvider(ctx context.Context, i *CreateWithGoogleProviderInput) (*models.SessionData, error)
+	DeleteSession(ctx context.Context, i *DeleteSessionInput) error
 	EditHandle(ctx context.Context, i *EditHandleInput) error
 	EditProfile(ctx context.Context, i *EditProfileInput) error
 	ExchangeSignInOtp(ctx context.Context, i *ExchangeSignInOtpInput) (*models.SessionData, error)

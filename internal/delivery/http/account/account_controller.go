@@ -41,6 +41,7 @@ func AddAccountController(i *AddAccountControllerInput) {
 
 	i.Mux.HandleFunc("/auth/google", accountController.AuthGoogle)
 	i.Mux.HandleFunc("/auth/link/ludopedia", accountController.AuthLinkLudopedia)
+	i.Mux.HandleFunc("/logout", accountController.Logout)
 
 	i.Mux.HandleFunc("/profile/handle", accountController.ProfileHandle)
 	i.Mux.HandleFunc("/profile/handle/check", accountController.ProfileHandleCheck)

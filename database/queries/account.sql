@@ -292,3 +292,9 @@ LEFT JOIN "accounts" a ON a."id" = s."account_id"
 WHERE
 	s."session_id" = $1
 LIMIT 1;
+
+-- name: DeleteSession :exec
+DELETE FROM
+	"sessions" s
+WHERE
+	s."session_id" = $1;
